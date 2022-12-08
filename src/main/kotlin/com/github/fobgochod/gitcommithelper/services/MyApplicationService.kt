@@ -1,6 +1,6 @@
-package org.jetbrains.plugins.template.services
+package com.github.fobgochod.gitcommithelper.services
 
-import org.jetbrains.plugins.template.MyBundle
+import com.github.fobgochod.gitcommithelper.MyBundle
 
 class MyApplicationService {
 
