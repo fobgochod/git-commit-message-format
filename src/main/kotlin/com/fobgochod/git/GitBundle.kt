@@ -1,13 +1,13 @@
-package com.github.fobgochod.gitcommithelper
+package com.fobgochod.git
 
 import com.intellij.DynamicBundle
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
 
 @NonNls
-private const val BUNDLE = "messages.MyBundle"
+private const val BUNDLE = "messages.GitBundle"
 
-object MyBundle : DynamicBundle(BUNDLE) {
+object GitBundle : DynamicBundle(BUNDLE) {
 
     @Suppress("SpreadOperator")
     @JvmStatic

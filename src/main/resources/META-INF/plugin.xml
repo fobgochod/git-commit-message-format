@@ -1,18 +1,21 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.fobgochod.gitcommithelper</id>
-    <name>IntelliJ Platform Plugin git-commit-helper</name>
+    <id>com.fobgochod.git-commit-helper</id>
+    <name>Git Commit Helper</name>
     <vendor>fobgochod</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.vcs</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.fobgochod.gitcommithelper.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.fobgochod.gitcommithelper.services.MyProjectService"/>
     </extensions>
 
-    <applicationListeners>
-        <listener class="com.github.fobgochod.gitcommithelper.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
+    <actions>
+        <action id="Commit.Button" class="com.fobgochod.git.commit.CreateCommitAction"
+                text="Create commit message"
+                description="Create commit message"
+                icon="/icons/load.png">
+            <add-to-group group-id="Vcs.MessageActionGroup" anchor="first"/>
+        </action>
+    </actions>
 </idea-plugin>
