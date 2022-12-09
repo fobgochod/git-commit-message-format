@@ -2,7 +2,7 @@ package com.fobgochod.git.commit
 
 import java.util.*
 
-enum class ChangeType(val title: String, val description: String) {
+enum class ChangeType(val title: String, private val description: String) {
     FEAT("Features", "A new feature"),
     FIX("Bug Fixes", "A bug fix"),
     DOCS("Documentation", "Documentation only changes"),
@@ -30,6 +30,6 @@ enum class ChangeType(val title: String, val description: String) {
     }
 
     override fun toString(): String {
-        return String.format("%s - %s", this.label(), this.description);
+        return this.label() + " - " + this.description;
     }
 }

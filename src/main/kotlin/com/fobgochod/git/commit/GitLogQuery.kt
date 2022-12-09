@@ -7,33 +7,27 @@ import java.util.concurrent.TimeUnit
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-class GitLogQuery(workingDirectory: File) {
+class GitLogQuery(private val workingDirectory: File) {
 
-    private val GIT_LOG_COMMAND: String = "git log --all --format=%s";
-    private val COMMIT_FIRST_LINE_FORMAT: Pattern = Pattern.compile("^[a-z]+\\((.+)\\):.*");
-
-    private val workingDirectory: File;
-
-    init {
-        this.workingDirectory = workingDirectory;
+    companion object {
+        const val GIT_LOG_COMMAND: String = "git log --all --format=%s";
+        val COMMIT_FIRST_LINE_FORMAT: Pattern = Pattern.compile("^[a-z]+\\((.+)\\):.*");
     }
-
 
     fun execute(): Result {
         try {
-            val processBuilder: ProcessBuilder;
             val osName: String = System.getProperty("os.name");
-            if (osName.contains("Windows")) {
-                processBuilder = ProcessBuilder("cmd", "/C", GIT_LOG_COMMAND);
+            val processBuilder: ProcessBuilder = if (osName.contains("Windows")) {
+                ProcessBuilder("cmd", "/C", GIT_LOG_COMMAND);
             } else {
-                processBuilder = ProcessBuilder("sh", "-c", GIT_LOG_COMMAND);
+                ProcessBuilder("sh", "-c", GIT_LOG_COMMAND);
             }
 
             val process: Process = processBuilder
                 .directory(workingDirectory)
                 .start();
-            val reader = BufferedReader(InputStreamReader(process.getInputStream()));
 
+            val reader = BufferedReader(InputStreamReader(process.inputStream));
             val output: List<String> = reader.lines().toList();
 
             process.waitFor(2, TimeUnit.SECONDS);
@@ -46,7 +40,7 @@ class GitLogQuery(workingDirectory: File) {
         }
     }
 
-    inner class Result(val exitValue: Int) {
+    inner class Result(private val exitValue: Int) {
 
         private var logs: List<String> = emptyList()
 

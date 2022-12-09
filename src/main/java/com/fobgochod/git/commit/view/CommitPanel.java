@@ -74,14 +74,9 @@ public class CommitPanel {
     }
 
     private void restoreValuesFromParsedCommitMessage(CommitMessage commitMessage) {
-        if (commitMessage.getChangeType() != null) {
-            for (Enumeration<AbstractButton> buttons = changeTypeGroup.getElements(); buttons.hasMoreElements(); ) {
-                AbstractButton button = buttons.nextElement();
-
-                if (button.getActionCommand().equalsIgnoreCase(commitMessage.getChangeType().label())) {
-                    button.setSelected(true);
-                }
-            }
+        for (Enumeration<AbstractButton> buttons = changeTypeGroup.getElements(); buttons.hasMoreElements(); ) {
+            AbstractButton button = buttons.nextElement();
+            button.setSelected(button.getActionCommand().equalsIgnoreCase(commitMessage.getChangeType().label()));
         }
         changeScope.setSelectedItem(commitMessage.getChangeScope());
         shortDescription.setText(commitMessage.getShortDescription());

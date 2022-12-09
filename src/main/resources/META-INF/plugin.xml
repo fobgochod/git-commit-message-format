@@ -12,7 +12,7 @@
 
     <actions>
         <action id="Commit.Button" class="com.fobgochod.git.commit.CreateCommitAction"
-                text="Create commit message"
+                text="Create Commit Message"
                 description="Create commit message"
                 icon="/icons/load.png">
             <add-to-group group-id="Vcs.MessageActionGroup" anchor="first"/>

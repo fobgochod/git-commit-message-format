@@ -11,35 +11,30 @@ import com.intellij.openapi.vcs.ui.Refreshable
 
 class CreateCommitAction : AnAction(), DumbAware {
 
-    override fun actionPerformed(e: AnActionEvent) {
-        val commitPanel: CommitMessageI? = getCommitPanel(e);
-        if (commitPanel == null) return;
-
+    override fun actionPerformed(event: AnActionEvent) {
+        val commitPanel: CommitMessageI = getCommitPanel(event) ?: return;
         val commitMessage: CommitMessage? = parseExistingCommitMessage(commitPanel);
-        val dialog = CommitDialog(e.getProject(), commitMessage);
+        val dialog = CommitDialog(event.project, commitMessage);
         dialog.show();
 
-        if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+        if (dialog.exitCode == DialogWrapper.OK_EXIT_CODE) {
             commitPanel.setCommitMessage(dialog.getCommitMessage().toString());
         }
     }
 
-    fun parseExistingCommitMessage(commitPanel: CommitMessageI): CommitMessage? {
+    private fun parseExistingCommitMessage(commitPanel: CommitMessageI): CommitMessage? {
         if (commitPanel is CheckinProjectPanel) {
-            val commitMessageString: String = commitPanel.getCommitMessage();
+            val commitMessageString: String = commitPanel.commitMessage;
             return CommitMessage.parse(commitMessageString);
         }
         return null;
     }
 
-    fun getCommitPanel(e: AnActionEvent): CommitMessageI? {
-        if (e == null) {
-            return null;
-        }
-        val data: Refreshable? = Refreshable.PANEL_KEY.getData(e.getDataContext());
+    private fun getCommitPanel(event: AnActionEvent): CommitMessageI? {
+        val data: Refreshable? = Refreshable.PANEL_KEY.getData(event.dataContext);
         if (data is CommitMessageI) {
             return data;
         }
-        return VcsDataKeys.COMMIT_MESSAGE_CONTROL.getData(e.getDataContext());
+        return VcsDataKeys.COMMIT_MESSAGE_CONTROL.getData(event.dataContext);
     }
 }
