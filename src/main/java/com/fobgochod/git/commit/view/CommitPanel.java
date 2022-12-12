@@ -7,32 +7,23 @@ import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
 import java.io.File;
-import java.util.Enumeration;
 
 public class CommitPanel {
 
     private JPanel mainPanel;
+    private JComboBox<ChangeType> changeType;
     private JComboBox<String> changeScope;
     private JTextField shortDescription;
     private JTextArea longDescription;
+    private JCheckBox wrapTextCheckBox;
     private JTextArea breakingChanges;
     private JTextField closedIssues;
-    private JCheckBox wrapTextCheckBox;
     private JCheckBox skipCICheckBox;
-    private JRadioButton featRadioButton;
-    private JRadioButton fixRadioButton;
-    private JRadioButton docsRadioButton;
-    private JRadioButton styleRadioButton;
-    private JRadioButton refactorRadioButton;
-    private JRadioButton perfRadioButton;
-    private JRadioButton testRadioButton;
-    private JRadioButton buildRadioButton;
-    private JRadioButton ciRadioButton;
-    private JRadioButton choreRadioButton;
-    private JRadioButton revertRadioButton;
-    private ButtonGroup changeTypeGroup;
 
     public CommitPanel(Project project, CommitMessage commitMessage) {
+
+        changeType.setModel(new DefaultComboBoxModel<>(ChangeType.values()));
+
         File workingDirectory = new File(project.getBasePath());
         GitLogQuery.Result result = new GitLogQuery(workingDirectory).execute();
         if (result.isSuccess()) {
@@ -52,7 +43,7 @@ public class CommitPanel {
     public CommitMessage getCommitMessage() {
         return new CommitMessage(
                 getSelectedChangeType(),
-                (String) changeScope.getSelectedItem(),
+                getSelectedChangeScope(),
                 shortDescription.getText().trim(),
                 longDescription.getText().trim(),
                 breakingChanges.getText().trim(),
@@ -63,21 +54,17 @@ public class CommitPanel {
     }
 
     private ChangeType getSelectedChangeType() {
-        for (Enumeration<AbstractButton> buttons = changeTypeGroup.getElements(); buttons.hasMoreElements(); ) {
-            AbstractButton button = buttons.nextElement();
+        Object selectedItem = changeType.getSelectedItem();
+        return (ChangeType) selectedItem;
+    }
 
-            if (button.isSelected()) {
-                return ChangeType.valueOf(button.getActionCommand().toUpperCase());
-            }
-        }
-        return null;
+    private String getSelectedChangeScope() {
+        Object selectedItem = changeScope.getSelectedItem();
+        return (String) selectedItem;
     }
 
     private void restoreValuesFromParsedCommitMessage(CommitMessage commitMessage) {
-        for (Enumeration<AbstractButton> buttons = changeTypeGroup.getElements(); buttons.hasMoreElements(); ) {
-            AbstractButton button = buttons.nextElement();
-            button.setSelected(button.getActionCommand().equalsIgnoreCase(commitMessage.getChangeType().label()));
-        }
+        changeType.setSelectedItem(commitMessage.getChangeType());
         changeScope.setSelectedItem(commitMessage.getChangeScope());
         shortDescription.setText(commitMessage.getShortDescription());
         longDescription.setText(commitMessage.getLongDescription());

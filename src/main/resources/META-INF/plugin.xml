@@ -8,6 +8,11 @@
     <depends>com.intellij.modules.vcs</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable parentId="tools"
+                                 instance="com.fobgochod.git.commit.settings.GitCommitHelperConfigurable"
+                                 id="com.fobgochod.git.commit.settings.GitCommitHelperConfigurable"
+                                 displayName="Git Commit Helper"/>
+        <applicationService serviceImplementation="com.fobgochod.git.commit.settings.GitCommitHelperState"/>
     </extensions>
 
     <actions>

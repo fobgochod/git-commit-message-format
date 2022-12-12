@@ -21,6 +21,11 @@ plugins {
 group = properties("pluginGroup")
 version = properties("pluginVersion")
 
+dependencies {
+    implementation("uk.com.robust-it:cloning:1.9.12")
+}
+
+
 // Configure project's dependencies
 repositories {
     mavenCentral()
