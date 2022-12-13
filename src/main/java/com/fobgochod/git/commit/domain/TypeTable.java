@@ -130,7 +130,7 @@ public class TypeTable extends JBTable {
 
 
     public void commit(GitCommitHelperState settings) {
-        settings.getDateSettings().setTypeAliases(new LinkedList<>(typeItems));
+        settings.setTypeItems(new LinkedList<>(typeItems));
     }
 
     public void resetDefaultAliases() {
@@ -155,7 +155,7 @@ public class TypeTable extends JBTable {
 
     private void obtainAliases(@NotNull List<TypeItem> aliases, GitCommitHelperState settings) {
         aliases.clear();
-        aliases.addAll(settings.getDateSettings().getTypeAliases());
+        aliases.addAll(settings.getTypeItems());
     }
 
     public boolean editAlias() {

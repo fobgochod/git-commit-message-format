@@ -16,10 +16,10 @@ public class TypeEditor extends DialogWrapper {
     public TypeEditor(String dialogTitle, String title, String description) {
         super(true);
         setTitle(dialogTitle);
+        
         root = new JPanel();
-
-        titleField = new JTextField();
-        descriptionField = new JTextField();
+        titleField = new JTextField(title);
+        descriptionField = new JTextField(description);
 
         JPanel panel = FormBuilder.createFormBuilder()
                 .setHorizontalGap(5)
@@ -29,8 +29,6 @@ public class TypeEditor extends DialogWrapper {
         panel.setPreferredSize(new Dimension(460, 70));
         root.add(panel);
 
-        titleField.setText(title);
-        descriptionField.setText(description);
         init();
     }
 

@@ -22,7 +22,6 @@ group = properties("pluginGroup")
 version = properties("pluginVersion")
 
 dependencies {
-    implementation("uk.com.robust-it:cloning:1.9.12")
 }
 
 

@@ -1,28 +1,32 @@
-package com.fobgochod.git.commit.view;
+package com.fobgochod.git.commit.view.settings;
 
 import com.fobgochod.git.commit.ChangeType;
 import com.fobgochod.git.commit.CommitMessage;
 import com.fobgochod.git.commit.GitLogQuery;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBox;
+import com.intellij.util.ui.FormBuilder;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 
-public class CommitPanel {
+public class CommitWindow {
 
     private JPanel mainPanel;
     private JComboBox<ChangeType> changeType;
     private JComboBox<String> changeScope;
-    private JTextField shortDescription;
-    private JTextArea longDescription;
-    private JCheckBox wrapTextCheckBox;
-    private JTextArea breakingChanges;
-    private JTextField closedIssues;
-    private JCheckBox skipCICheckBox;
+    private JTextField shortDescription = new JTextField();
+    private JTextArea longDescription = new JTextArea();
+    private JCheckBox wrapTextCheckBox = new JCheckBox("Wrap text at 72 characters?", true);
+    private JTextArea breakingChanges = new JTextArea();
+    private JTextField closedIssues = new JTextField();
+    private JCheckBox skipCICheckBox = new JCheckBox("Skip CI?");
 
-    public CommitPanel(Project project, CommitMessage commitMessage) {
+    public CommitWindow(Project project, CommitMessage commitMessage) {
 
-        changeType.setModel(new DefaultComboBoxModel<>(ChangeType.values()));
+        changeType = new ComboBox<>(new DefaultComboBoxModel<>(ChangeType.values()));
+        changeScope = new ComboBox<>( );
 
         File workingDirectory = new File(project.getBasePath());
         GitLogQuery.Result result = new GitLogQuery(workingDirectory).execute();
@@ -34,6 +38,22 @@ public class CommitPanel {
         if (commitMessage != null) {
             restoreValuesFromParsedCommitMessage(commitMessage);
         }
+
+        longDescription.setPreferredSize(new Dimension(150, 100));
+        longDescription.setLineWrap(true);
+        breakingChanges.setPreferredSize(new Dimension(150, 50));
+        breakingChanges.setLineWrap(true);
+
+        mainPanel = FormBuilder.createFormBuilder()
+                .addLabeledComponent(new JLabel("Type of change"), changeType)
+                .addLabeledComponent(new JLabel("Scope of this change"), changeScope)
+                .addLabeledComponent(new JLabel("Short description"), shortDescription)
+                .addLabeledComponent(new JLabel("Long description"), longDescription)
+                .addComponentToRightColumn(wrapTextCheckBox)
+                .addLabeledComponent(new JLabel("Breaking changes"), breakingChanges)
+                .addLabeledComponent(new JLabel("Closed issues"), closedIssues)
+                .addComponentToRightColumn(skipCICheckBox)
+                .getPanel();
     }
 
     public JPanel getMainPanel() {
@@ -41,6 +61,8 @@ public class CommitPanel {
     }
 
     public CommitMessage getCommitMessage() {
+
+
         return new CommitMessage(
                 getSelectedChangeType(),
                 getSelectedChangeScope(),

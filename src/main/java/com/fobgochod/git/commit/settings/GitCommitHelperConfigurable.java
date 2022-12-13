@@ -1,19 +1,21 @@
 package com.fobgochod.git.commit.settings;
 
+import com.fobgochod.git.commit.domain.TypeItem;
 import com.intellij.openapi.options.SearchableConfigurable;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.List;
 
 /**
  * 这个类Settings 中的属性被创建的时候
  */
 public class GitCommitHelperConfigurable implements SearchableConfigurable {
 
+    private final GitCommitHelperState settings;
     private GitCommitHelperComponent component;
-    private GitCommitHelperState settings;
 
 
     public GitCommitHelperConfigurable() {
@@ -58,13 +60,20 @@ public class GitCommitHelperConfigurable implements SearchableConfigurable {
 
     @Override
     public boolean isModified() {
-        return component != null && component.isSettingsModified(settings);
+        if (component == null) {
+            return false;
+        }
+        String template = component.getSettings().getTemplate().trim();
+        List<TypeItem> typeItems = component.getSettings().getTypeItems();
+        return !template.equals(settings.getTemplate()) || typeItems != settings.getTypeItems();
     }
 
 
     @Override
     public void apply() {
-        settings.setDateSettings(component.getSettings().getDateSettings());
-        settings = component.getSettings().clone();
+        if (component != null) {
+            settings.setTemplate(component.getSettings().getTemplate());
+            settings.setTypeItems(component.getSettings().getTypeItems());
+        }
     }
 }

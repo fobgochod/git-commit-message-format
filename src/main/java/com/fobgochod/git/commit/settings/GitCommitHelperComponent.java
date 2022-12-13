@@ -2,6 +2,7 @@ package com.fobgochod.git.commit.settings;
 
 import com.fobgochod.git.commit.domain.TypeTable;
 import com.intellij.codeInsight.template.HtmlContextType;
+import com.intellij.codeInsight.template.impl.ConstantNode;
 import com.intellij.codeInsight.template.impl.TemplateEditorUtil;
 import com.intellij.codeInsight.template.impl.TemplateImpl;
 import com.intellij.icons.AllIcons;
@@ -9,7 +10,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.JBSplitter;
 import com.intellij.ui.ToolbarDecorator;
@@ -30,7 +30,7 @@ import java.util.stream.IntStream;
 
 public class GitCommitHelperComponent {
 
-    private static final TemplateImpl MOCK_TEMPLATE = new TemplateImpl("mockTemplate-xxx", "mockTemplateGroup-yyy");
+    private static final TemplateImpl GIT_COMMIT_TEMPLATE = new TemplateImpl("commit-template", "Git");
     private GitCommitHelperState settings = GitCommitHelperState.getInstance();
 
     private JPanel mainPanel;
@@ -81,8 +81,16 @@ public class GitCommitHelperComponent {
         }.installOn(typeTable);
 
 
-        String template = Optional.of(settings.getDateSettings().getTemplate()).orElse("");
-        templateEditor = TemplateEditorUtil.createEditor(false, template, MOCK_TEMPLATE.createContext());
+        String template = Optional.of(settings.getTemplate()).orElse("");
+
+        GIT_COMMIT_TEMPLATE.setString(template);
+        GIT_COMMIT_TEMPLATE.addVariable("type", new ConstantNode("type"), true);
+        GIT_COMMIT_TEMPLATE.addVariable("scope", "", "scope", true);
+        GIT_COMMIT_TEMPLATE.addVariable("subject", "", "subject", true);
+        GIT_COMMIT_TEMPLATE.addVariable("body", "", "body", true);
+        GIT_COMMIT_TEMPLATE.addVariable("changes", "", "changes", true);
+
+        templateEditor = TemplateEditorUtil.createEditor(false, GIT_COMMIT_TEMPLATE.getString(), GIT_COMMIT_TEMPLATE.createContext());
         TemplateEditorUtil.setHighlighter(templateEditor, new HtmlContextType());
 
         JPanel upPanel = new JPanel(new BorderLayout());
@@ -97,7 +105,6 @@ public class GitCommitHelperComponent {
         labels.add(new JLabel("${body} corresponds to the submission menu 'Long description'"));
         labels.add(new JLabel("${changes} corresponds to the submission menu 'Breaking changes'"));
         labels.add(new JLabel("${closes} corresponds to the submission menu 'Closed issues'"));
-        labels.add(new JLabel("${newLine} is '\\n'"));
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -131,32 +138,16 @@ public class GitCommitHelperComponent {
 
     public GitCommitHelperState getSettings() {
         typeTable.commit(settings);
-        settings.getDateSettings().setTemplate(templateEditor.getDocument().getText());
+        settings.setTemplate(templateEditor.getDocument().getText());
         return settings;
     }
 
     public void reset(GitCommitHelperState settings) {
-        this.settings = settings.clone();
+        this.settings.setTemplate(settings.getTemplate());
+        this.settings.setTypeItems(settings.getTypeItems());
         typeTable.reset(settings);
-        ApplicationManager.getApplication().runWriteAction(() -> templateEditor.getDocument().setText(settings.getDateSettings().getTemplate()));
+        ApplicationManager.getApplication().runWriteAction(() -> templateEditor.getDocument().setText(settings.getTemplate()));
     }
-
-
-    public boolean isSettingsModified(GitCommitHelperState settings) {
-        if (typeTable.isModified(settings)) return true;
-        return isModified(settings);
-    }
-
-    public boolean isModified(GitCommitHelperState data) {
-        if (!StringUtil.equals(settings.getDateSettings().getTemplate(), templateEditor.getDocument().getText())) {
-            return true;
-        }
-        if (settings.getDateSettings().getTypeAliases() == data.getDateSettings().getTypeAliases()) {
-            return true;
-        }
-        return false;
-    }
-
 
     public JPanel getMainPanel() {
         return mainPanel;

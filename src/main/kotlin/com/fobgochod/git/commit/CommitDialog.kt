@@ -1,14 +1,14 @@
 package com.fobgochod.git.commit
 
 import com.fobgochod.git.GitBundle
-import com.fobgochod.git.commit.view.CommitPanel
+import com.fobgochod.git.commit.view.settings.CommitWindow
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import javax.swing.JComponent
 
 class CommitDialog(project: Project?, commitMessage: CommitMessage?) : DialogWrapper(project) {
 
-    private var panel: CommitPanel
+    private var panel: CommitWindow
 
     override fun createCenterPanel(): JComponent? {
         return panel.mainPanel;
@@ -20,9 +20,8 @@ class CommitDialog(project: Project?, commitMessage: CommitMessage?) : DialogWra
     }
 
     init {
-        panel = CommitPanel(project, commitMessage)
+        panel = CommitWindow(project, commitMessage)
         title = GitBundle.message("create.commit.message")
-        setOKButtonText("OK")
         init()
     }
 }

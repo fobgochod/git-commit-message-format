@@ -1,7 +1,7 @@
 package com.fobgochod.git.commit.settings;
 
-import com.fobgochod.git.commit.domain.DataSettings;
 import com.fobgochod.git.commit.constant.GitCommitConstant;
+import com.fobgochod.git.commit.domain.MessageType;
 import com.fobgochod.git.commit.domain.TypeItem;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -9,7 +9,6 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.xmlb.XmlSerializerUtil;
-import com.rits.cloning.Cloner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,8 +26,9 @@ import java.util.List;
 )
 public class GitCommitHelperState implements PersistentStateComponent<GitCommitHelperState> {
 
-    private static final Logger log = Logger.getInstance(GitCommitHelperState.class);
-    private DataSettings dataSettings;
+    private static final Logger logger = Logger.getInstance(GitCommitHelperState.class);
+    private String template;
+    private List<TypeItem> typeItems;
 
     public static GitCommitHelperState getInstance() {
         return ApplicationManager.getApplication().getService(GitCommitHelperState.class);
@@ -37,75 +37,45 @@ public class GitCommitHelperState implements PersistentStateComponent<GitCommitH
     @Nullable
     @Override
     public GitCommitHelperState getState() {
-        if (this.dataSettings == null) {
-            loadDefaultSettings();
-        }
+        loadDefaultSettings();
         return this;
     }
 
 
     @Override
-    public void loadState(@NotNull GitCommitHelperState gitCommitHelperState) {
-        XmlSerializerUtil.copyBean(gitCommitHelperState, this);
+    public void loadState(@NotNull GitCommitHelperState state) {
+        XmlSerializerUtil.copyBean(state, this);
     }
 
     /**
      * 加载默认配置
      */
     private void loadDefaultSettings() {
-        dataSettings = new DataSettings();
-        try {
-            dataSettings.setTemplate(GitCommitConstant.DEFAULT_TEMPLATE);
+        if (this.template == null) {
+            template = GitCommitConstant.DEFAULT_TEMPLATE;
+        }
+        if (this.typeItems == null) {
             List<TypeItem> typeItems = new LinkedList<>();
-            typeItems.add(new TypeItem("feature", "A new feature"));
-            typeItems.add(new TypeItem("fix", "A bug fix"));
-            typeItems.add(new TypeItem("docs", "Documentation only changes"));
-            typeItems.add(new TypeItem("style", "Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)"));
-            typeItems.add(new TypeItem("refactor", "A code change that neither fixes a bug nor adds a feature"));
-            typeItems.add(new TypeItem("perf", "A code change that improves performance"));
-            typeItems.add(new TypeItem("test", "Adding missing tests or correcting existing tests"));
-            typeItems.add(new TypeItem("build", "Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)"));
-            typeItems.add(new TypeItem("ci", "Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)"));
-            typeItems.add(new TypeItem("chore", "Other changes that don't modify src or test files"));
-            typeItems.add(new TypeItem("revert", "Reverts a previous commit"));
-            dataSettings.setTypeAliases(typeItems);
-        } catch (Exception e) {
-            log.error("loadDefaultSettings failed", e);
+            for (MessageType type : MessageType.values()) {
+                typeItems.add(new TypeItem(type.key(), type.intro()));
+            }
+            this.typeItems = typeItems;
         }
     }
 
-    /**
-     * Getter method for property <tt>codeTemplates</tt>.
-     *
-     * @return property value of codeTemplates
-     */
-    public DataSettings getDateSettings() {
-        if (dataSettings == null) {
-            loadDefaultSettings();
-        }
-        return dataSettings;
+    public String getTemplate() {
+        return template;
     }
 
-
-    public void setDateSettings(DataSettings dateSettings) {
-        this.dataSettings = dateSettings;
+    public void setTemplate(String template) {
+        this.template = template;
     }
 
-
-    public void updateTemplate(String template) {
-        dataSettings.setTemplate(template);
+    public List<TypeItem> getTypeItems() {
+        return typeItems;
     }
 
-    public void updateTypeMap(List<TypeItem> typeItems) {
-        dataSettings.setTypeAliases(typeItems);
+    public void setTypeItems(List<TypeItem> typeItems) {
+        this.typeItems = typeItems;
     }
-
-
-    @Override
-    public GitCommitHelperState clone() {
-        Cloner cloner = new Cloner();
-        cloner.nullInsteadOfClone();
-        return cloner.deepClone(this);
-    }
-
 }
