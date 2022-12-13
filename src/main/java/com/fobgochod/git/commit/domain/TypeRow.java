@@ -1,23 +1,22 @@
 package com.fobgochod.git.commit.domain;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import java.util.Objects;
 
 /**
- * TypeItem
+ * 类型
  *
  * @author fobgochod
  * @date 2022/12/11 23:16
  */
-public class TypeItem {
+public class TypeRow {
 
     public String title;
     public String description;
 
-    public TypeItem() {
+    public TypeRow() {
     }
 
-    public TypeItem(String title, String description) {
+    public TypeRow(String title, String description) {
         this.title = title;
         this.description = description;
     }
@@ -39,13 +38,16 @@ public class TypeItem {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj, false);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TypeRow typeRow = (TypeRow) o;
+        return Objects.equals(title, typeRow.title) && Objects.equals(description, typeRow.description);
     }
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return Objects.hash(title, description);
     }
 
     @Override

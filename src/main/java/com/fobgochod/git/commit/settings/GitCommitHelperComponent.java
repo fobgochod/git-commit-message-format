@@ -60,28 +60,28 @@ public class GitCommitHelperComponent {
         typeTable = new TypeTable();
         typePanel.add(
                 ToolbarDecorator.createDecorator(typeTable)
-                        .setAddAction(action -> typeTable.addAlias())
-                        .setRemoveAction(action -> typeTable.removeSelectedAliases())
-                        .setEditAction(action -> typeTable.editAlias())
+                        .setAddAction(action -> typeTable.addRow())
+                        .setRemoveAction(action -> typeTable.removeRow())
+                        .setEditAction(action -> typeTable.editRow())
                         .setMoveUpAction(action -> typeTable.moveUp())
                         .setMoveDownAction(action -> typeTable.moveDown())
                         .addExtraAction(
                                 new AnAction("Reset", "Reset Default Aliases", AllIcons.Actions.Rollback) {
                                     @Override
                                     public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
-                                        typeTable.resetDefaultAliases();
+                                        typeTable.resetRow();
                                     }
                                 })
                         .createPanel(), BorderLayout.CENTER);
         new DoubleClickListener() {
             @Override
             protected boolean onDoubleClick(MouseEvent event) {
-                return typeTable.editAlias();
+                return typeTable.editRow();
             }
         }.installOn(typeTable);
 
 
-        String template = Optional.of(settings.getTemplate()).orElse("");
+        String template = Optional.ofNullable(settings.getTemplate()).orElse("");
 
         GIT_COMMIT_TEMPLATE.setString(template);
         GIT_COMMIT_TEMPLATE.addVariable("type", new ConstantNode("type"), true);
@@ -89,6 +89,7 @@ public class GitCommitHelperComponent {
         GIT_COMMIT_TEMPLATE.addVariable("subject", "", "subject", true);
         GIT_COMMIT_TEMPLATE.addVariable("body", "", "body", true);
         GIT_COMMIT_TEMPLATE.addVariable("changes", "", "changes", true);
+        GIT_COMMIT_TEMPLATE.addVariable("closes", "", "closes", true);
 
         templateEditor = TemplateEditorUtil.createEditor(false, GIT_COMMIT_TEMPLATE.getString(), GIT_COMMIT_TEMPLATE.createContext());
         TemplateEditorUtil.setHighlighter(templateEditor, new HtmlContextType());
@@ -144,7 +145,7 @@ public class GitCommitHelperComponent {
 
     public void reset(GitCommitHelperState settings) {
         this.settings.setTemplate(settings.getTemplate());
-        this.settings.setTypeItems(settings.getTypeItems());
+        this.settings.setTypeRows(settings.getTypeRows());
         typeTable.reset(settings);
         ApplicationManager.getApplication().runWriteAction(() -> templateEditor.getDocument().setText(settings.getTemplate()));
     }

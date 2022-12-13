@@ -1,6 +1,6 @@
 package com.fobgochod.git.commit.settings;
 
-import com.fobgochod.git.commit.domain.TypeItem;
+import com.fobgochod.git.commit.domain.TypeRow;
 import com.intellij.openapi.options.SearchableConfigurable;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -64,8 +64,8 @@ public class GitCommitHelperConfigurable implements SearchableConfigurable {
             return false;
         }
         String template = component.getSettings().getTemplate().trim();
-        List<TypeItem> typeItems = component.getSettings().getTypeItems();
-        return !template.equals(settings.getTemplate()) || typeItems != settings.getTypeItems();
+        List<TypeRow> typeRows = component.getSettings().getTypeRows();
+        return !template.equals(settings.getTemplate()) || typeRows != settings.getTypeRows();
     }
 
 
@@ -73,7 +73,7 @@ public class GitCommitHelperConfigurable implements SearchableConfigurable {
     public void apply() {
         if (component != null) {
             settings.setTemplate(component.getSettings().getTemplate());
-            settings.setTypeItems(component.getSettings().getTypeItems());
+            settings.setTypeRows(component.getSettings().getTypeRows());
         }
     }
 }

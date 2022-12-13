@@ -1,6 +1,6 @@
 package com.fobgochod.git.commit.domain;
 
-public enum MessageType {
+public enum TypeEnum {
 
     feature("feature", "A new feature"),
     fix("fix", "A bug fix"),
@@ -14,20 +14,19 @@ public enum MessageType {
     chore("chore", "Other changes that don't modify src or test files"),
     revert("revert", "Reverts a previous commit");
 
+    private final String title;
+    private final String description;
 
-    private final String key;
-    private final String intro;
-
-    MessageType(String key, String intro) {
-        this.key = key;
-        this.intro = intro;
+    TypeEnum(String title, String description) {
+        this.title = title;
+        this.description = description;
     }
 
-    public String key() {
-        return key;
+    public String title() {
+        return title;
     }
 
-    public String intro() {
-        return intro;
+    public String description() {
+        return description;
     }
 }

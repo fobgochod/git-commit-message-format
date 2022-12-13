@@ -1,8 +1,8 @@
 package com.fobgochod.git.commit.settings;
 
 import com.fobgochod.git.commit.constant.GitCommitConstant;
-import com.fobgochod.git.commit.domain.MessageType;
-import com.fobgochod.git.commit.domain.TypeItem;
+import com.fobgochod.git.commit.domain.TypeEnum;
+import com.fobgochod.git.commit.domain.TypeRow;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -28,7 +28,7 @@ public class GitCommitHelperState implements PersistentStateComponent<GitCommitH
 
     private static final Logger logger = Logger.getInstance(GitCommitHelperState.class);
     private String template;
-    private List<TypeItem> typeItems;
+    private List<TypeRow> typeRows;
 
     public static GitCommitHelperState getInstance() {
         return ApplicationManager.getApplication().getService(GitCommitHelperState.class);
@@ -54,16 +54,17 @@ public class GitCommitHelperState implements PersistentStateComponent<GitCommitH
         if (this.template == null) {
             template = GitCommitConstant.DEFAULT_TEMPLATE;
         }
-        if (this.typeItems == null) {
-            List<TypeItem> typeItems = new LinkedList<>();
-            for (MessageType type : MessageType.values()) {
-                typeItems.add(new TypeItem(type.key(), type.intro()));
+        if (this.typeRows == null) {
+            List<TypeRow> typeRows = new LinkedList<>();
+            for (TypeEnum type : TypeEnum.values()) {
+                typeRows.add(new TypeRow(type.title(), type.description()));
             }
-            this.typeItems = typeItems;
+            this.typeRows = typeRows;
         }
     }
 
     public String getTemplate() {
+        loadDefaultSettings();
         return template;
     }
 
@@ -71,11 +72,12 @@ public class GitCommitHelperState implements PersistentStateComponent<GitCommitH
         this.template = template;
     }
 
-    public List<TypeItem> getTypeItems() {
-        return typeItems;
+    public List<TypeRow> getTypeRows() {
+        loadDefaultSettings();
+        return typeRows;
     }
 
-    public void setTypeItems(List<TypeItem> typeItems) {
-        this.typeItems = typeItems;
+    public void setTypeRows(List<TypeRow> typeRows) {
+        this.typeRows = typeRows;
     }
 }

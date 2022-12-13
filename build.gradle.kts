@@ -21,9 +21,6 @@ plugins {
 group = properties("pluginGroup")
 version = properties("pluginVersion")
 
-dependencies {
-}
-
 
 // Configure project's dependencies
 repositories {

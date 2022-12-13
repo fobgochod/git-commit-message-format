@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *  TypeTable.java
+ * TypeTable.java
  *
  * @author fobgochod
  * @date 2022/12/13 2:13
@@ -26,33 +26,29 @@ import java.util.List;
 public class TypeTable extends JBTable {
 
     private static final Logger log = Logger.getInstance(TypeTable.class);
-    private static final int NAME_COLUMN = 0;
-    private static final int VALUE_COLUMN = 1;
+    private static final int TITLE_COLUMN = 0;
+    private static final int DESCRIPTION_COLUMN = 1;
     private final MyTableModel myTableModel = new MyTableModel();
-
-
-    private List<TypeItem> typeItems = new LinkedList<>();
+    private final List<TypeRow> typeRows = new LinkedList<>();
 
     /**
      * instantiation AliasTable
      */
     public TypeTable() {
         setModel(myTableModel);
-        TableColumn column = getColumnModel().getColumn(NAME_COLUMN);
-        TableColumn valueColumn = getColumnModel().getColumn(VALUE_COLUMN);
-        column.setCellRenderer(new DefaultTableCellRenderer() {
+        TableColumn titleColumn = getColumnModel().getColumn(TITLE_COLUMN);
+        TableColumn descriptionColumn = getColumnModel().getColumn(DESCRIPTION_COLUMN);
+        descriptionColumn.setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 final Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                final String macroValue = getAliasValueAt(row);
-                component.setForeground(macroValue.length() == 0
-                        ? JBColor.RED
-                        : isSelected ? table.getSelectionForeground() : table.getForeground());
+                final String titleValue = getTitleValueAt(row);
+                component.setForeground(titleValue.length() == 0 ? JBColor.RED : isSelected ? table.getSelectionForeground() : table.getForeground());
                 return component;
             }
         });
-        setColumnSize(column, 150, 250, 150);
-        setColumnSize(valueColumn, 550, 750, 550);
+        setColumnSize(titleColumn, 150, 250, 150);
+        setColumnSize(descriptionColumn, 550, 750, 550);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
 
@@ -60,55 +56,30 @@ public class TypeTable extends JBTable {
     /**
      * Set  Something  ColumnSize
      */
-    public static void setColumnSize(TableColumn column, int preferedWidth, int maxWidth, int minWidth) {
-        column.setPreferredWidth(preferedWidth);
+    public static void setColumnSize(TableColumn column, int preferredWidth, int maxWidth, int minWidth) {
+        column.setPreferredWidth(preferredWidth);
         column.setMaxWidth(maxWidth);
         column.setMinWidth(minWidth);
     }
 
 
-    public String getAliasValueAt(int row) {
-        return (String) getValueAt(row, VALUE_COLUMN);
+    public String getTitleValueAt(int row) {
+        return (String) getValueAt(row, TITLE_COLUMN);
     }
 
-
-    public void addAlias() {
-        final TypeEditor macroEditor = new TypeEditor("Add Type", "", "");
-        if (macroEditor.showAndGet()) {
-            final String name = macroEditor.getTitle();
-            typeItems.add(new TypeItem(macroEditor.getTitle(), macroEditor.getDescription()));
-            final int index = indexOfAliasWithName(name);
+    public void addRow() {
+        final TypeEditor rowEditor = new TypeEditor("Add Type", "", "");
+        if (rowEditor.showAndGet()) {
+            final String name = rowEditor.getTitle();
+            typeRows.add(new TypeRow(rowEditor.getTitle(), rowEditor.getDescription()));
+            final int index = indexOfRowWithName(name);
             log.assertTrue(index >= 0);
             myTableModel.fireTableDataChanged();
             setRowSelectionInterval(index, index);
         }
     }
 
-    private boolean isValidRow(int selectedRow) {
-        return selectedRow >= 0 && selectedRow < typeItems.size();
-    }
-
-    public void moveUp() {
-        int selectedRow = getSelectedRow();
-        int index1 = selectedRow - 1;
-        if (selectedRow != -1) {
-            Collections.swap(typeItems, selectedRow, index1);
-        }
-        setRowSelectionInterval(index1, index1);
-    }
-
-
-    public void moveDown() {
-        int selectedRow = getSelectedRow();
-        int index1 = selectedRow + 1;
-        if (selectedRow != -1) {
-            Collections.swap(typeItems, selectedRow, index1);
-        }
-        setRowSelectionInterval(index1, index1);
-    }
-
-
-    public void removeSelectedAliases() {
+    public void removeRow() {
         final int[] selectedRows = getSelectedRows();
         if (selectedRows.length == 0) return;
         Arrays.sort(selectedRows);
@@ -116,7 +87,7 @@ public class TypeTable extends JBTable {
         for (int i = selectedRows.length - 1; i >= 0; i--) {
             final int selectedRow = selectedRows[i];
             if (isValidRow(selectedRow)) {
-                typeItems.remove(selectedRow);
+                typeRows.remove(selectedRow);
             }
         }
         myTableModel.fireTableDataChanged();
@@ -128,55 +99,71 @@ public class TypeTable extends JBTable {
         }
     }
 
-
-    public void commit(GitCommitHelperState settings) {
-        settings.setTypeItems(new LinkedList<>(typeItems));
+    public boolean editRow() {
+        if (getSelectedRowCount() != 1) {
+            return false;
+        }
+        final int selectedRow = getSelectedRow();
+        final TypeRow typeRow = typeRows.get(selectedRow);
+        final TypeEditor editor = new TypeEditor("Edit Type", typeRow.getTitle(), typeRow.getDescription());
+        if (editor.showAndGet()) {
+            typeRow.setTitle(editor.getTitle());
+            typeRow.setDescription(editor.getDescription());
+            myTableModel.fireTableDataChanged();
+        }
+        return true;
     }
 
-    public void resetDefaultAliases() {
+    public void moveUp() {
+        int selectedRow = getSelectedRow();
+        int index = selectedRow - 1;
+        if (selectedRow != -1) {
+            Collections.swap(typeRows, selectedRow, index);
+        }
+        setRowSelectionInterval(index, index);
+    }
+
+
+    public void moveDown() {
+        int selectedRow = getSelectedRow();
+        int index = selectedRow + 1;
+        if (selectedRow != -1) {
+            Collections.swap(typeRows, selectedRow, index);
+        }
+        setRowSelectionInterval(index, index);
+    }
+
+    public void resetRow() {
         myTableModel.fireTableDataChanged();
     }
 
-    public void reset(GitCommitHelperState settings) {
-        obtainAliases(typeItems, settings);
+    private boolean isValidRow(int selectedRow) {
+        return selectedRow >= 0 && selectedRow < typeRows.size();
+    }
+
+    public void commit(GitCommitHelperState state) {
+        state.setTypeRows(typeRows);
+    }
+
+    public void reset(GitCommitHelperState state) {
+        obtainRows(typeRows, state);
         myTableModel.fireTableDataChanged();
     }
 
 
-    private int indexOfAliasWithName(String name) {
-        for (int i = 0; i < typeItems.size(); i++) {
-            final TypeItem typeItem = typeItems.get(i);
-            if (name.equals(typeItem.getTitle())) {
+    private int indexOfRowWithName(String name) {
+        for (int i = 0; i < typeRows.size(); i++) {
+            final TypeRow typeRow = typeRows.get(i);
+            if (name.equals(typeRow.getTitle())) {
                 return i;
             }
         }
         return -1;
     }
 
-    private void obtainAliases(@NotNull List<TypeItem> aliases, GitCommitHelperState settings) {
-        aliases.clear();
-        aliases.addAll(settings.getTypeItems());
-    }
-
-    public boolean editAlias() {
-        if (getSelectedRowCount() != 1) {
-            return false;
-        }
-        final int selectedRow = getSelectedRow();
-        final TypeItem typeItem = typeItems.get(selectedRow);
-        final TypeEditor editor = new TypeEditor("Edit Type", typeItem.getTitle(), typeItem.getDescription());
-        if (editor.showAndGet()) {
-            typeItem.setTitle(editor.getTitle());
-            typeItem.setDescription(editor.getDescription());
-            myTableModel.fireTableDataChanged();
-        }
-        return true;
-    }
-
-    public boolean isModified(GitCommitHelperState settings) {
-        final List<TypeItem> aliases = new LinkedList<>();
-        obtainAliases(aliases, settings);
-        return !aliases.equals(typeItems);
+    private void obtainRows(@NotNull List<TypeRow> typeRows, GitCommitHelperState settings) {
+        typeRows.clear();
+        typeRows.addAll(settings.getTypeRows());
     }
 
     //==========================================================================//
@@ -196,52 +183,52 @@ public class TypeTable extends JBTable {
      * MyTableModel
      */
     private class MyTableModel extends AbstractTableModel {
+
+        @Override
+        public int getRowCount() {
+            return typeRows.size();
+        }
+
         @Override
         public int getColumnCount() {
             return 2;
         }
 
         @Override
-        public int getRowCount() {
-            return typeItems.size();
-        }
-
-        @Override
-        public Class getColumnClass(int columnIndex) {
-            return String.class;
-        }
-
-        @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            final TypeItem pair = typeItems.get(rowIndex);
-            switch (columnIndex) {
-                case NAME_COLUMN:
-                    return pair.getTitle();
-                case VALUE_COLUMN:
-                    return pair.getDescription();
-            }
-            log.error("Wrong indices");
-            return null;
-        }
-
-        @Override
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        }
-
-        @Override
         public String getColumnName(int columnIndex) {
             switch (columnIndex) {
-                case NAME_COLUMN:
+                case TITLE_COLUMN:
                     return "title";
-                case VALUE_COLUMN:
+                case DESCRIPTION_COLUMN:
                     return "description";
             }
             return null;
         }
 
         @Override
+        public Class<String> getColumnClass(int columnIndex) {
+            return String.class;
+        }
+
+        @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
             return false;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            final TypeRow row = typeRows.get(rowIndex);
+            switch (columnIndex) {
+                case TITLE_COLUMN:
+                    return row.getTitle();
+                case DESCRIPTION_COLUMN:
+                    return row.getDescription();
+            }
+            return null;
+        }
+
+        @Override
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         }
     }
 }
