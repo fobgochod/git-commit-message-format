@@ -1,5 +1,6 @@
 package com.fobgochod.git.commit
 
+import com.fobgochod.git.commit.domain.ChangeType
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.WordUtils
 import java.util.*

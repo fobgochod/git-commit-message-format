@@ -9,17 +9,15 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationConfigurable parentId="tools"
-                                 instance="com.fobgochod.git.commit.settings.GitCommitHelperConfigurable"
                                  id="com.fobgochod.git.commit.settings.GitCommitHelperConfigurable"
-                                 displayName="Git Commit Helper"/>
+                                 instance="com.fobgochod.git.commit.settings.GitCommitHelperConfigurable"
+                                 bundle="messages.GitBundle"
+                                 key="plugin.name"/>
         <applicationService serviceImplementation="com.fobgochod.git.commit.settings.GitCommitHelperState"/>
     </extensions>
 
     <actions>
-        <action id="Commit.Button" class="com.fobgochod.git.commit.CreateCommitAction"
-                text="Create Commit Message"
-                description="Create commit message"
-                icon="/icons/load.png">
+        <action id="Commit.Button" class="com.fobgochod.git.commit.action.CreateCommitAction" icon="/icons/load.png">
             <add-to-group group-id="Vcs.MessageActionGroup" anchor="first"/>
         </action>
     </actions>

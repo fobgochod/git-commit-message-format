@@ -1,7 +1,7 @@
-package com.fobgochod.git.commit
+package com.fobgochod.git.commit.view
 
 import com.fobgochod.git.GitBundle
-import com.fobgochod.git.commit.view.settings.CommitWindow
+import com.fobgochod.git.commit.CommitMessage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import javax.swing.JComponent
@@ -10,7 +10,7 @@ class CommitDialog(project: Project?, commitMessage: CommitMessage?) : DialogWra
 
     private var panel: CommitWindow
 
-    override fun createCenterPanel(): JComponent? {
+    override fun createCenterPanel(): JComponent {
         return panel.mainPanel;
     }
 
