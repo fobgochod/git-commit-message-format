@@ -1,7 +1,7 @@
 package com.fobgochod.git.commit.settings
 
 import com.fobgochod.git.GitBundle
-import com.fobgochod.git.commit.domain.TypeTable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.options.SearchableConfigurable
 import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
@@ -28,17 +28,20 @@ class GitCommitHelperConfigurable : SearchableConfigurable {
     }
 
     override fun reset() {
-        component.reset()
+        component.typeTable.reset(state)
+        ApplicationManager.getApplication().runWriteAction {
+            component.templateEditor.document.setText(state.template)
+        }
     }
 
     override fun isModified(): Boolean {
         val template = component.templateEditor.document.text.trim { it <= ' ' }
-        val typeRows: TypeTable = component.typeTable
-        return template != state.template || typeRows.isModified(state)
+        val typeRows = component.typeTable.typeRows
+        return template != state.template || typeRows != state.typeRows
     }
 
     override fun apply() {
         state.template = component.templateEditor.document.text
-        state.typeRows = component.typeRows
+        state.typeRows = component.typeTable.typeRows
     }
 }

@@ -11,7 +11,7 @@ class CommitDialog(project: Project?, commitMessage: CommitMessage?) : DialogWra
     private var panel: CommitWindow
 
     override fun createCenterPanel(): JComponent {
-        return panel.mainPanel;
+        return panel.root;
     }
 
 

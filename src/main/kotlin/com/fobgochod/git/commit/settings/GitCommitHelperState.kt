@@ -51,8 +51,5 @@ class GitCommitHelperState : PersistentStateComponent<GitCommitHelperState?> {
         @JvmStatic
         fun getInstance(): GitCommitHelperState =
             ApplicationManager.getApplication().getService(GitCommitHelperState::class.java)
-
-        // val instance: GitCommitHelperState
-        // get() = ApplicationManager.getApplication().getService(GitCommitHelperState::class.java)
     }
 }

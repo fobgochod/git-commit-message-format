@@ -22,7 +22,7 @@ import javax.swing.table.TableColumn
  */
 class TypeTable : JBTable() {
     private val myTableModel: MyTableModel = MyTableModel()
-    private val typeRows: MutableList<TypeRow> = LinkedList()
+    val typeRows: MutableList<TypeRow> = LinkedList()
 
     /**
      * instantiation AliasTable
@@ -156,7 +156,9 @@ class TypeTable : JBTable() {
 
     private fun obtainRows(typeRows: MutableList<TypeRow>, state: GitCommitHelperState) {
         typeRows.clear()
-        typeRows.addAll(state.typeRows)
+        for (typeRow in state.typeRows) {
+            typeRows.add(typeRow.clone())
+        }
     }
     //==========================================================================//
     /**

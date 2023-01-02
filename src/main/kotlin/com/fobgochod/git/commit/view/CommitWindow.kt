@@ -1,56 +1,53 @@
 package com.fobgochod.git.commit.view
 
+import com.fobgochod.git.GitBundle
+import com.fobgochod.git.commit.CommitMessage
 import com.fobgochod.git.commit.GitLogQuery
 import com.fobgochod.git.commit.domain.ChangeType
-import com.fobgochod.git.commit.CommitMessage
+import com.intellij.icons.AllIcons
+import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.util.ui.FormBuilder
+import java.awt.BorderLayout
 import java.awt.Dimension
+import java.awt.GridLayout
+import java.awt.event.ItemEvent
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import java.io.File
+import java.util.*
 import java.util.function.Consumer
 import javax.swing.*
 
-class CommitWindow(project: Project?, commitMessage: CommitMessage?) {
-    val mainPanel: JPanel
-    private val changeType: JComboBox<ChangeType>
-    private val changeScope: JComboBox<String>
+class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMessage?) {
+
+    private val formBuilder = FormBuilder.createFormBuilder();
+    private val changeTypeGroup = ButtonGroup();
+    private val changeType: JComboBox<ChangeType> = ComboBox(DefaultComboBoxModel(ChangeType.values()))
+    private val changeScope: JComboBox<String> = ComboBox()
     private val shortDescription = JTextField()
     private val longDescription = JTextArea()
     private val wrapTextCheckBox = JCheckBox("Wrap text at 72 characters?", true)
     private val breakingChanges = JTextArea()
     private val closedIssues = JTextField()
     private val skipCICheckBox = JCheckBox("Skip CI?")
+    private val editSettings = JLabel(AllIcons.General.Settings)
+
+    private val changeTypePanel = JPanel(GridLayout(MAX_USE_COUNT + 1, 1))
+    private val bottomPanel: JPanel = JPanel(BorderLayout())
+
+    companion object {
+        const val MAX_USE_COUNT = 3;
+    }
 
     init {
-        changeType = ComboBox(DefaultComboBoxModel(ChangeType.values()))
-        changeScope = ComboBox()
-        val workingDirectory = File(project?.basePath)
-        val result = GitLogQuery(workingDirectory).execute()
-        if (result.isSuccess()) {
-            changeScope.addItem("") // no value by default
-            result.getScopes().forEach(Consumer { item: String ->
-                changeScope.addItem(
-                    item
-                )
-            })
-        }
-        commitMessage?.let { restoreValuesFromParsedCommitMessage(it) }
-        longDescription.preferredSize = Dimension(150, 100)
-        longDescription.lineWrap = true
-        breakingChanges.preferredSize = Dimension(150, 50)
-        breakingChanges.lineWrap = true
-        mainPanel = FormBuilder.createFormBuilder()
-            .addLabeledComponent(JLabel("Type of change"), changeType)
-            .addLabeledComponent(JLabel("Scope of this change"), changeScope)
-            .addLabeledComponent(JLabel("Short description"), shortDescription)
-            .addLabeledComponent(JLabel("Long description"), longDescription)
-            .addComponentToRightColumn(wrapTextCheckBox)
-            .addLabeledComponent(JLabel("Breaking changes"), breakingChanges)
-            .addLabeledComponent(JLabel("Closed issues"), closedIssues)
-            .addComponentToRightColumn(skipCICheckBox)
-            .panel
+        initView()
+        initEvent()
+        initData()
     }
+
+    val root: JPanel get() = formBuilder.panel
 
     val commitMessage: CommitMessage
         get() = CommitMessage(
@@ -63,6 +60,80 @@ class CommitWindow(project: Project?, commitMessage: CommitMessage?) {
             wrapTextCheckBox.isSelected,
             skipCICheckBox.isSelected
         )
+
+    private fun initView() {
+        for ((index, type) in ChangeType.values().withIndex()) {
+            if (index < MAX_USE_COUNT) {
+                val jRadioButton = JRadioButton(type.toString())
+                changeTypeGroup.add(jRadioButton)
+                changeTypePanel.add(jRadioButton)
+            }
+        }
+        changeTypePanel.add(changeType);
+
+        longDescription.preferredSize = Dimension(150, 100)
+        longDescription.lineWrap = true
+        breakingChanges.preferredSize = Dimension(150, 50)
+        breakingChanges.lineWrap = true
+
+
+        bottomPanel.add(skipCICheckBox, BorderLayout.CENTER)
+        bottomPanel.add(editSettings, BorderLayout.EAST)
+
+        formBuilder.addLabeledComponent(JLabel("Type of change"), changeTypePanel)
+            .addLabeledComponent(JLabel("Scope of change"), changeScope)
+            .addLabeledComponent(JLabel("Short description"), shortDescription)
+            .addLabeledComponent(JLabel("Long description"), longDescription)
+            .addComponentToRightColumn(wrapTextCheckBox)
+            .addLabeledComponent(JLabel("Breaking changes"), breakingChanges)
+            .addLabeledComponent(JLabel("Closed issues"), closedIssues).addComponentToRightColumn(bottomPanel)
+    }
+
+    private fun initEvent() {
+        for (element in changeTypeGroup.elements) {
+            element.addChangeListener {
+                if (element.isSelected) {
+                    changeType.selectedItem = getTypeFromJRadioButton(element)
+                }
+            }
+        }
+
+        changeType.addItemListener { e: ItemEvent ->
+            val item: ChangeType = e.item as ChangeType
+            if (item.ordinal > MAX_USE_COUNT) {
+                changeTypeGroup.clearSelection()
+            } else {
+                for (element in changeTypeGroup.elements) {
+                    if (item == getTypeFromJRadioButton(element)) {
+                        element.isSelected = true;
+                    }
+                }
+            }
+        }
+
+        editSettings.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                ShowSettingsUtil.getInstance().showSettingsDialog(project, GitBundle.message("plugin.name"))
+            }
+        })
+    }
+
+    private fun initData() {
+        // 恢复数据
+        val workingDirectory = File(project?.basePath)
+        val result = GitLogQuery(workingDirectory).execute()
+        if (result.isSuccess()) {
+            changeScope.addItem("") // no value by default
+            result.getScopes().forEach(Consumer { item: String ->
+                changeScope.addItem(
+                    item
+                )
+            })
+        }
+        oldCommitMessage?.let { restoreValuesFromParsedCommitMessage(it) }
+    }
+
+
     private val selectedChangeType: ChangeType
         get() {
             val selectedItem = changeType.selectedItem
@@ -82,5 +153,10 @@ class CommitWindow(project: Project?, commitMessage: CommitMessage?) {
         breakingChanges.text = commitMessage.breakingChanges
         closedIssues.text = commitMessage.closedIssues
         skipCICheckBox.isSelected = commitMessage.isSkipCI()
+    }
+
+    private fun getTypeFromJRadioButton(button: AbstractButton): ChangeType {
+        val text: String = button.text.split("-".toRegex())[0].trim { it <= ' ' }
+        return ChangeType.valueOf(text.uppercase(Locale.getDefault()))
     }
 }

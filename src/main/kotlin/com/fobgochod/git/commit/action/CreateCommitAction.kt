@@ -2,6 +2,7 @@ package com.fobgochod.git.commit.action
 
 import com.fobgochod.git.GitBundle
 import com.fobgochod.git.commit.CommitMessage
+import com.fobgochod.git.commit.GitCommitMessage
 import com.fobgochod.git.commit.view.CommitDialog
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -25,7 +26,7 @@ class CreateCommitAction() : AnAction(), DumbAware {
         dialog.show();
 
         if (dialog.exitCode == DialogWrapper.OK_EXIT_CODE) {
-            commitPanel.setCommitMessage(dialog.getCommitMessage().toString());
+            commitPanel.setCommitMessage(GitCommitMessage.format());
         }
     }
 

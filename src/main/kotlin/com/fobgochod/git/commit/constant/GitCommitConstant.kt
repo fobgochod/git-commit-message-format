@@ -4,9 +4,9 @@ object GitCommitConstant {
 
     val DEFAULT_TEMPLATE = """
             ${'$'}type${'$'}(${'$'}scope${'$'}): ${'$'}subject${'$'}
-                        
+
             ${'$'}body${'$'}
-                        
+
             ${'$'}changes${'$'}
             """.trimIndent()
 }
