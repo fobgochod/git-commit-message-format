@@ -1,6 +1,7 @@
 package com.fobgochod.git.commit
 
 import com.fobgochod.git.commit.domain.ChangeType
+import com.intellij.openapi.diagnostic.logger
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.WordUtils
 import java.util.*
@@ -11,76 +12,77 @@ class CommitMessage {
     companion object {
         private const val MAX_LINE_LENGTH = 72 // https://stackoverflow.com/a/2120040/5138796
         private val COMMIT_FIRST_LINE_FORMAT: Pattern = Pattern.compile("^([a-z]+)(\\((.+)\\))?: (.+)")
-        private val COMMIT_CLOSES_FORMAT: Pattern = Pattern.compile("Closes (.+)")
+        private val COMMIT_CLOSED_ISSUE_FORMAT: Pattern = Pattern.compile("Closes (.+)")
 
         fun parse(message: String): CommitMessage {
             val commitMessage = CommitMessage()
             try {
                 var matcher = COMMIT_FIRST_LINE_FORMAT.matcher(message)
                 if (!matcher.find()) return commitMessage
-                commitMessage.changeType = ChangeType.valueOf(matcher.group(1).uppercase(Locale.getDefault()))
-                commitMessage.changeScope = matcher.group(3)
-                commitMessage.shortDescription = matcher.group(4)
-                val strings = message.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                if (strings.size < 2) return commitMessage
+                commitMessage.changeType = ChangeType.valueOf(matcher.group(1).uppercase(Locale.getDefault())).title
+                commitMessage.changeScope = if (matcher.group(3) != null) matcher.group(3) else ""
+                commitMessage.changeSubject = matcher.group(4)
+
+                val messages = message.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                if (messages.size < 2) {
+                    return commitMessage
+                }
+
                 var pos = 1
-                var stringBuilder: StringBuilder = StringBuilder()
-                while (pos < strings.size) {
-                    val lineString = strings[pos]
-                    if (lineString.startsWith("BREAKING") || lineString.startsWith("Closes") || lineString.equals(
-                            "[skip ci]", ignoreCase = true
+                var builder: StringBuilder = StringBuilder()
+                while (pos < messages.size) {
+                    val lineString = messages[pos]
+                    if (lineString.startsWith("Breaking") || lineString.startsWith("Closes") || lineString.equals(
+                            "[skip ci]",
+                            ignoreCase = true
                         )
                     ) break
-                    stringBuilder.append(lineString).append('\n')
+                    builder.append(lineString).append('\n')
                     pos++
                 }
-                commitMessage.longDescription = stringBuilder.toString().trim { it <= ' ' }
+                commitMessage.changeBody = builder.toString().trim { it <= ' ' }
 
-                stringBuilder = StringBuilder()
-                while (pos < strings.size) {
-                    val lineString = strings[pos]
+                builder = StringBuilder()
+                while (pos < messages.size) {
+                    val lineString = messages[pos]
                     if (lineString.startsWith("Closes") || lineString.equals("[skip ci]", ignoreCase = true)) break
-                    stringBuilder.append(lineString).append('\n')
+                    builder.append(lineString).append('\n')
                     pos++
                 }
-                commitMessage.breakingChanges =
-                    stringBuilder.toString().trim { it <= ' ' }.replace("BREAKING CHANGE: ", "")
-                matcher = COMMIT_CLOSES_FORMAT.matcher(message)
+                commitMessage.breakingChanges = builder.toString().trim { it <= ' ' }.replace("Breaking Changes: ", "")
 
-                stringBuilder = StringBuilder()
+                matcher = COMMIT_CLOSED_ISSUE_FORMAT.matcher(message)
+                builder = StringBuilder()
                 while (matcher.find()) {
-                    stringBuilder.append(matcher.group(1)).append(',')
+                    builder.append(matcher.group(1)).append(',')
                 }
-                if (stringBuilder.isNotEmpty()) stringBuilder.delete(stringBuilder.length - 1, stringBuilder.length)
-                commitMessage.closedIssues = stringBuilder.toString()
+                if (builder.isNotEmpty()) builder.delete(builder.length - 1, builder.length)
+                commitMessage.closedIssues = builder.toString()
                 commitMessage.skipCI = message.contains("[skip ci]")
-            } catch (_: RuntimeException) {
+            } catch (e: RuntimeException) {
+                logger<String>().error(e.message)
             }
             return commitMessage
         }
     }
 
 
-    var changeType: ChangeType = ChangeType.FEAT;
+    var changeType: String = ""
     var changeScope: String = "";
-    var shortDescription: String = "";
-    var longDescription: String;
-    var breakingChanges: String;
-    var closedIssues: String;
+    var changeSubject: String = "";
+    var changeBody: String = "";
+    var breakingChanges: String = "";
+    var closedIssues: String = "";
     private var wrapText: Boolean = true;
     var skipCI: Boolean = false;
 
-    constructor() {
-        this.longDescription = "";
-        this.breakingChanges = "";
-        this.closedIssues = "";
-    }
+    constructor()
 
     constructor(
-        changeType: ChangeType,
+        changeType: String,
         changeScope: String,
-        shortDescription: String,
-        longDescription: String,
+        changeSubject: String,
+        changeBody: String,
         breakingChanges: String,
         closedIssues: String,
         wrapText: Boolean,
@@ -88,8 +90,8 @@ class CommitMessage {
     ) {
         this.changeType = changeType;
         this.changeScope = changeScope;
-        this.shortDescription = shortDescription;
-        this.longDescription = longDescription;
+        this.changeSubject = changeSubject;
+        this.changeBody = changeBody;
         this.breakingChanges = breakingChanges;
         this.closedIssues = closedIssues;
         this.wrapText = wrapText;
@@ -98,21 +100,29 @@ class CommitMessage {
 
     override fun toString(): String {
         val builder: StringBuilder = StringBuilder();
-        builder.append(changeType.label());
+        builder.append(changeType);
         if (StringUtils.isNotBlank(changeScope)) {
             builder.append('(').append(changeScope).append(')');
         }
-        builder.append(": ").append(shortDescription);
+        builder.append(": ").append(changeSubject);
 
-        if (StringUtils.isNotBlank(longDescription)) {
+        if (StringUtils.isNotBlank(changeBody)) {
             builder.append(System.lineSeparator()).append(System.lineSeparator())
-                .append(if (wrapText) WordUtils.wrap(longDescription, MAX_LINE_LENGTH) else longDescription);
+            if (wrapText) {
+                builder.append(WordUtils.wrap(changeBody, MAX_LINE_LENGTH))
+            } else {
+                builder.append(changeBody)
+            }
         }
 
         if (StringUtils.isNotBlank(breakingChanges)) {
-            val content = "BREAKING CHANGE: $breakingChanges";
+            val breakingContent = "Breaking Changes: $breakingChanges";
             builder.append(System.lineSeparator()).append(System.lineSeparator())
-                .append(if (wrapText) WordUtils.wrap(content, MAX_LINE_LENGTH) else content);
+            if (wrapText) {
+                builder.append(WordUtils.wrap(breakingContent, MAX_LINE_LENGTH))
+            } else {
+                builder.append(breakingContent)
+            }
         }
 
         if (StringUtils.isNotBlank(closedIssues)) {
@@ -131,12 +141,10 @@ class CommitMessage {
 
 
     private fun formatClosedIssue(closedIssue: String): String {
-        val trimmed = closedIssue.trim { it <= ' ' }
-        return (if (StringUtils.isNumeric(trimmed)) "#" else "") + trimmed
-    }
-
-
-    fun isSkipCI(): Boolean {
-        return skipCI
+        val issue = closedIssue.trim { it <= ' ' }
+        if (StringUtils.isNumeric(issue)) {
+            return "#$issue"
+        }
+        return issue
     }
 }

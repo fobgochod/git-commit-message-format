@@ -18,6 +18,20 @@ This plugin allows to create a commit message with the following template:
 
 <!-- Plugin description end -->
 
+## Field description
+
+- **Breaking Changes** are any changes that might require action from our integrators. We divide these changes into two
+  categories:
+    - **Breaking**: Changes that will break existing queries to the GraphQL API. For example, removing a field would be
+      a
+      breaking change.
+    - **Dangerous**: Changes that won't break existing queries but could affect the runtime behavior of clients. Adding
+      an
+      enum value is an example of a dangerous change.
+
+- **Closed Issues**: You can close an issue when bugs are fixed, feedback is acted on, or to show that work is not
+  planned.
+
 ## Installation
 
 - Using IDE built-in plugin system:

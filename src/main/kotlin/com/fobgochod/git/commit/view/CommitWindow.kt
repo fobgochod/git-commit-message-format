@@ -22,18 +22,19 @@ import javax.swing.*
 
 class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMessage?) {
 
-    private val formBuilder = FormBuilder.createFormBuilder();
     private val changeTypeGroup = ButtonGroup();
     private val changeType: JComboBox<ChangeType> = ComboBox(DefaultComboBoxModel(ChangeType.values()))
     private val changeScope: JComboBox<String> = ComboBox()
-    private val shortDescription = JTextField()
-    private val longDescription = JTextArea()
-    private val wrapTextCheckBox = JCheckBox("Wrap text at 72 characters?", true)
+    private val changeSubject = JTextField()
+    private val changeBody = JTextArea()
+    private val wrapText = JCheckBox("Wrap text at 72 characters?", true)
     private val breakingChanges = JTextArea()
     private val closedIssues = JTextField()
-    private val skipCICheckBox = JCheckBox("Skip CI?")
+    private val skipCI = JCheckBox("Skip CI?")
+
     private val editSettings = JLabel(AllIcons.General.Settings)
 
+    private val formBuilder = FormBuilder.createFormBuilder();
     private val changeTypePanel = JPanel(GridLayout(MAX_USE_COUNT + 1, 1))
     private val bottomPanel: JPanel = JPanel(BorderLayout())
 
@@ -51,14 +52,14 @@ class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMe
 
     val commitMessage: CommitMessage
         get() = CommitMessage(
-            selectedChangeType,
+            selectedChangeType.title,
             selectedChangeScope,
-            shortDescription.text.trim { it <= ' ' },
-            longDescription.text.trim { it <= ' ' },
+            changeSubject.text.trim { it <= ' ' },
+            changeBody.text.trim { it <= ' ' },
             breakingChanges.text.trim { it <= ' ' },
             closedIssues.text.trim { it <= ' ' },
-            wrapTextCheckBox.isSelected,
-            skipCICheckBox.isSelected
+            wrapText.isSelected,
+            skipCI.isSelected
         )
 
     private fun initView() {
@@ -71,22 +72,21 @@ class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMe
         }
         changeTypePanel.add(changeType);
 
-        longDescription.preferredSize = Dimension(150, 100)
-        longDescription.lineWrap = true
+        changeBody.preferredSize = Dimension(150, 100)
+        changeBody.lineWrap = true
         breakingChanges.preferredSize = Dimension(150, 50)
         breakingChanges.lineWrap = true
 
-
-        bottomPanel.add(skipCICheckBox, BorderLayout.CENTER)
+        bottomPanel.add(skipCI, BorderLayout.CENTER)
         bottomPanel.add(editSettings, BorderLayout.EAST)
 
         formBuilder.addLabeledComponent(JLabel("Type of change"), changeTypePanel)
             .addLabeledComponent(JLabel("Scope of change"), changeScope)
-            .addLabeledComponent(JLabel("Short description"), shortDescription)
-            .addLabeledComponent(JLabel("Long description"), longDescription)
-            .addComponentToRightColumn(wrapTextCheckBox)
-            .addLabeledComponent(JLabel("Breaking changes"), breakingChanges)
-            .addLabeledComponent(JLabel("Closed issues"), closedIssues).addComponentToRightColumn(bottomPanel)
+            .addLabeledComponent(JLabel("Subject of change"), changeSubject)
+            .addLabeledComponent(JLabel("Body of change"), changeBody)
+            .addComponentToRightColumn(wrapText)
+            .addLabeledComponent(JLabel("Breaking Changes"), breakingChanges)
+            .addLabeledComponent(JLabel("Closed Issues"), closedIssues).addComponentToRightColumn(bottomPanel)
     }
 
     private fun initEvent() {
@@ -148,11 +148,11 @@ class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMe
     private fun restoreValuesFromParsedCommitMessage(commitMessage: CommitMessage) {
         changeType.selectedItem = commitMessage.changeType
         changeScope.selectedItem = commitMessage.changeScope
-        shortDescription.text = commitMessage.shortDescription
-        longDescription.text = commitMessage.longDescription
+        changeSubject.text = commitMessage.changeSubject
+        changeBody.text = commitMessage.changeBody
         breakingChanges.text = commitMessage.breakingChanges
         closedIssues.text = commitMessage.closedIssues
-        skipCICheckBox.isSelected = commitMessage.isSkipCI()
+        skipCI.isSelected = commitMessage.skipCI
     }
 
     private fun getTypeFromJRadioButton(button: AbstractButton): ChangeType {

@@ -3,7 +3,7 @@ package com.fobgochod.git.commit.domain
 import java.util.*
 
 enum class ChangeType(val title: String, val description: String) {
-    FEAT("feature", "A new feature"),
+    FEAT("feat", "A new feature"),
     FIX("fix", "A bug fix"),
     DOCS(
         "docs", "Documentation only changes"

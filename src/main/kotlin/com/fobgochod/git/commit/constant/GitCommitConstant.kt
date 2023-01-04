@@ -9,4 +9,16 @@ object GitCommitConstant {
 
             ${'$'}changes${'$'}
             """.trimIndent()
+
+
+    val DEFAULT_TEMPLATE_ = """
+                <type>(<scope>): <subject>
+                <blank line>
+                <body>
+                <blank line>
+                Breaking changes: <breaking>
+                <blank line>
+                Closes #<closed>
+                <blank line>
+            """.trimIndent()
 }
