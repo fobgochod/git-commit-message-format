@@ -1,6 +1,6 @@
 package com.fobgochod.git.commit.domain
 
-enum class TemplateVarType(val title: String, val description: String) {
+enum class TemplateVariable(val title: String, val description: String) {
 
     TYPE("type", "\${type} corresponds to the submission menu 'Type of chang'"),
     SCOPE("scope", "\${scope} corresponds to the submission menu 'Scope of this change'"),

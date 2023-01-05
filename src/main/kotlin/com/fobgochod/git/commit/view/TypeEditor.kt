@@ -9,8 +9,7 @@ import javax.swing.JPanel
 import javax.swing.JTextField
 
 
-class TypeEditor(dialogTitle: String?, title: String?, description: String?) :
-    DialogWrapper(true) {
+class TypeEditor(dialogTitle: String?, title: String?, description: String?) : DialogWrapper(true) {
     private val root: JPanel
     private val titleField: JTextField
     private val descriptionField: JTextField

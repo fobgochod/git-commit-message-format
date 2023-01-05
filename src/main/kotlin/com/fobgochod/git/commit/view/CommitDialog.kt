@@ -6,14 +6,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import javax.swing.JComponent
 
-class CommitDialog(project: Project?, commitMessage: CommitMessage?) : DialogWrapper(project) {
+class CommitDialog(project: Project?, commitMessage: CommitMessage) : DialogWrapper(project) {
 
     private var panel: CommitWindow
 
     override fun createCenterPanel(): JComponent {
         return panel.root;
     }
-
 
     fun getCommitMessage(): CommitMessage {
         return panel.commitMessage;

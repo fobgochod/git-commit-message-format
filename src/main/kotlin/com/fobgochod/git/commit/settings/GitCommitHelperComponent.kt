@@ -1,6 +1,6 @@
 package com.fobgochod.git.commit.settings
 
-import com.fobgochod.git.commit.domain.TemplateVarType
+import com.fobgochod.git.commit.domain.TemplateVariable
 import com.fobgochod.git.commit.domain.TypeTable
 import com.intellij.codeInsight.template.HtmlContextType
 import com.intellij.codeInsight.template.impl.TemplateEditorUtil
@@ -16,6 +16,7 @@ import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.tabs.JBTabs
 import com.intellij.ui.tabs.TabInfo
 import com.intellij.ui.tabs.impl.JBTabsImpl
+import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
 import java.awt.GridBagConstraints
@@ -24,6 +25,7 @@ import java.awt.event.MouseEvent
 import java.util.stream.IntStream
 import javax.swing.JLabel
 import javax.swing.JPanel
+import javax.swing.JTextField
 
 
 class GitCommitHelperComponent : Disposable {
@@ -43,7 +45,7 @@ class GitCommitHelperComponent : Disposable {
     val typeTable: TypeTable = TypeTable()
 
     /**
-     * template标签
+     * template标签+
      */
     @Transient
     private val templateTab: TabInfo
@@ -52,6 +54,7 @@ class GitCommitHelperComponent : Disposable {
     private val variableDescPanel: JPanel = JPanel(GridBagLayout())
     private val templateTextPanel: JPanel = JPanel(BorderLayout())
     var templateEditor: Editor
+    val countTextField: JTextField = JTextField()
 
     init {
         // 1.type标签
@@ -83,7 +86,7 @@ class GitCommitHelperComponent : Disposable {
 
         // 2.1. Template variables description
         val labels: MutableList<JLabel> = ArrayList()
-        for (value in TemplateVarType.values()) {
+        for (value in TemplateVariable.values()) {
             labels.add(JLabel(value.description))
         }
         val constraints = GridBagConstraints()
@@ -99,13 +102,18 @@ class GitCommitHelperComponent : Disposable {
         templateDescPanel.add(variableDescPanel, BorderLayout.CENTER)
 
         // 2.2Template text
-        for (value in TemplateVarType.values()) {
+        for (value in TemplateVariable.values()) {
             TEMPLATE.addVariable(value.title, "", "", true)
         }
         templateEditor = TemplateEditorUtil.createEditor(false, "", TEMPLATE.createContext())
         TemplateEditorUtil.setHighlighter(templateEditor, HtmlContextType())
+
+        val builder = FormBuilder.createFormBuilder()
+            .addLabeledComponent(JLabel("common type count: "), countTextField)
+
         templateTextPanel.add(JLabel("Template text:"), BorderLayout.NORTH)
         templateTextPanel.add(templateEditor.component, BorderLayout.CENTER)
+        templateTextPanel.add(builder.panel, BorderLayout.SOUTH)
 
         // tabs
         tabbedPane = JBTabsImpl(null, null, this)

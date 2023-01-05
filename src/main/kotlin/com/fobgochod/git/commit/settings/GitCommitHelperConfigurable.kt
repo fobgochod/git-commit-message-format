@@ -28,6 +28,7 @@ class GitCommitHelperConfigurable : SearchableConfigurable {
     }
 
     override fun reset() {
+        component.countTextField.text = state.count.toString()
         component.typeTable.reset(state)
         ApplicationManager.getApplication().runWriteAction {
             component.templateEditor.document.setText(state.template)
@@ -35,12 +36,14 @@ class GitCommitHelperConfigurable : SearchableConfigurable {
     }
 
     override fun isModified(): Boolean {
+        val count: Int = component.countTextField.text.toInt()
         val template = component.templateEditor.document.text.trim { it <= ' ' }
         val typeRows = component.typeTable.typeRows
-        return template != state.template || typeRows != state.typeRows
+        return count != state.count || template != state.template || typeRows != state.typeRows
     }
 
     override fun apply() {
+        state.count = component.countTextField.text.toInt()
         state.template = component.templateEditor.document.text
         state.typeRows = component.typeTable.typeRows
     }

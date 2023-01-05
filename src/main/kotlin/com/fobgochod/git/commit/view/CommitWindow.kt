@@ -3,44 +3,42 @@ package com.fobgochod.git.commit.view
 import com.fobgochod.git.GitBundle
 import com.fobgochod.git.commit.CommitMessage
 import com.fobgochod.git.commit.GitLogQuery
-import com.fobgochod.git.commit.domain.ChangeType
+import com.fobgochod.git.commit.domain.TypeRow
+import com.fobgochod.git.commit.settings.GitCommitHelperState
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.util.ui.FormBuilder
 import java.awt.BorderLayout
-import java.awt.Dimension
 import java.awt.GridLayout
 import java.awt.event.ItemEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.io.File
-import java.util.*
 import java.util.function.Consumer
 import javax.swing.*
 
-class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMessage?) {
+class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMessage) {
+
+    private var state: GitCommitHelperState = GitCommitHelperState.getInstance()
 
     private val changeTypeGroup = ButtonGroup();
-    private val changeType: JComboBox<ChangeType> = ComboBox(DefaultComboBoxModel(ChangeType.values()))
+    private val changeType: JComboBox<TypeRow> = ComboBox()
     private val changeScope: JComboBox<String> = ComboBox()
     private val changeSubject = JTextField()
-    private val changeBody = JTextArea()
+    private val changeBody = JTextArea(6, 0)
     private val wrapText = JCheckBox("Wrap text at 72 characters?", true)
-    private val breakingChanges = JTextArea()
+    private val breakingChanges = JTextArea(3, 0)
     private val closedIssues = JTextField()
     private val skipCI = JCheckBox("Skip CI?")
 
     private val editSettings = JLabel(AllIcons.General.Settings)
-
     private val formBuilder = FormBuilder.createFormBuilder();
-    private val changeTypePanel = JPanel(GridLayout(MAX_USE_COUNT + 1, 1))
-    private val bottomPanel: JPanel = JPanel(BorderLayout())
+    private val changeTypePanel = JPanel(GridLayout(state.count + 1, 1))
 
-    companion object {
-        const val MAX_USE_COUNT = 3;
-    }
+
+    private val bottomPanel: JPanel = JPanel(BorderLayout())
 
     init {
         initView()
@@ -52,19 +50,19 @@ class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMe
 
     val commitMessage: CommitMessage
         get() = CommitMessage(
-            selectedChangeType.title,
+            selectedChangeType,
             selectedChangeScope,
             changeSubject.text.trim { it <= ' ' },
             changeBody.text.trim { it <= ' ' },
+            wrapText.isSelected,
             breakingChanges.text.trim { it <= ' ' },
             closedIssues.text.trim { it <= ' ' },
-            wrapText.isSelected,
             skipCI.isSelected
         )
 
     private fun initView() {
-        for ((index, type) in ChangeType.values().withIndex()) {
-            if (index < MAX_USE_COUNT) {
+        for ((index, type) in state.typeRows.withIndex()) {
+            if (index < state.count) {
                 val jRadioButton = JRadioButton(type.toString())
                 changeTypeGroup.add(jRadioButton)
                 changeTypePanel.add(jRadioButton)
@@ -72,9 +70,9 @@ class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMe
         }
         changeTypePanel.add(changeType);
 
-        changeBody.preferredSize = Dimension(150, 100)
+        changeScope.isEditable = true
+
         changeBody.lineWrap = true
-        breakingChanges.preferredSize = Dimension(150, 50)
         breakingChanges.lineWrap = true
 
         bottomPanel.add(skipCI, BorderLayout.CENTER)
@@ -86,25 +84,26 @@ class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMe
             .addLabeledComponent(JLabel("Body of change"), changeBody)
             .addComponentToRightColumn(wrapText)
             .addLabeledComponent(JLabel("Breaking Changes"), breakingChanges)
-            .addLabeledComponent(JLabel("Closed Issues"), closedIssues).addComponentToRightColumn(bottomPanel)
+            .addLabeledComponent(JLabel("Closed Issues"), closedIssues)
+            .addComponentToRightColumn(bottomPanel)
     }
 
     private fun initEvent() {
         for (element in changeTypeGroup.elements) {
             element.addChangeListener {
                 if (element.isSelected) {
-                    changeType.selectedItem = getTypeFromJRadioButton(element)
+                    changeType.selectedItem = GitCommitHelperState.getInstance().getTypeFromName(element.text)
                 }
             }
         }
 
         changeType.addItemListener { e: ItemEvent ->
-            val item: ChangeType = e.item as ChangeType
-            if (item.ordinal > MAX_USE_COUNT) {
+            val item: TypeRow = e.item as TypeRow
+            if (state.typeRows.indexOf(item) > state.count) {
                 changeTypeGroup.clearSelection()
             } else {
                 for (element in changeTypeGroup.elements) {
-                    if (item == getTypeFromJRadioButton(element)) {
+                    if (item == GitCommitHelperState.getInstance().getTypeFromName(element.text)) {
                         element.isSelected = true;
                     }
                 }
@@ -120,6 +119,10 @@ class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMe
 
     private fun initData() {
         // 恢复数据
+        for (typeRow in GitCommitHelperState.getInstance().typeRows) {
+            changeType.addItem(typeRow)
+        }
+
         val workingDirectory = File(project?.basePath)
         val result = GitLogQuery(workingDirectory).execute()
         if (result.isSuccess()) {
@@ -130,14 +133,14 @@ class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMe
                 )
             })
         }
-        oldCommitMessage?.let { restoreValuesFromParsedCommitMessage(it) }
+        restoreValuesFromParsedCommitMessage(oldCommitMessage)
     }
 
 
-    private val selectedChangeType: ChangeType
+    private val selectedChangeType: String
         get() {
             val selectedItem = changeType.selectedItem
-            return selectedItem as ChangeType
+            return (selectedItem as TypeRow).title
         }
     private val selectedChangeScope: String
         get() {
@@ -150,13 +153,9 @@ class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMe
         changeScope.selectedItem = commitMessage.changeScope
         changeSubject.text = commitMessage.changeSubject
         changeBody.text = commitMessage.changeBody
+        wrapText.isSelected = commitMessage.wrapText
         breakingChanges.text = commitMessage.breakingChanges
         closedIssues.text = commitMessage.closedIssues
         skipCI.isSelected = commitMessage.skipCI
-    }
-
-    private fun getTypeFromJRadioButton(button: AbstractButton): ChangeType {
-        val text: String = button.text.split("-".toRegex())[0].trim { it <= ' ' }
-        return ChangeType.valueOf(text.uppercase(Locale.getDefault()))
     }
 }

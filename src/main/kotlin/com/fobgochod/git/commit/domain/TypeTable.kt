@@ -25,7 +25,7 @@ class TypeTable : JBTable() {
     val typeRows: MutableList<TypeRow> = LinkedList()
 
     /**
-     * instantiation AliasTable
+     * instantiation TypeTable
      */
     init {
         model = myTableModel
@@ -62,7 +62,7 @@ class TypeTable : JBTable() {
             val name = rowEditor.title
             typeRows.add(TypeRow(rowEditor.title, rowEditor.description))
             val index = indexOfRowWithName(name)
-            log.assertTrue(index >= 0)
+            logger.assertTrue(index >= 0)
             myTableModel.fireTableDataChanged()
             setRowSelectionInterval(index, index)
         }
@@ -70,7 +70,7 @@ class TypeTable : JBTable() {
 
     fun removeRow() {
         val selectedRows = selectedRows
-        if (selectedRows.size == 0) return
+        if (selectedRows.isEmpty()) return
         Arrays.sort(selectedRows)
         val originalRow = selectedRows[0]
         for (i in selectedRows.indices.reversed()) {
@@ -127,12 +127,6 @@ class TypeTable : JBTable() {
 
     private fun isValidRow(selectedRow: Int): Boolean {
         return selectedRow >= 0 && selectedRow < typeRows.size
-    }
-
-    fun isModified(state: GitCommitHelperState): Boolean {
-        val rows: MutableList<TypeRow> = LinkedList()
-        obtainRows(rows, state)
-        return rows != typeRows
     }
 
     fun commit(state: GitCommitHelperState) {
@@ -212,9 +206,7 @@ class TypeTable : JBTable() {
     }
 
     companion object {
-        private val log = Logger.getInstance(
-            TypeTable::class.java
-        )
+        private val logger = Logger.getInstance(TypeTable::class.java)
         private const val TITLE_COLUMN = 0
         private const val DESCRIPTION_COLUMN = 1
 

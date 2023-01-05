@@ -17,7 +17,7 @@
     </extensions>
 
     <actions>
-        <action id="Commit.Button" class="com.fobgochod.git.commit.action.CreateCommitAction" icon="/icons/load.png">
+        <action id="Commit.Button" class="com.fobgochod.git.commit.action.CreateCommitAction">
             <add-to-group group-id="Vcs.MessageActionGroup" anchor="first"/>
         </action>
     </actions>

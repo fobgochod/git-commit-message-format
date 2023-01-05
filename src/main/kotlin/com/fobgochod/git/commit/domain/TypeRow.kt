@@ -1,24 +1,29 @@
 package com.fobgochod.git.commit.domain
 
-import java.util.*
-
 /**
  * 类型
  *
  * @author fobgochod
  * @date 2022/12/11 23:16
  */
-class TypeRow(var title: String?, var description: String?) : Cloneable {
+class TypeRow(var title: String = "", var description: String = "") : Cloneable {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || javaClass != other.javaClass) return false
-        val typeRow = other as TypeRow
-        return title == typeRow.title && description == typeRow.description
+        if (javaClass != other?.javaClass) return false
+
+        other as TypeRow
+
+        if (title != other.title) return false
+        if (description != other.description) return false
+
+        return true
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(title, description)
+        var result = title.hashCode()
+        result = 31 * result + description.hashCode()
+        return result
     }
 
     override fun toString(): String {

@@ -1,6 +1,7 @@
 package com.fobgochod.git.commit.action
 
 import com.fobgochod.git.GitBundle
+import com.fobgochod.git.GitIcons
 import com.fobgochod.git.commit.CommitMessage
 import com.fobgochod.git.commit.view.CommitDialog
 import com.intellij.openapi.actionSystem.AnAction
@@ -16,11 +17,12 @@ class CreateCommitAction() : AnAction(), DumbAware {
 
     init {
         templatePresentation.text = GitBundle.message("create.commit.message")
+        templatePresentation.icon = GitIcons.COMMIT_MESSAGE_ACTION
     }
 
     override fun actionPerformed(event: AnActionEvent) {
         val commitPanel: CommitMessageI = getCommitPanel(event) ?: return;
-        val commitMessage: CommitMessage? = parseExistingCommitMessage(commitPanel);
+        val commitMessage: CommitMessage = parseExistingCommitMessage(commitPanel);
         val dialog = CommitDialog(event.project, commitMessage);
         dialog.show();
 
@@ -29,12 +31,11 @@ class CreateCommitAction() : AnAction(), DumbAware {
         }
     }
 
-    private fun parseExistingCommitMessage(commitPanel: CommitMessageI): CommitMessage? {
+    private fun parseExistingCommitMessage(commitPanel: CommitMessageI): CommitMessage {
         if (commitPanel is CheckinProjectPanel) {
-            val commitMessageString: String = commitPanel.commitMessage;
-            return CommitMessage.parse(commitMessageString);
+            return CommitMessage.parse(commitPanel.commitMessage);
         }
-        return null;
+        return CommitMessage();
     }
 
     private fun getCommitPanel(event: AnActionEvent): CommitMessageI? {
