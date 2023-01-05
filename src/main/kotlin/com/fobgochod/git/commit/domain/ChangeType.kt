@@ -21,7 +21,11 @@ enum class ChangeType {
         return name.lowercase(Locale.getDefault())
     }
 
+    fun description(): String {
+        return GitBundle.message("change.type.${this.title()}");
+    }
+
     override fun toString(): String {
-        return this.title() + " - " + GitBundle.message("change.type.${this.title()}")
+        return this.title() + " - " + this.description()
     }
 }

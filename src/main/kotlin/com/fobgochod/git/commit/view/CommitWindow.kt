@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.util.ui.FormBuilder
 import java.awt.BorderLayout
+import java.awt.Dimension
 import java.awt.GridLayout
 import java.awt.event.ItemEvent
 import java.awt.event.MouseAdapter
@@ -23,22 +24,24 @@ class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMe
 
     private var state: GitCommitHelperState = GitCommitHelperState.getInstance()
 
+    private val formBuilder = FormBuilder.createFormBuilder();
+
+    private val changeTypePanel = JPanel(GridLayout(state.count + 1, 1))
     private val changeTypeGroup = ButtonGroup();
     private val changeType: JComboBox<TypeRow> = ComboBox()
+
+    private val changeScopePanel = JPanel(BorderLayout())
     private val changeScope: JComboBox<String> = ComboBox()
+
     private val changeSubject = JTextField()
     private val changeBody = JTextArea(6, 0)
     private val wrapText = JCheckBox("Wrap text at 72 characters?", true)
     private val breakingChanges = JTextArea(3, 0)
     private val closedIssues = JTextField()
-    private val skipCI = JCheckBox("Skip CI?")
-
-    private val editSettings = JLabel(AllIcons.General.Settings)
-    private val formBuilder = FormBuilder.createFormBuilder();
-    private val changeTypePanel = JPanel(GridLayout(state.count + 1, 1))
-
 
     private val bottomPanel: JPanel = JPanel(BorderLayout())
+    private val skipCI = JCheckBox("Skip CI?")
+    private val editSettings = JLabel(AllIcons.General.Settings)
 
     init {
         initView()
@@ -71,6 +74,7 @@ class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMe
         changeTypePanel.add(changeType);
 
         changeScope.isEditable = true
+        changeScopePanel.add(changeScope, BorderLayout.CENTER)
 
         changeBody.lineWrap = true
         breakingChanges.lineWrap = true
@@ -78,8 +82,9 @@ class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMe
         bottomPanel.add(skipCI, BorderLayout.CENTER)
         bottomPanel.add(editSettings, BorderLayout.EAST)
 
+        formBuilder.panel.minimumSize = Dimension(600, 0)
         formBuilder.addLabeledComponent(JLabel("Type of change"), changeTypePanel)
-            .addLabeledComponent(JLabel("Scope of change"), changeScope)
+            .addLabeledComponent(JLabel("Scope of change"), changeScopePanel)
             .addLabeledComponent(JLabel("Subject of change"), changeSubject)
             .addLabeledComponent(JLabel("Body of change"), changeBody)
             .addComponentToRightColumn(wrapText)

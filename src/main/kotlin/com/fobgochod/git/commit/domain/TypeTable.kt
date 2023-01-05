@@ -122,15 +122,19 @@ class TypeTable : JBTable() {
     }
 
     fun resetRow() {
+        if (selectedRowCount != 1) {
+            return
+        }
+        val selectedRow = selectedRow
+        val typeRow = typeRows[selectedRow]
+        val oleTypeRow = GitCommitHelperState.getInstance().typeRows[selectedRow]
+        typeRow.title = oleTypeRow.title
+        typeRow.description = oleTypeRow.description
         myTableModel.fireTableDataChanged()
     }
 
     private fun isValidRow(selectedRow: Int): Boolean {
         return selectedRow >= 0 && selectedRow < typeRows.size
-    }
-
-    fun commit(state: GitCommitHelperState) {
-        state.typeRows = typeRows
     }
 
     fun reset(state: GitCommitHelperState) {

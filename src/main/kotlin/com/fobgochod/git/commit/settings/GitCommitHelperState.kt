@@ -1,6 +1,5 @@
 package com.fobgochod.git.commit.settings
 
-import com.fobgochod.git.GitBundle
 import com.fobgochod.git.commit.constant.GitCommitConstant
 import com.fobgochod.git.commit.domain.ChangeType
 import com.fobgochod.git.commit.domain.TypeRow
@@ -10,7 +9,6 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil
 import java.util.*
-
 
 /**
  * Supports storing the application settings in a persistent way.
@@ -30,7 +28,7 @@ class GitCommitHelperState : PersistentStateComponent<GitCommitHelperState?> {
     init {
         if (typeRows.isEmpty()) {
             for (type in ChangeType.values()) {
-                typeRows.add(TypeRow(type.title(), GitBundle.message("change.type.${type.title()}")))
+                typeRows.add(TypeRow(type.title(), type.description()))
             }
         }
     }
