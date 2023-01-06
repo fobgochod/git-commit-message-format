@@ -1,11 +1,11 @@
 package com.fobgochod.git.commit.settings
 
-import com.fobgochod.git.commit.action.ResetChangeTypeAction
+import com.fobgochod.git.commit.util.GitBundle
+import com.fobgochod.git.commit.action.ResetTypeAction
 import com.fobgochod.git.commit.domain.TypeTable
 import com.intellij.codeInsight.template.HtmlContextType
 import com.intellij.codeInsight.template.impl.TemplateEditorUtil
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.ui.DoubleClickListener
 import com.intellij.ui.ToolbarDecorator
@@ -19,14 +19,13 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JTextField
 
-
-class GitCommitHelperComponent : Disposable {
+class GitComponent {
 
     /**
      * main panel
      */
     val mainPanel: JPanel = JPanel(BorderLayout())
-    private val tabbedPane: JBTabs
+    private val mainTabs: JBTabs
 
     /**
      * type标签
@@ -35,14 +34,14 @@ class GitCommitHelperComponent : Disposable {
     private val typeTab: TabInfo
     private val typePanel: JPanel = JPanel(BorderLayout())
     val typeTable: TypeTable = TypeTable()
+    val commonCountField: JTextField = JTextField()
 
     /**
      * template标签
      */
     @Transient
     private val templateTab: TabInfo
-    var templateEditor: EditorEx
-    val countTextField: JTextField = JTextField()
+    var templateEditor: Editor
 
     init {
         // 1.type标签
@@ -53,7 +52,7 @@ class GitCommitHelperComponent : Disposable {
                 .setEditAction { typeTable.editRow() }
                 .setMoveUpAction { typeTable.moveUp() }
                 .setMoveDownAction { typeTable.moveDown() }
-                .addExtraAction(ResetChangeTypeAction(typeTable))
+                .addExtraAction(ResetTypeAction(typeTable))
                 .createPanel(),
             BorderLayout.CENTER
         )
@@ -65,31 +64,27 @@ class GitCommitHelperComponent : Disposable {
 
         typePanel.add(
             FormBuilder.createFormBuilder()
-                .addLabeledComponent(JLabel("common type count: "), countTextField).panel,
+                .addLabeledComponent(JLabel("common type count: "), commonCountField).panel,
             BorderLayout.SOUTH
         )
 
         // 2.template标签
-        templateEditor = TemplateEditorUtil.createEditor(true, "") as EditorEx
+        templateEditor = TemplateEditorUtil.createEditor(true, "")
         templateEditor.settings.isLineNumbersShown = true
         TemplateEditorUtil.setHighlighter(templateEditor, HtmlContextType())
 
         // tabs
-        val project = ProjectManager.getInstance().openProjects[0]
-        tabbedPane = JBTabsImpl(project)
+        mainTabs = JBTabsImpl(ProjectManager.getInstance().openProjects[0])
         typeTab = TabInfo(typePanel)
-        typeTab.text = "type"
-        tabbedPane.addTab(typeTab)
+        typeTab.text = GitBundle.message("settings.tabs.type")
+        mainTabs.addTab(typeTab)
 
         templateTab = TabInfo(templateEditor.component)
-        templateTab.text = "template"
-        tabbedPane.addTab(templateTab)
+        templateTab.text = GitBundle.message("settings.tabs.template")
+        mainTabs.addTab(templateTab)
 
         // main
-        mainPanel.add(JLabel("Personalize your git commit types and template."), BorderLayout.NORTH)
-        mainPanel.add(tabbedPane.component, BorderLayout.CENTER)
-    }
-
-    override fun dispose() {
+        mainPanel.add(JLabel(GitBundle.message("settings.desc.text")), BorderLayout.NORTH)
+        mainPanel.add(mainTabs.component, BorderLayout.CENTER)
     }
 }

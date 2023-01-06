@@ -1,4 +1,4 @@
-package com.fobgochod.git
+package com.fobgochod.git.commit.util
 
 import com.intellij.openapi.util.IconLoader
 import javax.swing.Icon

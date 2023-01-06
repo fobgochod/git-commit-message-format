@@ -1,8 +1,7 @@
 package com.fobgochod.git.commit.domain
 
-import com.fobgochod.git.commit.settings.GitCommitHelperState
+import com.fobgochod.git.commit.settings.GitState
 import com.fobgochod.git.commit.view.TypeEditor
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.ui.JBColor
 import com.intellij.ui.table.JBTable
 import java.awt.Component
@@ -59,12 +58,13 @@ class TypeTable : JBTable() {
     fun addRow() {
         val rowEditor = TypeEditor("Add Type", "", "")
         if (rowEditor.showAndGet()) {
-            val name = rowEditor.title
-            typeRows.add(TypeRow(rowEditor.title, rowEditor.description))
-            val index = indexOfRowWithName(name)
-            logger.assertTrue(index >= 0)
-            myTableModel.fireTableDataChanged()
-            setRowSelectionInterval(index, index)
+            val title = rowEditor.title()
+            typeRows.add(TypeRow(title, rowEditor.description()))
+            val index = indexOfRowWithTitle(title)
+            if (isValidRow(index)) {
+                myTableModel.fireTableDataChanged()
+                setRowSelectionInterval(index, index)
+            }
         }
     }
 
@@ -73,8 +73,8 @@ class TypeTable : JBTable() {
         if (selectedRows.isEmpty()) return
         Arrays.sort(selectedRows)
         val originalRow = selectedRows[0]
-        for (i in selectedRows.indices.reversed()) {
-            val selectedRow = selectedRows[i]
+        for (index in selectedRows.indices.reversed()) {
+            val selectedRow = selectedRows[index]
             if (isValidRow(selectedRow)) {
                 typeRows.removeAt(selectedRow)
             }
@@ -96,8 +96,8 @@ class TypeTable : JBTable() {
         val typeRow = typeRows[selectedRow]
         val editor = TypeEditor("Edit Type", typeRow.title, typeRow.description)
         if (editor.showAndGet()) {
-            typeRow.title = editor.title
-            typeRow.description = editor.description
+            typeRow.title = editor.title()
+            typeRow.description = editor.description()
             myTableModel.fireTableDataChanged()
         }
         return true
@@ -121,15 +121,19 @@ class TypeTable : JBTable() {
         setRowSelectionInterval(index, index)
     }
 
-    fun resetRow() {
-        if (selectedRowCount != 1) {
-            return
-        }
+    fun isModified(): Boolean {
         val selectedRow = selectedRow
         val typeRow = typeRows[selectedRow]
-        val oleTypeRow = GitCommitHelperState.getInstance().typeRows[selectedRow]
-        typeRow.title = oleTypeRow.title
-        typeRow.description = oleTypeRow.description
+        val oldTypeRow = GitState.getInstance().typeRows[selectedRow]
+        return typeRow != oldTypeRow
+    }
+
+    fun resetRow() {
+        val selectedRow = selectedRow
+        val typeRow = typeRows[selectedRow]
+        val oldTypeRow = GitState.getInstance().typeRows[selectedRow]
+        typeRow.title = oldTypeRow.title
+        typeRow.description = oldTypeRow.description
         myTableModel.fireTableDataChanged()
     }
 
@@ -137,36 +141,32 @@ class TypeTable : JBTable() {
         return selectedRow >= 0 && selectedRow < typeRows.size
     }
 
-    fun reset(state: GitCommitHelperState) {
-        obtainRows(typeRows, state)
+    fun reset(state: GitState) {
+        typeRows.clear()
+        for (typeRow in state.typeRows) {
+            typeRows.add(typeRow.copy())
+        }
         myTableModel.fireTableDataChanged()
     }
 
-    private fun indexOfRowWithName(name: String): Int {
-        for (i in typeRows.indices) {
-            val typeRow = typeRows[i]
-            if (name == typeRow.title) {
-                return i
+    private fun indexOfRowWithTitle(title: String): Int {
+        for (index in typeRows.indices) {
+            val typeRow = typeRows[index]
+            if (title == typeRow.title) {
+                return index
             }
         }
         return -1
     }
 
-    private fun obtainRows(typeRows: MutableList<TypeRow>, state: GitCommitHelperState) {
-        typeRows.clear()
-        for (typeRow in state.typeRows) {
-            typeRows.add(typeRow.clone())
-        }
-    }
     //==========================================================================//
     /**
      * EditValidator
      */
     private class EditValidator : TypeEditor.Validator {
         override fun isOK(name: String, value: String): Boolean {
-            return !name.isEmpty() && !value.isEmpty()
+            return name.isNotEmpty() && value.isNotEmpty()
         }
-
     }
 
     /**
@@ -210,13 +210,9 @@ class TypeTable : JBTable() {
     }
 
     companion object {
-        private val logger = Logger.getInstance(TypeTable::class.java)
         private const val TITLE_COLUMN = 0
         private const val DESCRIPTION_COLUMN = 1
 
-        /**
-         * Set  Something  ColumnSize
-         */
         fun setColumnSize(column: TableColumn, preferredWidth: Int, maxWidth: Int, minWidth: Int) {
             column.preferredWidth = preferredWidth
             column.maxWidth = maxWidth

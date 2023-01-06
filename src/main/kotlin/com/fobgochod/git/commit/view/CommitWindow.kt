@@ -1,10 +1,10 @@
 package com.fobgochod.git.commit.view
 
-import com.fobgochod.git.GitBundle
-import com.fobgochod.git.commit.CommitMessage
-import com.fobgochod.git.commit.GitLogQuery
+import com.fobgochod.git.commit.domain.CommitMessage
+import com.fobgochod.git.commit.util.GitLogQuery
 import com.fobgochod.git.commit.domain.TypeRow
-import com.fobgochod.git.commit.settings.GitCommitHelperState
+import com.fobgochod.git.commit.settings.GitState
+import com.fobgochod.git.commit.util.GitBundle
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
@@ -16,17 +16,16 @@ import java.awt.GridLayout
 import java.awt.event.ItemEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.io.File
 import java.util.function.Consumer
 import javax.swing.*
 
-class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMessage) {
+class CommitWindow(val project: Project?, private val oldMessage: CommitMessage) {
 
-    private var state: GitCommitHelperState = GitCommitHelperState.getInstance()
+    private var state: GitState = GitState.getInstance()
 
     private val formBuilder = FormBuilder.createFormBuilder();
 
-    private val changeTypePanel = JPanel(GridLayout(state.count + 1, 1))
+    private val changeTypePanel = JPanel()
     private val changeTypeGroup = ButtonGroup();
     private val changeType: JComboBox<TypeRow> = ComboBox()
 
@@ -64,11 +63,17 @@ class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMe
         )
 
     private fun initView() {
+        var typeCount = state.commonCount;
+        if (state.commonCount > state.typeRows.size) {
+            typeCount = state.typeRows.size
+        }
+
+        changeTypePanel.layout = GridLayout(typeCount + 1, 1)
         for ((index, type) in state.typeRows.withIndex()) {
-            if (index < state.count) {
-                val jRadioButton = JRadioButton(type.toString())
-                changeTypeGroup.add(jRadioButton)
-                changeTypePanel.add(jRadioButton)
+            if (index < state.commonCount) {
+                val radioButton = JRadioButton(type.toString())
+                changeTypeGroup.add(radioButton)
+                changeTypePanel.add(radioButton)
             }
         }
         changeTypePanel.add(changeType);
@@ -97,18 +102,18 @@ class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMe
         for (element in changeTypeGroup.elements) {
             element.addChangeListener {
                 if (element.isSelected) {
-                    changeType.selectedItem = GitCommitHelperState.getInstance().getTypeFromName(element.text)
+                    changeType.selectedItem = GitState.getInstance().getTypeFromName(element.text)
                 }
             }
         }
 
         changeType.addItemListener { e: ItemEvent ->
             val item: TypeRow = e.item as TypeRow
-            if (state.typeRows.indexOf(item) > state.count) {
+            if (state.typeRows.indexOf(item) > state.commonCount) {
                 changeTypeGroup.clearSelection()
             } else {
                 for (element in changeTypeGroup.elements) {
-                    if (item == GitCommitHelperState.getInstance().getTypeFromName(element.text)) {
+                    if (item == GitState.getInstance().getTypeFromName(element.text)) {
                         element.isSelected = true;
                     }
                 }
@@ -124,12 +129,11 @@ class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMe
 
     private fun initData() {
         // 恢复数据
-        for (typeRow in GitCommitHelperState.getInstance().typeRows) {
+        for (typeRow in GitState.getInstance().typeRows) {
             changeType.addItem(typeRow)
         }
 
-        val workingDirectory = File(project?.basePath)
-        val result = GitLogQuery(workingDirectory).execute()
+        val result = GitLogQuery(project).execute()
         if (result.isSuccess()) {
             changeScope.addItem("") // no value by default
             result.getScopes().forEach(Consumer { item: String ->
@@ -138,7 +142,8 @@ class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMe
                 )
             })
         }
-        restoreValuesFromParsedCommitMessage(oldCommitMessage)
+
+        restoreFromParsedCommitMessage(oldMessage)
     }
 
 
@@ -153,7 +158,7 @@ class CommitWindow(val project: Project?, private val oldCommitMessage: CommitMe
             return selectedItem as String
         }
 
-    private fun restoreValuesFromParsedCommitMessage(commitMessage: CommitMessage) {
+    private fun restoreFromParsedCommitMessage(commitMessage: CommitMessage) {
         changeType.selectedItem = commitMessage.changeType
         changeScope.selectedItem = commitMessage.changeScope
         changeSubject.text = commitMessage.changeSubject

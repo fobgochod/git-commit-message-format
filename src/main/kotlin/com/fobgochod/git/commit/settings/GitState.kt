@@ -1,7 +1,7 @@
 package com.fobgochod.git.commit.settings
 
-import com.fobgochod.git.commit.constant.GitCommitConstant
-import com.fobgochod.git.commit.domain.ChangeType
+import com.fobgochod.git.commit.constant.GitConstant
+import com.fobgochod.git.commit.domain.TypeEnum
 import com.fobgochod.git.commit.domain.TypeRow
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
@@ -16,28 +16,28 @@ import java.util.*
  * these persistent application settings are stored.
  */
 @State(
-    name = GitCommitHelperState.NAME,
-    storages = [Storage(GitCommitHelperState.STORAGES)]
+    name = GitState.NAME,
+    storages = [Storage(GitState.STORAGES)]
 )
-class GitCommitHelperState : PersistentStateComponent<GitCommitHelperState?> {
+class GitState : PersistentStateComponent<GitState?> {
 
-    var count: Int = GitCommitConstant.COMMON_TYPE_COUNT
-    var template: String = GitCommitConstant.DEFAULT_TEMPLATE
+    var commonCount: Int = GitConstant.COMMON_TYPE_COUNT
+    var template: String = GitConstant.DEFAULT_TEMPLATE
     var typeRows: MutableList<TypeRow> = LinkedList()
 
     init {
         if (typeRows.isEmpty()) {
-            for (type in ChangeType.values()) {
+            for (type in TypeEnum.values()) {
                 typeRows.add(TypeRow(type.title(), type.description()))
             }
         }
     }
 
-    override fun getState(): GitCommitHelperState {
+    override fun getState(): GitState {
         return this
     }
 
-    override fun loadState(state: GitCommitHelperState) {
+    override fun loadState(state: GitState) {
         XmlSerializerUtil.copyBean(state, this)
     }
 
@@ -59,7 +59,7 @@ class GitCommitHelperState : PersistentStateComponent<GitCommitHelperState?> {
         // CommandLineProjectOpenProcessor
         // PlatformProjectOpenProcessor
         @JvmStatic
-        fun getInstance(): GitCommitHelperState =
-            ApplicationManager.getApplication().getService(GitCommitHelperState::class.java)
+        fun getInstance(): GitState =
+            ApplicationManager.getApplication().getService(GitState::class.java)
     }
 }

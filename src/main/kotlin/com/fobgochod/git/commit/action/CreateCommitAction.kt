@@ -1,8 +1,8 @@
 package com.fobgochod.git.commit.action
 
-import com.fobgochod.git.GitBundle
-import com.fobgochod.git.GitIcons
-import com.fobgochod.git.commit.CommitMessage
+import com.fobgochod.git.commit.util.GitBundle
+import com.fobgochod.git.commit.util.GitIcons
+import com.fobgochod.git.commit.domain.CommitMessage
 import com.fobgochod.git.commit.view.CommitDialog
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent

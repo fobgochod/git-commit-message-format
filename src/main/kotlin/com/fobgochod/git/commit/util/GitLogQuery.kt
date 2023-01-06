@@ -1,5 +1,6 @@
-package com.fobgochod.git.commit
+package com.fobgochod.git.commit.util
 
+import com.intellij.openapi.project.Project
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -7,14 +8,15 @@ import java.util.concurrent.TimeUnit
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-class GitLogQuery(private val workingDirectory: File) {
+class GitLogQuery(private val project: Project?) {
 
     companion object {
         const val GIT_LOG_COMMAND: String = "git log --all --format=%s";
-        val COMMIT_FIRST_LINE_FORMAT: Pattern = Pattern.compile("^[a-z]+\\((.+)\\):.*");
+        val SCOPE_PATTERN: Pattern = Pattern.compile("^[a-z]+\\((.+)\\):.*");
     }
 
     fun execute(): Result {
+        val basePath = File(project?.basePath)
         try {
             val osName: String = System.getProperty("os.name");
             val processBuilder: ProcessBuilder = if (osName.contains("Windows")) {
@@ -24,7 +26,7 @@ class GitLogQuery(private val workingDirectory: File) {
             }
 
             val process: Process = processBuilder
-                .directory(workingDirectory)
+                .directory(basePath)
                 .start();
 
             val reader = BufferedReader(InputStreamReader(process.inputStream));
@@ -56,7 +58,7 @@ class GitLogQuery(private val workingDirectory: File) {
             val scopes: Set<String> = HashSet();
 
             logs.forEach { log ->
-                val matcher: Matcher = COMMIT_FIRST_LINE_FORMAT.matcher(log);
+                val matcher: Matcher = SCOPE_PATTERN.matcher(log);
                 if (matcher.find()) {
                     scopes.plus(matcher.group(1));
                 }

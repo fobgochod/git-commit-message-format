@@ -9,16 +9,16 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationConfigurable parentId="tools"
-                                 id="com.fobgochod.git.commit.settings.GitCommitHelperConfigurable"
-                                 instance="com.fobgochod.git.commit.settings.GitCommitHelperConfigurable"
+                                 id="com.fobgochod.git.commit.settings.GitConfigurable"
+                                 instance="com.fobgochod.git.commit.settings.GitConfigurable"
                                  bundle="messages.GitBundle"
                                  key="plugin.name"/>
-        <applicationService serviceImplementation="com.fobgochod.git.commit.settings.GitCommitHelperState"/>
+        <applicationService serviceImplementation="com.fobgochod.git.commit.settings.GitState"/>
     </extensions>
 
     <actions>
         <action id="Commit.Button" class="com.fobgochod.git.commit.action.CreateCommitAction">
-            <keyboard-shortcut keymap="$default" first-keystroke="alt N"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="alt Q"/>
             <add-to-group group-id="Vcs.MessageActionGroup" anchor="first"/>
         </action>
     </actions>

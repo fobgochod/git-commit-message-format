@@ -1,9 +1,9 @@
 package com.fobgochod.git.commit.domain
 
-import com.fobgochod.git.GitBundle
+import com.fobgochod.git.commit.util.GitBundle
 import java.util.*
 
-enum class ChangeType {
+enum class TypeEnum {
 
     FEAT,
     FIX,
