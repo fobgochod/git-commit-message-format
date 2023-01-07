@@ -28,7 +28,7 @@ class GitState : PersistentStateComponent<GitState?> {
     init {
         if (typeRows.isEmpty()) {
             for (type in TypeEnum.values()) {
-                typeRows.add(TypeRow(type.title(), type.description()))
+                typeRows.add(TypeRow(type.type(), type.description()))
             }
         }
     }
@@ -41,10 +41,14 @@ class GitState : PersistentStateComponent<GitState?> {
         XmlSerializerUtil.copyBean(state, this)
     }
 
-    fun getTypeFromName(title: String): TypeRow {
-        val name: String = title.split("-".toRegex())[0].trim { it <= ' ' }
+    fun isValidRow(index: Int): Boolean {
+        return index >= 0 && index < typeRows.size
+    }
+
+    fun getTypeFromName(name: String): TypeRow {
+        val name0: String = name.split("-")[0].trim()
         for (typeRow in typeRows) {
-            if (name == typeRow.title) {
+            if (name0 == typeRow.name) {
                 return typeRow
             }
         }

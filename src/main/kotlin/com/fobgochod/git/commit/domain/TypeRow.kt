@@ -6,9 +6,9 @@ package com.fobgochod.git.commit.domain
  * @author fobgochod
  * @date 2022/12/11 23:16
  */
-data class TypeRow(var title: String, var description: String) {
+data class TypeRow(var name: String, var description: String) {
 
     override fun toString(): String {
-        return String.format("%s - %s", title, description)
+        return String.format("%s - %s", name, description)
     }
 }

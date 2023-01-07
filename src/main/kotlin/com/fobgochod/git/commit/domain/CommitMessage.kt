@@ -26,7 +26,7 @@ data class CommitMessage(
                 var matcher = GitConstant.HEADER_PATTERN.matcher(message)
                 if (!matcher.find()) return commitMessage
 
-                commitMessage.changeType = GitState.getInstance().getTypeFromName(matcher.group(1)).title
+                commitMessage.changeType = GitState.getInstance().getTypeFromName(matcher.group(1)).name
                 commitMessage.changeScope = if (matcher.group(3) != null) matcher.group(3) else ""
                 commitMessage.changeSubject = matcher.group(4)
 

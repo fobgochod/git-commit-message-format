@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-class GitLogQuery(private val project: Project?) {
+class GitLog(private val project: Project?) {
 
     companion object {
         const val GIT_LOG_COMMAND: String = "git log --all --format=%s";
@@ -25,9 +25,7 @@ class GitLogQuery(private val project: Project?) {
                 ProcessBuilder("sh", "-c", GIT_LOG_COMMAND);
             }
 
-            val process: Process = processBuilder
-                .directory(basePath)
-                .start();
+            val process: Process = processBuilder.directory(basePath).start();
 
             val reader = BufferedReader(InputStreamReader(process.inputStream));
             val output: List<String> = reader.lines().toList();
@@ -42,13 +40,7 @@ class GitLogQuery(private val project: Project?) {
         }
     }
 
-    inner class Result(private val exitValue: Int) {
-
-        private var logs: List<String> = emptyList()
-
-        constructor(exitValue: Int, logs: List<String>) : this(exitValue) {
-            this.logs = logs;
-        }
+    inner class Result(private val exitValue: Int, private val logs: List<String> = emptyList()) {
 
         fun isSuccess(): Boolean {
             return exitValue == 0;
@@ -66,5 +58,4 @@ class GitLogQuery(private val project: Project?) {
             return scopes;
         }
     }
-
 }

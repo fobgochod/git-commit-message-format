@@ -17,15 +17,15 @@ enum class TypeEnum {
     CHORE,
     REVERT;
 
-    fun title(): String {
+    fun type(): String {
         return name.lowercase(Locale.getDefault())
     }
 
     fun description(): String {
-        return GitBundle.message("change.type.${this.title()}");
+        return GitBundle.message("change.type.${this.type()}");
     }
 
     override fun toString(): String {
-        return this.title() + " - " + this.description()
+        return this.type() + " - " + this.description()
     }
 }

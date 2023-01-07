@@ -1,6 +1,7 @@
 package com.fobgochod.git.commit.domain
 
 import com.fobgochod.git.commit.settings.GitState
+import com.fobgochod.git.commit.util.GitBundle
 import com.fobgochod.git.commit.view.TypeEditor
 import com.intellij.ui.JBColor
 import com.intellij.ui.table.JBTable
@@ -12,7 +13,6 @@ import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.TableColumn
 
-
 /**
  * TypeTable.java
  *
@@ -20,15 +20,14 @@ import javax.swing.table.TableColumn
  * @date 2022/12/13 2:13
  */
 class TypeTable : JBTable() {
+
+    private var state: GitState = GitState.getInstance()
     private val myTableModel: MyTableModel = MyTableModel()
     val typeRows: MutableList<TypeRow> = LinkedList()
 
-    /**
-     * instantiation TypeTable
-     */
     init {
         model = myTableModel
-        val titleColumn = getColumnModel().getColumn(TITLE_COLUMN)
+        val nameColumn = getColumnModel().getColumn(NAME_COLUMN)
         val descriptionColumn = getColumnModel().getColumn(DESCRIPTION_COLUMN)
         descriptionColumn.cellRenderer = object : DefaultTableCellRenderer() {
             override fun getTableCellRendererComponent(
@@ -40,27 +39,32 @@ class TypeTable : JBTable() {
                 column: Int
             ): Component {
                 val component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
-                val titleValue = getTitleValueAt(row)
-                component.foreground =
-                    if (titleValue.isEmpty()) JBColor.RED else if (isSelected) table.selectionForeground else table.foreground
+                val nameValue = getNameValueAt(row)
+                if (nameValue.isEmpty()) {
+                    component.foreground = JBColor.RED
+                } else if (isSelected) {
+                    component.foreground = table.selectionForeground
+                } else {
+                    component.foreground = table.foreground
+                }
                 return component
             }
         }
-        setColumnSize(titleColumn, 150, 250, 150)
+        setColumnSize(nameColumn, 150, 250, 150)
         setColumnSize(descriptionColumn, 550, 750, 550)
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
     }
 
-    fun getTitleValueAt(row: Int): String {
-        return getValueAt(row, TITLE_COLUMN) as String
+    fun getNameValueAt(row: Int): String {
+        return getValueAt(row, NAME_COLUMN) as String
     }
 
     fun addRow() {
         val rowEditor = TypeEditor("Add Type", "", "")
         if (rowEditor.showAndGet()) {
-            val title = rowEditor.title()
-            typeRows.add(TypeRow(title, rowEditor.description()))
-            val index = indexOfRowWithTitle(title)
+            val name = rowEditor.name()
+            typeRows.add(TypeRow(name, rowEditor.description()))
+            val index = indexOfRowWithName(name)
             if (isValidRow(index)) {
                 myTableModel.fireTableDataChanged()
                 setRowSelectionInterval(index, index)
@@ -94,9 +98,9 @@ class TypeTable : JBTable() {
         }
         val selectedRow = selectedRow
         val typeRow = typeRows[selectedRow]
-        val editor = TypeEditor("Edit Type", typeRow.title, typeRow.description)
+        val editor = TypeEditor("Edit Type", typeRow.name, typeRow.description)
         if (editor.showAndGet()) {
-            typeRow.title = editor.title()
+            typeRow.name = editor.name()
             typeRow.description = editor.description()
             myTableModel.fireTableDataChanged()
         }
@@ -122,17 +126,19 @@ class TypeTable : JBTable() {
     }
 
     fun isModified(): Boolean {
-        val selectedRow = selectedRow
-        val typeRow = typeRows[selectedRow]
-        val oldTypeRow = GitState.getInstance().typeRows[selectedRow]
-        return typeRow != oldTypeRow
+        if (isValidRow(selectedRow) && state.isValidRow(selectedRow)) {
+            val typeRow = typeRows[selectedRow]
+            val oldTypeRow = state.typeRows[selectedRow]
+            return typeRow != oldTypeRow
+        }
+        return false
     }
 
     fun resetRow() {
         val selectedRow = selectedRow
         val typeRow = typeRows[selectedRow]
-        val oldTypeRow = GitState.getInstance().typeRows[selectedRow]
-        typeRow.title = oldTypeRow.title
+        val oldTypeRow = state.typeRows[selectedRow]
+        typeRow.name = oldTypeRow.name
         typeRow.description = oldTypeRow.description
         myTableModel.fireTableDataChanged()
     }
@@ -141,18 +147,18 @@ class TypeTable : JBTable() {
         return selectedRow >= 0 && selectedRow < typeRows.size
     }
 
-    fun reset(state: GitState) {
+    fun reset(types: List<TypeRow>) {
         typeRows.clear()
-        for (typeRow in state.typeRows) {
+        for (typeRow in types) {
             typeRows.add(typeRow.copy())
         }
         myTableModel.fireTableDataChanged()
     }
 
-    private fun indexOfRowWithTitle(title: String): Int {
+    private fun indexOfRowWithName(name: String): Int {
         for (index in typeRows.indices) {
             val typeRow = typeRows[index]
-            if (title == typeRow.title) {
+            if (name == typeRow.name) {
                 return index
             }
         }
@@ -160,15 +166,6 @@ class TypeTable : JBTable() {
     }
 
     //==========================================================================//
-    /**
-     * EditValidator
-     */
-    private class EditValidator : TypeEditor.Validator {
-        override fun isOK(name: String, value: String): Boolean {
-            return name.isNotEmpty() && value.isNotEmpty()
-        }
-    }
-
     /**
      * MyTableModel
      */
@@ -183,8 +180,8 @@ class TypeTable : JBTable() {
 
         override fun getColumnName(columnIndex: Int): String? {
             when (columnIndex) {
-                TITLE_COLUMN -> return "title"
-                DESCRIPTION_COLUMN -> return "description"
+                NAME_COLUMN -> return GitBundle.message("settings.type.table.column.1")
+                DESCRIPTION_COLUMN -> return GitBundle.message("settings.type.table.column.2")
             }
             return null
         }
@@ -200,7 +197,7 @@ class TypeTable : JBTable() {
         override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? {
             val row = typeRows[rowIndex]
             when (columnIndex) {
-                TITLE_COLUMN -> return row.title
+                NAME_COLUMN -> return row.name
                 DESCRIPTION_COLUMN -> return row.description
             }
             return null
@@ -210,7 +207,7 @@ class TypeTable : JBTable() {
     }
 
     companion object {
-        private const val TITLE_COLUMN = 0
+        private const val NAME_COLUMN = 0
         private const val DESCRIPTION_COLUMN = 1
 
         fun setColumnSize(column: TableColumn, preferredWidth: Int, maxWidth: Int, minWidth: Int) {

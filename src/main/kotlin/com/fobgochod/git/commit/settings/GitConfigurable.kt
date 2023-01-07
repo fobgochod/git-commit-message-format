@@ -1,7 +1,6 @@
 package com.fobgochod.git.commit.settings
 
 import com.fobgochod.git.commit.util.GitBundle
-import com.fobgochod.git.commit.constant.GitConstant
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.options.SearchableConfigurable
 import org.jetbrains.annotations.Nls
@@ -16,7 +15,7 @@ class GitConfigurable : SearchableConfigurable {
     private var component: GitComponent = GitComponent()
 
     override fun getId(): String {
-        return GitConstant.PLUGIN_ID
+        return GitConfigurable::class.java.name;
     }
 
     override fun createComponent(): JComponent {
@@ -28,7 +27,7 @@ class GitConfigurable : SearchableConfigurable {
     }
 
     override fun reset() {
-        component.typeTable.reset(state)
+        component.typeTable.reset(state.typeRows)
         component.commonCountField.text = state.commonCount.toString()
         ApplicationManager.getApplication().runWriteAction {
             component.templateEditor.document.setText(state.template)

@@ -1,5 +1,6 @@
 package com.fobgochod.git.commit.view
 
+import com.fobgochod.git.commit.util.GitBundle
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.FormBuilder
@@ -9,32 +10,32 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-class TypeEditor(dialogTitle: String, title: String, description: String) : DialogWrapper(true) {
+class TypeEditor(title: String, name: String, description: String) : DialogWrapper(true) {
 
     private val root: JPanel
-    private val titleField: JBTextField
+    private val nameLabel = JLabel(GitBundle.message("settings.type.table.column.1"))
+    private val nameField: JBTextField
+    private val descriptionLabel = JLabel(GitBundle.message("settings.type.table.column.2"))
     private val descriptionField: JBTextField
 
     init {
-        setTitle(dialogTitle)
+        setTitle(title)
         root = JPanel(BorderLayout())
-        titleField = JBTextField(title)
+        nameField = JBTextField(name)
         descriptionField = JBTextField(description)
-        val panel = FormBuilder.createFormBuilder().addLabeledComponent(JLabel("title"), titleField)
-            .addLabeledComponent(JLabel("description"), descriptionField).panel
-        root.add(panel, BorderLayout.CENTER)
+        val formBuilder = FormBuilder.createFormBuilder()
+            .addLabeledComponent(nameLabel, nameField)
+            .addLabeledComponent(descriptionLabel, descriptionField)
+
+        root.add(formBuilder.panel, BorderLayout.CENTER)
         root.preferredSize = Dimension(500, 0)
         init()
     }
 
-    fun title(): String = titleField.text.trim { it <= ' ' }
+    fun name(): String = nameField.text.trim()
     fun description(): String = descriptionField.text.trim { it <= ' ' }
 
     override fun createCenterPanel(): JComponent {
         return root
-    }
-
-    interface Validator {
-        fun isOK(name: String, value: String): Boolean
     }
 }

@@ -8,10 +8,10 @@ import javax.swing.JComponent
 
 class CommitDialog(project: Project?, commitMessage: CommitMessage) : DialogWrapper(project) {
 
-    private var panel: CommitWindow
+    private var panel: CommitPanel
 
     init {
-        panel = CommitWindow(project, commitMessage)
+        panel = CommitPanel(project, commitMessage)
         title = GitBundle.message("create.commit.message")
         init()
     }
@@ -20,7 +20,7 @@ class CommitDialog(project: Project?, commitMessage: CommitMessage) : DialogWrap
         return panel.root;
     }
 
-    fun getCommitMessage(): CommitMessage {
-        return panel.commitMessage;
+    fun getCommitMessage(): String {
+        return panel.getCommitMessage().toString();
     }
 }

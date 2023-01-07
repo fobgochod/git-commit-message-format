@@ -1,10 +1,12 @@
 package com.fobgochod.git.commit.settings
 
-import com.fobgochod.git.commit.util.GitBundle
+import com.fobgochod.git.commit.action.ResetAllTypesAction
 import com.fobgochod.git.commit.action.ResetTypeAction
 import com.fobgochod.git.commit.domain.TypeTable
+import com.fobgochod.git.commit.util.GitBundle
 import com.intellij.codeInsight.template.HtmlContextType
 import com.intellij.codeInsight.template.impl.TemplateEditorUtil
+import com.intellij.openapi.actionSystem.ActionToolbarPosition
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.ui.DoubleClickListener
@@ -53,6 +55,8 @@ class GitComponent {
                 .setMoveUpAction { typeTable.moveUp() }
                 .setMoveDownAction { typeTable.moveDown() }
                 .addExtraAction(ResetTypeAction(typeTable))
+                .addExtraAction(ResetAllTypesAction(typeTable))
+                .setToolbarPosition(ActionToolbarPosition.RIGHT)
                 .createPanel(),
             BorderLayout.CENTER
         )
