@@ -1,13 +1,13 @@
 package com.fobgochod.git.commit.settings
 
-import com.fobgochod.git.commit.action.ResetAllTypesAction
 import com.fobgochod.git.commit.action.ResetTypeAction
+import com.fobgochod.git.commit.action.RestoreTypesAction
+import com.fobgochod.git.commit.constant.GitConstant
 import com.fobgochod.git.commit.domain.TypeTable
 import com.fobgochod.git.commit.util.GitBundle
-import com.intellij.codeInsight.template.HtmlContextType
-import com.intellij.codeInsight.template.impl.TemplateEditorUtil
+import com.fobgochod.git.commit.view.TemplateEditor
+import com.intellij.ide.highlighter.XmlFileType
 import com.intellij.openapi.actionSystem.ActionToolbarPosition
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.ui.DoubleClickListener
 import com.intellij.ui.ToolbarDecorator
@@ -43,7 +43,7 @@ class GitComponent {
      */
     @Transient
     private val templateTab: TabInfo
-    var templateEditor: Editor
+    private var templateEditor: TemplateEditor
 
     init {
         // 1.type标签
@@ -55,7 +55,7 @@ class GitComponent {
                 .setMoveUpAction { typeTable.moveUp() }
                 .setMoveDownAction { typeTable.moveDown() }
                 .addExtraAction(ResetTypeAction(typeTable))
-                .addExtraAction(ResetAllTypesAction(typeTable))
+                .addExtraAction(RestoreTypesAction(typeTable))
                 .setToolbarPosition(ActionToolbarPosition.RIGHT)
                 .createPanel(),
             BorderLayout.CENTER
@@ -68,17 +68,16 @@ class GitComponent {
 
         typePanel.add(
             FormBuilder.createFormBuilder()
-                .addLabeledComponent(JLabel("common type count: "), commonCountField).panel,
+                .addLabeledComponent(JLabel(GitBundle.message("settings.common.type.count")), commonCountField).panel,
             BorderLayout.SOUTH
         )
 
+        val project = ProjectManager.getInstance().openProjects[0]
         // 2.template标签
-        templateEditor = TemplateEditorUtil.createEditor(true, "")
-        templateEditor.settings.isLineNumbersShown = true
-        TemplateEditorUtil.setHighlighter(templateEditor, HtmlContextType())
+        templateEditor = TemplateEditor(GitConstant.DEFAULT_TEMPLATE, project, XmlFileType.INSTANCE);
 
         // tabs
-        mainTabs = JBTabsImpl(ProjectManager.getInstance().openProjects[0])
+        mainTabs = JBTabsImpl(project)
         typeTab = TabInfo(typePanel)
         typeTab.text = GitBundle.message("settings.tabs.type")
         mainTabs.addTab(typeTab)

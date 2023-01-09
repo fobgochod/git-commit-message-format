@@ -12,7 +12,7 @@ class CommitDialog(project: Project?, commitMessage: CommitMessage) : DialogWrap
 
     init {
         panel = CommitPanel(project, commitMessage)
-        title = GitBundle.message("create.commit.message")
+        title = GitBundle.message("action.toolbar.create.commit.message.text")
         init()
     }
 

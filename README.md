@@ -1,12 +1,9 @@
-# Git Commit Helper
+# Git Commit Message Format
 
-![Build](https://github.com/fobgochod/git-commit-helper/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID)
+[![Build](https://github.com/fobgochod/git-commit-helper/workflows/Build/badge.svg)](https://github.com/fobgochod/git-commit-helper/actions?query=workflow%3ABuild)
+[![Version](https://img.shields.io/jetbrains/plugin/v/20317.svg)](https://plugins.jetbrains.com/plugin/20317)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/20317.svg)](https://plugins.jetbrains.com/plugin/20317)
 
-> - [AngularJS's commit message convention](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines)
-> - [The commitizen command line utility](https://github.com/commitizen/cz-cli)
-> - [Commit message 和 Change log 编写指南](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)
 
 <!-- Plugin description -->
 
@@ -92,6 +89,14 @@ A detailed explanation can be found in
 this [document](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#).
 
 <!-- Plugin description end -->
+
+## Reference
+
+> - [AngularJS's commit message convention](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines)
+> - [The commitizen command line utility](https://github.com/commitizen/cz-cli)
+> - [Commit message 和 Change log 编写指南](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)
+>- [Git Commit Template](https://github.com/MobileTribe/commit-template-idea-plugin)
+>- [Git Commit Message Helper](https://github.com/AutismSuperman/git-commit-message-helper)
 
 ## Installation
 

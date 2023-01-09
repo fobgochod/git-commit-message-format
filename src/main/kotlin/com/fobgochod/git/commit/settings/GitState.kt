@@ -22,7 +22,6 @@ import java.util.*
 class GitState : PersistentStateComponent<GitState?> {
 
     var commonCount: Int = GitConstant.COMMON_TYPE_COUNT
-    var template: String = GitConstant.DEFAULT_TEMPLATE
     var typeRows: MutableList<TypeRow> = LinkedList()
 
     init {
@@ -57,8 +56,8 @@ class GitState : PersistentStateComponent<GitState?> {
 
     companion object {
 
-        const val NAME = "GitCommitHelper"
-        const val STORAGES = "git.commit.helper.xml"
+        const val NAME = "GitCommitMessageFormat"
+        const val STORAGES = "git.commit.message.format.xml"
 
         // CommandLineProjectOpenProcessor
         // PlatformProjectOpenProcessor

@@ -60,7 +60,7 @@ class TypeTable : JBTable() {
     }
 
     fun addRow() {
-        val rowEditor = TypeEditor("Add Type", "", "")
+        val rowEditor = TypeEditor(GitBundle.message("settings.type.dialog.add.title"), "", "")
         if (rowEditor.showAndGet()) {
             val name = rowEditor.name()
             typeRows.add(TypeRow(name, rowEditor.description()))
@@ -98,7 +98,7 @@ class TypeTable : JBTable() {
         }
         val selectedRow = selectedRow
         val typeRow = typeRows[selectedRow]
-        val editor = TypeEditor("Edit Type", typeRow.name, typeRow.description)
+        val editor = TypeEditor(GitBundle.message("settings.type.dialog.edit.title"), typeRow.name, typeRow.description)
         if (editor.showAndGet()) {
             typeRow.name = editor.name()
             typeRow.description = editor.description()

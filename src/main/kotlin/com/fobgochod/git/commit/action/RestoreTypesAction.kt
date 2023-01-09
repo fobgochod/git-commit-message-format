@@ -3,15 +3,18 @@ package com.fobgochod.git.commit.action
 import com.fobgochod.git.commit.domain.TypeEnum
 import com.fobgochod.git.commit.domain.TypeRow
 import com.fobgochod.git.commit.domain.TypeTable
+import com.fobgochod.git.commit.util.GitBundle
 import com.fobgochod.git.commit.util.GitIcons
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import java.util.*
 
-class ResetAllTypesAction(private val typeTable: TypeTable) :
-    AnAction("Restore", "Restore change type to initial.", GitIcons.RESTORE) {
+class RestoreTypesAction(private val typeTable: TypeTable) : AnAction(
+    GitBundle.message("action.toolbar.restore.text"),
+    GitBundle.message("action.toolbar.restore.description"),
+    GitIcons.RESTORE
+) {
 
     private val typeRows: MutableList<TypeRow> = LinkedList()
 
