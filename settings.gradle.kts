@@ -1,1 +1,1 @@
-rootProject.name = "git-commit-helper"
+rootProject.name = "git-commit-message-format"

@@ -1,6 +1,6 @@
 # Git Commit Message Format
 
-[![Build](https://github.com/fobgochod/git-commit-helper/workflows/Build/badge.svg)](https://github.com/fobgochod/git-commit-helper/actions?query=workflow%3ABuild)
+[![Build](https://github.com/fobgochod/git-commit-message-format/workflows/Build/badge.svg)](https://github.com/fobgochod/git-commit-message-format/actions?query=workflow%3ABuild)
 [![Version](https://img.shields.io/jetbrains/plugin/v/20317.svg)](https://plugins.jetbrains.com/plugin/20317)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/20317.svg)](https://plugins.jetbrains.com/plugin/20317)
 
@@ -95,22 +95,22 @@ this [document](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHOR
 > - [AngularJS's commit message convention](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines)
 > - [The commitizen command line utility](https://github.com/commitizen/cz-cli)
 > - [Commit message 和 Change log 编写指南](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)
->- [Git Commit Template](https://github.com/MobileTribe/commit-template-idea-plugin)
->- [Git Commit Message Helper](https://github.com/AutismSuperman/git-commit-message-helper)
+> - [Git Commit Template](https://github.com/MobileTribe/commit-template-idea-plugin)
+> - [Git Commit Message Helper](https://github.com/AutismSuperman/git-commit-message-helper)
 
 ## Installation
 
 - Using IDE built-in plugin system:
 
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "
-  Git Commit Helper"</kbd> >
+  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "Git Commit Message
+  Format"</kbd> >
   <kbd>Install Plugin</kbd>
 
 - Manually:
 
-  Download the [latest release](https://github.com/fobgochod/git-commit-helper/releases/latest) and install it manually
-  using
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
+  Download the [latest release](https://github.com/fobgochod/git-commit-message-format/releases/latest) and install it
+  manually using <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from
+  disk...</kbd>
 
 ---
 Plugin based on the [IntelliJ Platform Plugin Template][template].

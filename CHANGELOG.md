@@ -1,6 +1,6 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
-# git-commit-helper Changelog
+# git-commit-message-format Changelog
 
 ## [Unreleased]
 
