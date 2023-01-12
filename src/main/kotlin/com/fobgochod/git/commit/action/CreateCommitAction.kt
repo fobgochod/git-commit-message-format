@@ -17,7 +17,7 @@ class CreateCommitAction() : AnAction(), DumbAware {
 
     init {
         templatePresentation.text = GitBundle.message("action.toolbar.create.commit.message.text")
-        templatePresentation.icon = GitIcons.COMMIT_MESSAGE_ACTION
+        templatePresentation.icon = GitIcons.LOGO_ACTION
     }
 
     override fun actionPerformed(event: AnActionEvent) {

@@ -8,12 +8,13 @@ import com.fobgochod.git.commit.util.GitIcons
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.ui.AnActionButton
 import java.util.*
 
-class RestoreTypesAction(private val typeTable: TypeTable) : AnAction(
+class RestoreTypesAction(private val typeTable: TypeTable) : AnActionButton(
     GitBundle.message("action.toolbar.restore.text"),
     GitBundle.message("action.toolbar.restore.description"),
-    GitIcons.RESTORE
+    GitIcons.RESTORE_ACTION
 ) {
 
     private val typeRows: MutableList<TypeRow> = LinkedList()
@@ -30,8 +31,8 @@ class RestoreTypesAction(private val typeTable: TypeTable) : AnAction(
         typeTable.reset(typeRows)
     }
 
-    override fun update(event: AnActionEvent) {
-        super.update(event)
+    override fun updateButton(event: AnActionEvent) {
+        // super.update(event)
         event.presentation.isEnabled = typeRows != typeTable.typeRows
     }
 

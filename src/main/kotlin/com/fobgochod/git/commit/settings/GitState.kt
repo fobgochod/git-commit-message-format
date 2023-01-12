@@ -19,7 +19,7 @@ import java.util.*
     name = GitState.NAME,
     storages = [Storage(GitState.STORAGES)]
 )
-class GitState : PersistentStateComponent<GitState?> {
+class GitState : PersistentStateComponent<GitState> {
 
     var commonCount: Int = GitConstant.COMMON_TYPE_COUNT
     var typeRows: MutableList<TypeRow> = LinkedList()
