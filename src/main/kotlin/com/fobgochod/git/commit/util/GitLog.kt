@@ -11,32 +11,32 @@ import java.util.regex.Pattern
 class GitLog(private val project: Project?) {
 
     companion object {
-        const val GIT_LOG_COMMAND: String = "git log --all --format=%s";
-        val SCOPE_PATTERN: Pattern = Pattern.compile("^[a-z]+\\((.+)\\):.*");
+        const val GIT_LOG_COMMAND: String = "git log --all --format=%s"
+        val SCOPE_PATTERN: Pattern = Pattern.compile("^[a-z]+\\((.+)\\):.*")
     }
 
     fun execute(): Result {
         val basePath = File(project?.basePath)
         try {
-            val osName: String = System.getProperty("os.name");
+            val osName: String = System.getProperty("os.name")
             val processBuilder: ProcessBuilder = if (osName.contains("Windows")) {
-                ProcessBuilder("cmd", "/C", GIT_LOG_COMMAND);
+                ProcessBuilder("cmd", "/C", GIT_LOG_COMMAND)
             } else {
-                ProcessBuilder("sh", "-c", GIT_LOG_COMMAND);
+                ProcessBuilder("sh", "-c", GIT_LOG_COMMAND)
             }
 
-            val process: Process = processBuilder.directory(basePath).start();
+            val process: Process = processBuilder.directory(basePath).start()
 
-            val reader = BufferedReader(InputStreamReader(process.inputStream));
-            val output: List<String> = reader.lines().toList();
+            val reader = BufferedReader(InputStreamReader(process.inputStream))
+            val output: List<String> = reader.lines().toList()
 
-            process.waitFor(2, TimeUnit.SECONDS);
-            process.destroy();
-            process.waitFor();
+            process.waitFor(2, TimeUnit.SECONDS)
+            process.destroy()
+            process.waitFor()
 
-            return Result(process.exitValue(), output);
+            return Result(process.exitValue(), output)
         } catch (e: Exception) {
-            return Result(-1);
+            return Result(-1)
         }
     }
 
@@ -47,15 +47,15 @@ class GitLog(private val project: Project?) {
         }
 
         fun getScopes(): Set<String> {
-            val scopes: Set<String> = HashSet();
+            val scopes: Set<String> = HashSet()
 
             logs.forEach { log ->
-                val matcher: Matcher = SCOPE_PATTERN.matcher(log);
+                val matcher: Matcher = SCOPE_PATTERN.matcher(log)
                 if (matcher.find()) {
                     scopes.plus(matcher.group(1));
                 }
             }
-            return scopes;
+            return scopes
         }
     }
 }

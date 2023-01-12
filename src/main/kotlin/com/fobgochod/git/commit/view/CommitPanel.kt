@@ -22,7 +22,7 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
 
     private var state: GitState = GitState.getInstance()
 
-    private val formBuilder = FormBuilder.createFormBuilder();
+    private val formBuilder = FormBuilder.createFormBuilder()
 
     private val changeTypePanel = JPanel()
     private val changeTypeGroup = ButtonGroup();
@@ -61,7 +61,7 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
                 changeTypePanel.add(radioButton)
             }
         }
-        changeTypePanel.add(changeType);
+        changeTypePanel.add(changeType)
 
         changeScope.isEditable = true
         changeScopePanel.add(changeScope, BorderLayout.CENTER)
@@ -99,7 +99,7 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
             } else {
                 for (element in changeTypeGroup.elements) {
                     if (item == state.getTypeFromName(element.text)) {
-                        element.isSelected = true;
+                        element.isSelected = true
                     }
                 }
             }

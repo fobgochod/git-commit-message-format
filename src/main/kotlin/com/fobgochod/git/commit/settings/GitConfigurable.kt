@@ -14,7 +14,7 @@ class GitConfigurable : SearchableConfigurable {
     private var component: GitComponent = GitComponent()
 
     override fun getId(): String {
-        return GitConfigurable::class.java.name;
+        return GitConfigurable::class.java.name
     }
 
     override fun createComponent(): JComponent {

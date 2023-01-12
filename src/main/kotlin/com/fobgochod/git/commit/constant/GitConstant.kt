@@ -9,14 +9,6 @@ object GitConstant {
      */
     const val COMMON_TYPE_COUNT = 3;
 
-    val DEFAULT_TEMPLATE = """
-                <type>(<scope>): <subject>
-                <BLANK LINE>
-                <body>
-                <BLANK LINE>
-                <footer>
-            """.trimIndent()
-
     /**
      * https://stackoverflow.com/a/2120040/5138796
      */

@@ -19,7 +19,7 @@ class GitComponent {
     /**
      * main panel
      */
-    val mainPanel: JPanel = JPanel(BorderLayout(0, 10))
+    val mainPanel: JPanel = JPanel(BorderLayout(0, 6))
 
     /**
      * type标签
@@ -48,7 +48,6 @@ class GitComponent {
                 .setMoveDownAction { typeTable.moveDown() }
                 .addExtraAction(ResetTypeAction(typeTable))
                 .addExtraAction(RestoreTypesAction(typeTable))
-                .setToolbarPosition(ActionToolbarPosition.RIGHT)
                 .createPanel(),
             BorderLayout.CENTER)
         mainPanel.add(

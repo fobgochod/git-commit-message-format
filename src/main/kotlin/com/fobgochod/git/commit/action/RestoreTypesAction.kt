@@ -6,7 +6,6 @@ import com.fobgochod.git.commit.domain.TypeTable
 import com.fobgochod.git.commit.util.GitBundle
 import com.fobgochod.git.commit.util.GitIcons
 import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.ui.AnActionButton
 import java.util.*

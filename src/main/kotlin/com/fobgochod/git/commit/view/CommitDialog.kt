@@ -17,10 +17,10 @@ class CommitDialog(project: Project?, commitMessage: CommitMessage) : DialogWrap
     }
 
     override fun createCenterPanel(): JComponent {
-        return panel.root;
+        return panel.root
     }
 
     fun getCommitMessage(): String {
-        return panel.getCommitMessage().toString();
+        return panel.getCommitMessage().toString()
     }
 }
