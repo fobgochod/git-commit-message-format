@@ -104,10 +104,10 @@ tasks {
         systemProperty("jb.consents.confirmation.enabled", "false")
     }
 
-    runPluginVerifier {
-        ideVersions.set(listOf("IC-2022.2.4", "IC-2022.3.1"))
-        downloadDir.set("D:\\install\\JetBrains\\pluginVerifier\\ides")
-    }
+//    runPluginVerifier {
+//        ideVersions.set(listOf("IC-2022.2.4", "IC-2022.3.1"))
+//        downloadDir.set("D:\\install\\JetBrains\\pluginVerifier\\ides")
+//    }
 
     signPlugin {
         certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
