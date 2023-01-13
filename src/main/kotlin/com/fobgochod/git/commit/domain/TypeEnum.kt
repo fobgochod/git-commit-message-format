@@ -22,7 +22,7 @@ enum class TypeEnum {
     }
 
     fun description(): String {
-        return GitBundle.message("change.type.${this.type()}");
+        return GitBundle.message("change.type.${this.type()}")
     }
 
     override fun toString(): String {

@@ -7,7 +7,7 @@ object GitConstant {
     /**
      * 常用类型个数
      */
-    const val COMMON_TYPE_COUNT = 3;
+    const val COMMON_TYPE_COUNT = 3
 
     /**
      * https://stackoverflow.com/a/2120040/5138796

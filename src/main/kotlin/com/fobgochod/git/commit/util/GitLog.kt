@@ -28,7 +28,7 @@ class GitLog(private val project: Project?) {
             val process: Process = processBuilder.directory(basePath).start()
 
             val reader = BufferedReader(InputStreamReader(process.inputStream))
-            val output: List<String> = reader.lines().toList()
+            val output: List<String> = reader.readText().split("\n")
 
             process.waitFor(2, TimeUnit.SECONDS)
             process.destroy()
@@ -43,7 +43,7 @@ class GitLog(private val project: Project?) {
     inner class Result(private val exitValue: Int, private val logs: List<String> = emptyList()) {
 
         fun isSuccess(): Boolean {
-            return exitValue == 0;
+            return exitValue == 0
         }
 
         fun getScopes(): Set<String> {
@@ -52,7 +52,7 @@ class GitLog(private val project: Project?) {
             logs.forEach { log ->
                 val matcher: Matcher = SCOPE_PATTERN.matcher(log)
                 if (matcher.find()) {
-                    scopes.plus(matcher.group(1));
+                    scopes.plus(matcher.group(1))
                 }
             }
             return scopes

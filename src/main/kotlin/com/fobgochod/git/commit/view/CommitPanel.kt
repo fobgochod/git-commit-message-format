@@ -25,7 +25,7 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
     private val formBuilder = FormBuilder.createFormBuilder()
 
     private val changeTypePanel = JPanel()
-    private val changeTypeGroup = ButtonGroup();
+    private val changeTypeGroup = ButtonGroup()
     private val changeType: JComboBox<TypeRow> = ComboBox()
 
     private val changeScopePanel = JPanel(BorderLayout())
@@ -48,7 +48,7 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
     }
 
     private fun initView() {
-        var maxCount = state.commonCount;
+        var maxCount = state.commonCount
         if (state.commonCount > state.typeRows.size) {
             maxCount = state.typeRows.size
         }
@@ -121,7 +121,7 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
         val result = GitLog(project).execute()
         if (result.isSuccess()) {
             changeScope.addItem("") // no value by default
-            result.getScopes().forEach(changeScope::addItem);
+            result.getScopes().forEach(changeScope::addItem)
         }
 
         restoreFromParsedCommitMessage(commitMessage)

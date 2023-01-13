@@ -77,12 +77,12 @@ data class CommitMessage(
     }
 
     override fun toString(): String {
-        val builder: StringBuilder = StringBuilder();
-        builder.append(changeType);
+        val builder: StringBuilder = StringBuilder()
+        builder.append(changeType)
         if (StringUtils.isNotBlank(changeScope)) {
-            builder.append('(').append(changeScope).append(')');
+            builder.append('(').append(changeScope).append(')')
         }
-        builder.append(": ").append(changeSubject);
+        builder.append(": ").append(changeSubject)
 
         if (StringUtils.isNotBlank(changeBody)) {
             builder.append(System.lineSeparator()).append(System.lineSeparator())
@@ -94,7 +94,7 @@ data class CommitMessage(
         }
 
         if (StringUtils.isNotBlank(breakingChanges)) {
-            val breakingContent = GitConstant.BREAKING_CHANGE_PREFIX + breakingChanges;
+            val breakingContent = GitConstant.BREAKING_CHANGE_PREFIX + breakingChanges
             builder.append(System.lineSeparator()).append(System.lineSeparator())
             if (wrapText) {
                 builder.append(WordUtils.wrap(breakingContent, GitConstant.MAX_LINE_LENGTH))
@@ -104,18 +104,18 @@ data class CommitMessage(
         }
 
         if (StringUtils.isNotBlank(closedIssues)) {
-            builder.append(System.lineSeparator());
+            builder.append(System.lineSeparator())
             for (closedIssue: String in closedIssues.split(",")) {
                 builder.append(System.lineSeparator()).append(GitConstant.CLOSES_PREFIX)
-                    .append(formatClosedIssue(closedIssue));
+                    .append(formatClosedIssue(closedIssue))
             }
         }
 
         if (skipCI) {
-            builder.append(System.lineSeparator()).append(System.lineSeparator()).append(GitConstant.SKIP_CI);
+            builder.append(System.lineSeparator()).append(System.lineSeparator()).append(GitConstant.SKIP_CI)
         }
 
-        return builder.toString();
+        return builder.toString()
     }
 
 

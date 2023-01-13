@@ -4,7 +4,6 @@ import com.fobgochod.git.commit.action.ResetTypeAction
 import com.fobgochod.git.commit.action.RestoreTypesAction
 import com.fobgochod.git.commit.domain.TypeTable
 import com.fobgochod.git.commit.util.GitBundle
-import com.intellij.openapi.actionSystem.ActionToolbarPosition
 import com.intellij.ui.DoubleClickListener
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.util.ui.FormBuilder
