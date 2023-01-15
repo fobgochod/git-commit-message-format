@@ -1,7 +1,7 @@
 package com.fobgochod.git.commit.domain
 
 /**
- * 类型
+ * commit type
  *
  * @author fobgochod
  * @date 2022/12/11 23:16

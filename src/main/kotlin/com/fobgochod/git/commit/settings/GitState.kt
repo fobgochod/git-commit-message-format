@@ -10,18 +10,13 @@ import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil
 import java.util.*
 
-/**
- * Supports storing the application settings in a persistent way.
- * The [State] and [Storage] annotations define the name of the data and the file name where
- * these persistent application settings are stored.
- */
 @State(
     name = GitState.NAME,
     storages = [Storage(GitState.STORAGES)]
 )
 class GitState : PersistentStateComponent<GitState> {
 
-    var commonCount: Int = GitConstant.COMMON_TYPE_COUNT
+    var typeCount: Int = GitConstant.RADIO_BUTTON_TYPE_COUNT
     var typeRows: MutableList<TypeRow> = LinkedList()
 
     init {
@@ -59,8 +54,6 @@ class GitState : PersistentStateComponent<GitState> {
         const val NAME = "GitCommitMessageFormat"
         const val STORAGES = "git.commit.message.format.xml"
 
-        // CommandLineProjectOpenProcessor
-        // PlatformProjectOpenProcessor
         @JvmStatic
         fun getInstance(): GitState =
             ApplicationManager.getApplication().getService(GitState::class.java)

@@ -92,11 +92,11 @@ this [document](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHOR
 
 ## Reference
 
-> - [AngularJS's commit message convention](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines)
-> - [The commitizen command line utility](https://github.com/commitizen/cz-cli)
-> - [Commit message 和 Change log 编写指南](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)
-> - [Git Commit Template](https://github.com/MobileTribe/commit-template-idea-plugin)
-> - [Git Commit Message Helper](https://github.com/AutismSuperman/git-commit-message-helper)
+- [AngularJS's commit message convention](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines)
+- [The commitizen command line utility](https://github.com/commitizen/cz-cli)
+- [Commit message 和 Change log 编写指南](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)
+- [Git Commit Template](https://github.com/MobileTribe/commit-template-idea-plugin)
+- [Git Commit Message Helper](https://github.com/AutismSuperman/git-commit-message-helper)
 
 ## Installation
 

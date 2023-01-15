@@ -2,7 +2,7 @@ package com.fobgochod.git.commit.domain
 
 import com.fobgochod.git.commit.settings.GitState
 import com.fobgochod.git.commit.util.GitBundle
-import com.fobgochod.git.commit.view.TypeEditor
+import com.fobgochod.git.commit.view.TypeDialog
 import com.intellij.ui.JBColor
 import com.intellij.ui.table.JBTable
 import java.awt.Component
@@ -14,7 +14,7 @@ import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.TableColumn
 
 /**
- * TypeTable.java
+ * commit type table
  *
  * @author fobgochod
  * @date 2022/12/13 2:13
@@ -60,10 +60,10 @@ class TypeTable : JBTable() {
     }
 
     fun addRow() {
-        val rowEditor = TypeEditor(GitBundle.message("settings.type.dialog.add.title"), "", "")
-        if (rowEditor.showAndGet()) {
-            val name = rowEditor.name()
-            typeRows.add(TypeRow(name, rowEditor.description()))
+        val typeDialog = TypeDialog(GitBundle.message("settings.type.dialog.add.title"), "", "")
+        if (typeDialog.showAndGet()) {
+            val name = typeDialog.name()
+            typeRows.add(TypeRow(name, typeDialog.description()))
             val index = indexOfRowWithName(name)
             if (isValidRow(index)) {
                 myTableModel.fireTableDataChanged()
@@ -98,10 +98,10 @@ class TypeTable : JBTable() {
         }
         val selectedRow = selectedRow
         val typeRow = typeRows[selectedRow]
-        val editor = TypeEditor(GitBundle.message("settings.type.dialog.edit.title"), typeRow.name, typeRow.description)
-        if (editor.showAndGet()) {
-            typeRow.name = editor.name()
-            typeRow.description = editor.description()
+        val typeDialog = TypeDialog(GitBundle.message("settings.type.dialog.edit.title"), typeRow.name, typeRow.description)
+        if (typeDialog.showAndGet()) {
+            typeRow.name = typeDialog.name()
+            typeRow.description = typeDialog.description()
             myTableModel.fireTableDataChanged()
         }
         return true

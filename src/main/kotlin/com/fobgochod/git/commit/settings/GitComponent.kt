@@ -24,7 +24,7 @@ class GitComponent {
      * type标签
      */
     val typeTable: TypeTable = TypeTable()
-    val commonCountField: JTextField = JTextField()
+    val typeCountField: JTextField = JTextField()
 
     init {
         initView()
@@ -51,7 +51,7 @@ class GitComponent {
             BorderLayout.CENTER)
         mainPanel.add(
             FormBuilder.createFormBuilder()
-                .addLabeledComponent(JLabel(GitBundle.message("settings.common.type.count")), commonCountField).panel,
+                .addLabeledComponent(JLabel(GitBundle.message("settings.common.type.count")), typeCountField).panel,
             BorderLayout.SOUTH
         )
     }

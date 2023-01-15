@@ -5,9 +5,6 @@ import com.intellij.openapi.options.SearchableConfigurable
 import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 
-/**
- * 这个类Settings 中的属性被创建的时候
- */
 class GitConfigurable : SearchableConfigurable {
 
     private var state: GitState = GitState.getInstance()
@@ -27,17 +24,17 @@ class GitConfigurable : SearchableConfigurable {
 
     override fun reset() {
         component.typeTable.reset(state.typeRows)
-        component.commonCountField.text = state.commonCount.toString()
+        component.typeCountField.text = state.typeCount.toString()
     }
 
     override fun isModified(): Boolean {
         val typeRows = component.typeTable.typeRows
-        val commonCount: Int = component.commonCountField.text.toInt()
-        return typeRows != state.typeRows || commonCount != state.commonCount
+        val typeCount: Int = component.typeCountField.text.toInt()
+        return typeRows != state.typeRows || typeCount != state.typeCount
     }
 
     override fun apply() {
         state.typeRows = component.typeTable.typeRows
-        state.commonCount = component.commonCountField.text.toInt()
+        state.typeCount = component.typeCountField.text.toInt()
     }
 }

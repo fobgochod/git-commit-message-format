@@ -10,26 +10,32 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-class TypeEditor(title: String, name: String, description: String) : DialogWrapper(true) {
+class TypeDialog(
+    title: String,
+    private val name: String,
+    private val description: String
+) : DialogWrapper(true) {
 
-    private val root: JPanel
+    private val root: JPanel = JPanel(BorderLayout())
+    private val formBuilder: FormBuilder = FormBuilder.createFormBuilder()
     private val nameLabel = JLabel(GitBundle.message("settings.type.table.column.1"))
-    private val nameField: JBTextField
+    private val nameField: JBTextField = JBTextField()
     private val descriptionLabel = JLabel(GitBundle.message("settings.type.table.column.2"))
-    private val descriptionField: JBTextField
+    private val descriptionField: JBTextField = JBTextField()
 
     init {
         setTitle(title)
-        root = JPanel(BorderLayout())
-        nameField = JBTextField(name)
-        descriptionField = JBTextField(description)
-        val formBuilder = FormBuilder.createFormBuilder()
-            .addLabeledComponent(nameLabel, nameField)
-            .addLabeledComponent(descriptionLabel, descriptionField)
+        initView()
+        init()
+    }
 
+    private fun initView() {
+        nameField.text = name
+        descriptionField.text = description
+        formBuilder.addLabeledComponent(nameLabel, nameField)
+            .addLabeledComponent(descriptionLabel, descriptionField)
         root.add(formBuilder.panel, BorderLayout.CENTER)
         root.preferredSize = Dimension(500, 0)
-        init()
     }
 
     fun name(): String = nameField.text.trim()

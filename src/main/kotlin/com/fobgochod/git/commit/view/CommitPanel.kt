@@ -17,6 +17,7 @@ import java.awt.event.ItemEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
+import kotlin.math.min
 
 class CommitPanel(val project: Project?, private val commitMessage: CommitMessage) {
 
@@ -48,14 +49,10 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
     }
 
     private fun initView() {
-        var maxCount = state.commonCount
-        if (state.commonCount > state.typeRows.size) {
-            maxCount = state.typeRows.size
-        }
-
-        changeTypePanel.layout = GridLayout(maxCount + 1, 1)
+        val minCount = min(state.typeCount, state.typeRows.size)
+        changeTypePanel.layout = GridLayout(minCount + 1, 1)
         for ((index, type) in state.typeRows.withIndex()) {
-            if (index < state.commonCount) {
+            if (index < state.typeCount) {
                 val radioButton = JRadioButton(type.toString())
                 changeTypeGroup.add(radioButton)
                 changeTypePanel.add(radioButton)
@@ -73,13 +70,13 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
         bottomPanel.add(editSettings, BorderLayout.EAST)
 
         formBuilder.panel.minimumSize = Dimension(600, 0)
-        formBuilder.addLabeledComponent(JLabel("Type of change"), changeTypePanel)
-            .addLabeledComponent(JLabel("Scope of change"), changeScopePanel)
-            .addLabeledComponent(JLabel("Subject of change"), changeSubject)
-            .addLabeledComponent(JLabel("Body of change"), changeBody)
+        formBuilder.addLabeledComponent(JLabel(GitBundle.message("dialog.form.label.type")), changeTypePanel)
+            .addLabeledComponent(JLabel(GitBundle.message("dialog.form.label.scope")), changeScopePanel)
+            .addLabeledComponent(JLabel(GitBundle.message("dialog.form.label.subject")), changeSubject)
+            .addLabeledComponent(JLabel(GitBundle.message("dialog.form.label.body")), changeBody)
             .addComponentToRightColumn(wrapText)
-            .addLabeledComponent(JLabel("Breaking Changes"), breakingChanges)
-            .addLabeledComponent(JLabel("Closed Issues"), closedIssues)
+            .addLabeledComponent(JLabel(GitBundle.message("dialog.form.label.breaking")), breakingChanges)
+            .addLabeledComponent(JLabel(GitBundle.message("dialog.form.label.issues")), closedIssues)
             .addComponentToRightColumn(bottomPanel)
     }
 
@@ -94,7 +91,7 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
 
         changeType.addItemListener { e: ItemEvent ->
             val item: TypeRow = e.item as TypeRow
-            if (state.typeRows.indexOf(item) > state.commonCount) {
+            if (state.typeRows.indexOf(item) > state.typeCount) {
                 changeTypeGroup.clearSelection()
             } else {
                 for (element in changeTypeGroup.elements) {
