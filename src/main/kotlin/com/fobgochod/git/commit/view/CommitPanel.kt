@@ -18,7 +18,6 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.ButtonGroup
 import javax.swing.JPanel
-import kotlin.math.min
 
 class CommitPanel(val project: Project?, private val commitMessage: CommitMessage) : JPanel() {
 
@@ -26,7 +25,7 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
 
     private val formBuilder = FormBuilder.createFormBuilder()
 
-    private val changeTypePanel = JPanel()
+    private val changeTypePanel = JPanel(GridLayout(0, 1))
     private val changeTypeGroup = ButtonGroup()
     private val changeType: ComboBox<TypeRow> = ComboBox()
 
@@ -52,8 +51,6 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
     }
 
     private fun initView() {
-        val minCount = min(state.typeCount, state.typeRows.size)
-        changeTypePanel.layout = GridLayout(minCount + 1, 1)
         for ((index, type) in state.typeRows.withIndex()) {
             if (index < state.typeCount) {
                 val radioButton = JBRadioButton(type.toString())
@@ -62,7 +59,11 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
                 changeTypePanel.add(radioButton)
             }
         }
-        changeTypePanel.add(changeType)
+        if (state.typeCount < state.typeRows.size) {
+            changeTypePanel.add(changeType)
+        } else {
+            changeTypePanel.layout = GridLayout(0, 1, 0, 5)
+        }
 
         changeScope.isEditable = true
         changeScopePanel.add(changeScope, BorderLayout.CENTER)
@@ -74,13 +75,13 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
         bottomPanel.add(editSettings, BorderLayout.EAST)
 
         formBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.type"), changeTypePanel)
-            .addLabeledComponent(GitBundle.message("dialog.form.label.scope"), changeScopePanel)
-            .addLabeledComponent(GitBundle.message("dialog.form.label.subject"), changeSubject)
-            .addLabeledComponent(GitBundle.message("dialog.form.label.body"), changeBody, 10, false)
-            .addComponentToRightColumn(wrapText)
-            .addLabeledComponent(GitBundle.message("dialog.form.label.breaking"), breakingChanges)
-            .addLabeledComponent(GitBundle.message("dialog.form.label.issues"), closedIssues)
-            .addComponentToRightColumn(bottomPanel)
+                .addLabeledComponent(GitBundle.message("dialog.form.label.scope"), changeScopePanel)
+                .addLabeledComponent(GitBundle.message("dialog.form.label.subject"), changeSubject)
+                .addLabeledComponent(GitBundle.message("dialog.form.label.body"), changeBody)
+                .addComponentToRightColumn(wrapText)
+                .addLabeledComponent(GitBundle.message("dialog.form.label.breaking"), breakingChanges)
+                .addLabeledComponent(GitBundle.message("dialog.form.label.issues"), closedIssues)
+                .addComponentToRightColumn(bottomPanel)
     }
 
     private fun initEvent() {
@@ -129,18 +130,18 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
 
     fun getCommitMessage(): CommitMessage {
         return CommitMessage(
-            getChangeType(),
-            getChangeScope(),
-            changeSubject.text.trim { it <= ' ' },
-            changeBody.text.trim { it <= ' ' },
-            wrapText.isSelected,
-            breakingChanges.text.trim { it <= ' ' },
-            closedIssues.text.trim { it <= ' ' },
-            skipCI.isSelected
+                getChangeTypeName(),
+                getChangeScope(),
+                changeSubject.text.trim { it <= ' ' },
+                changeBody.text.trim { it <= ' ' },
+                wrapText.isSelected,
+                breakingChanges.text.trim { it <= ' ' },
+                closedIssues.text.trim { it <= ' ' },
+                skipCI.isSelected
         )
     }
 
-    private fun getChangeType(): String {
+    private fun getChangeTypeName(): String {
         val selectedItem = changeType.selectedItem
         return (selectedItem as TypeRow).name
     }
@@ -151,7 +152,7 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
     }
 
     private fun restoreFromParsedCommitMessage(commitMessage: CommitMessage) {
-        changeType.selectedItem = commitMessage.changeType
+        changeType.selectedItem = getChangeTypeByName(commitMessage.changeType)
         changeScope.selectedItem = commitMessage.changeScope
         changeSubject.text = commitMessage.changeSubject
         changeBody.text = commitMessage.changeBody
@@ -159,5 +160,14 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
         breakingChanges.text = commitMessage.breakingChanges
         closedIssues.text = commitMessage.closedIssues
         skipCI.isSelected = commitMessage.skipCI
+    }
+
+    private fun getChangeTypeByName(name: String): TypeRow {
+        for (typeRow in state.typeRows) {
+            if (name == typeRow.name) {
+                return typeRow;
+            }
+        }
+        return state.typeRows[0];
     }
 }
