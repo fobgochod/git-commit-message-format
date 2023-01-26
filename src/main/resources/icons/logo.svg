@@ -1,5 +1,1 @@
-<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="1" y="9" width="14" height="2" fill="#9AA7B0" fill-opacity="0.8"/>
-    <rect x="2" y="12" width="12" height="2" fill="#9AA7B0" fill-opacity="0.8"/>
-    <path d="M11 2H5V4L7 5V9H9V5L11 4V2Z" fill="#9AA7B0" fill-opacity="0.8"/>
-</svg>
+<svg ti:v='1' width='16' height='16' viewBox='0,0,16,16' xmlns='http://www.w3.org/2000/svg' xmlns:ti='urn:schemas-jetbrains-com:tisvg'><g><path d='M0,0L16,0L16,16L0,16Z' fill='#FFFFFF' opacity='0'/><path d='M1,2L1,3.5L2,4.5L2,6L1,7L1,8L2,9L2,10.5L1,11.5L1,13L15,13L15,2ZM1,2M14,12L2,12L2,11.914L3,10.914L3,8.587L2,7.587L2,7.416L3,6.416L3,4.086L2,3.0860000000000003L2,3L14,3ZM14,12' fill='#9AA7B0' opacity='0.8'/><path d='M12,5L5,5L5,4L12,4ZM12,5M10,6L5,6L5,7L10,7ZM10,6M8,10L5,10L5,11L8,11ZM8,10M11,8L5,8L5,9L11,9ZM11,8' fill='#9AA7B0' opacity='0.8'/></g></svg>
