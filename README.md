@@ -1,8 +1,8 @@
 # Git Commit Message Format
 
-[![Build](https://github.com/fobgochod/git-commit-message-format/workflows/Build/badge.svg)](https://github.com/fobgochod/git-commit-message-format/actions?query=workflow%3ABuild)
-[![Version](https://img.shields.io/jetbrains/plugin/v/20317.svg)](https://plugins.jetbrains.com/plugin/20317)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/20317.svg)](https://plugins.jetbrains.com/plugin/20317)
+[![Build](https://github.com/fobgochod/git-commit-message-format/workflows/Build/badge.svg)][gh:build]
+[![Version](https://img.shields.io/jetbrains/plugin/v/20935.svg)][jb:git-commit-message-format]
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/20935.svg)][jb:git-commit-message-format]
 
 
 <!-- Plugin description -->
@@ -14,7 +14,7 @@ readable messages** that are easy to follow when looking through the **project h
 we use the git commit messages to **generate the AngularJS change log**.
 
 The commit message formatting can be added using a typical git workflow or through the use of a CLI
-wizard ([Commitizen](https://github.com/commitizen/cz-cli)). To use the wizard, run `yarn run commit`
+wizard ([Commitizen][gh:cz-cli]). To use the wizard, run `yarn run commit`
 in your terminal after staging your changes in git.
 
 ### Commit Message Format
@@ -80,23 +80,15 @@ The body should include the motivation for the change and contrast this with pre
 ### Footer
 
 The footer should contain any information about **Breaking Changes** and is also the place to
-[reference GitHub issues that this commit closes](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue).
+[reference GitHub issues that this commit closes][gh:closing-issues].
 
 **Breaking Changes** should start with the word `BREAKING CHANGE:` with a space or two newlines.
 The rest of the commit message is then used for this.
 
 A detailed explanation can be found in
-this [document](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#).
+this [document][docs:commit-message-format].
 
 <!-- Plugin description end -->
-
-## Reference
-
-- [AngularJS's commit message convention](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines)
-- [The commitizen command line utility](https://github.com/commitizen/cz-cli)
-- [Commit message 和 Change log 编写指南](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)
-- [Git Commit Template](https://github.com/MobileTribe/commit-template-idea-plugin)
-- [Git Commit Message Helper](https://github.com/AutismSuperman/git-commit-message-helper)
 
 ## Installation
 
@@ -108,11 +100,38 @@ this [document](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHOR
 
 - Manually:
 
-  Download the [latest release](https://github.com/fobgochod/git-commit-message-format/releases/latest) and install it
+  Download the [latest release][gh:releases-latest] and install it
   manually using <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from
   disk...</kbd>
 
----
-Plugin based on the [IntelliJ Platform Plugin Template][template].
+## Usage
 
-[template]: https://github.com/JetBrains/intellij-platform-plugin-template
+![commit-step1](doc/commit-template-1.png)
+
+![commit-step2](doc/commit-template-2.png)
+
+![commit-step3](doc/commit-template-3.png)
+
+## Reference
+
+- [AngularJS's commit message convention][docs:commit-message-convention]
+- [The commitizen command line utility][cz:cli]
+- [Commit message 和 Change log 编写指南][docs:commit-message-change-log]
+- [Git Commit Template][gh:commit-template-idea-plugin]
+- [Git Commit Message Helper][gh:git-commit-message-helper]
+
+---
+Plugin based on the [IntelliJ Platform Plugin Template][gh:intellij-platform-plugin-template].
+
+
+[gh:build]: https://github.com/fobgochod/git-commit-message-format/actions?query=workflow%3ABuild
+[gh:closing-issues]: https://help.github.com/articles/closing-issues-via-commit-messages/
+[gh:releases-latest]:https://github.com/fobgochod/git-commit-message-format/releases/latest
+[gh:cz-cli]: https://github.com/commitizen/cz-cli
+[gh:commit-template-idea-plugin]: https://github.com/MobileTribe/commit-template-idea-plugin
+[gh:git-commit-message-helper]: https://github.com/AutismSuperman/git-commit-message-helper
+[gh:intellij-platform-plugin-template]: https://github.com/JetBrains/intellij-platform-plugin-template
+[jb:git-commit-message-format]: https://plugins.jetbrains.com/plugin/20935
+[docs:commit-message-format]: https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#
+[docs:commit-message-change-log]: http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html
+[docs:commit-message-convention]: https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines
