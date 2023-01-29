@@ -4,6 +4,7 @@
 [![Version](https://img.shields.io/jetbrains/plugin/v/20935.svg)][jb:git-commit-message-format]
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/20935.svg)][jb:git-commit-message-format]
 
+![pluginIcon](src/main/resources/META-INF/pluginIcon.svg)
 
 <!-- Plugin description -->
 
@@ -115,7 +116,7 @@ this [document][docs:commit-message-format].
 ## Reference
 
 - [AngularJS's commit message convention][docs:commit-message-convention]
-- [The commitizen command line utility][cz:cli]
+- [The commitizen command line utility][gh:cz-cli]
 - [Commit message 和 Change log 编写指南][docs:commit-message-change-log]
 - [Git Commit Template][gh:commit-template-idea-plugin]
 - [Git Commit Message Helper][gh:git-commit-message-helper]
