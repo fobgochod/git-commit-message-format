@@ -26,6 +26,7 @@ version = properties("pluginVersion")
 repositories {
     mavenCentral()
 }
+
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.17.1")
 }
@@ -69,6 +70,7 @@ tasks {
         sourceCompatibility = "1.8"
         targetCompatibility = "1.8"
     }
+
     withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
     }
