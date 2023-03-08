@@ -3,7 +3,6 @@ package com.fobgochod.git.commit.action
 import com.fobgochod.git.commit.domain.TypeTable
 import com.fobgochod.git.commit.util.GitBundle
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.ui.AnActionButton
 
@@ -20,9 +19,5 @@ class ResetTypeAction(private val typeTable: TypeTable) : AnActionButton(
     override fun updateButton(event: AnActionEvent) {
         // super.update(event)
         event.presentation.isEnabled = typeTable.isModified()
-    }
-
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
     }
 }

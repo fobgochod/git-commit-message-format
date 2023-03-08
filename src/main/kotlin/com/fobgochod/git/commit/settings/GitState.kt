@@ -56,6 +56,6 @@ class GitState : PersistentStateComponent<GitState> {
 
         @JvmStatic
         fun getInstance(): GitState =
-            ApplicationManager.getApplication().getService(GitState::class.java)
+            ApplicationManager.getApplication().getComponent(GitState::class.java)
     }
 }

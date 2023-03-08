@@ -4,7 +4,6 @@ import com.fobgochod.git.commit.domain.CommitMessage
 import com.fobgochod.git.commit.util.GitBundle
 import com.fobgochod.git.commit.util.GitIcons
 import com.fobgochod.git.commit.view.CommitDialog
-import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
@@ -30,10 +29,6 @@ class CreateCommitAction : AnAction(), DumbAware {
         if (dialog.exitCode == DialogWrapper.OK_EXIT_CODE) {
             commitPanel.setCommitMessage(dialog.getCommitMessage())
         }
-    }
-
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
     }
 
     private fun parseExistingCommitMessage(commitPanel: CommitMessageI): CommitMessage {

@@ -18,7 +18,7 @@ enum class TypeEnum {
     REVERT;
 
     fun type(): String {
-        return name.lowercase(Locale.getDefault())
+        return name.toLowerCase(Locale.getDefault())
     }
 
     fun description(): String {

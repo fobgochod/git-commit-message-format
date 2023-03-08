@@ -1,13 +1,13 @@
 package com.fobgochod.git.commit.util
 
-import com.intellij.DynamicBundle
+import com.intellij.AbstractBundle
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
 
 @NonNls
 private const val BUNDLE = "messages.GitBundle"
 
-object GitBundle : DynamicBundle(BUNDLE) {
+object GitBundle : AbstractBundle(BUNDLE) {
 
     @JvmStatic
     fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any) =
