@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
-import java.util.concurrent.TimeUnit
+import java.nio.charset.StandardCharsets
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -26,13 +26,10 @@ class GitLog(private val project: Project?) {
             }
 
             val process: Process = processBuilder.directory(basePath).start()
+            val reader = BufferedReader(InputStreamReader(process.inputStream, StandardCharsets.UTF_8))
+            val output: List<String> = reader.lines().toList();
 
-            val reader = BufferedReader(InputStreamReader(process.inputStream))
-            val output: List<String> = reader.readText().split("\n")
-
-            process.waitFor(2, TimeUnit.SECONDS)
             process.destroy()
-            process.waitFor()
 
             return Result(process.exitValue(), output)
         } catch (e: Exception) {
@@ -40,22 +37,33 @@ class GitLog(private val project: Project?) {
         }
     }
 
-    inner class Result(private val exitValue: Int, private val logs: List<String> = emptyList()) {
+    inner class Result(exitValue: Int, private val logs: List<String> = emptyList()) {
 
-        fun isSuccess(): Boolean {
-            return exitValue == 0
+        val scopes: MutableSet<String> = LinkedHashSet()
+
+        init {
+            scopes.add("")
+            if (exitValue == 0) {
+                initScopesByPattern();
+            }
         }
 
-        fun getScopes(): Set<String> {
-            val scopes: Set<String> = HashSet()
+        private fun initScopes() {
+            logs.forEach { log ->
+                val header = log.split(" ")[0]
+                if (header.indexOf('(') > -1 && header.indexOf(')') > -1) {
+                    scopes.add(header.substring(header.indexOf('(') + 1, header.indexOf(')')))
+                }
+            }
+        }
 
+        private fun initScopesByPattern() {
             logs.forEach { log ->
                 val matcher: Matcher = SCOPE_PATTERN.matcher(log)
                 if (matcher.find()) {
-                    scopes.plus(matcher.group(1))
+                    scopes.add(matcher.group(1))
                 }
             }
-            return scopes
         }
     }
 }

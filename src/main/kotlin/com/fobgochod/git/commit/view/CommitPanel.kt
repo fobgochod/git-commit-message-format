@@ -120,10 +120,7 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
         }
 
         val result = GitLog(project).execute()
-        if (result.isSuccess()) {
-            changeScope.addItem("") // no value by default
-            result.getScopes().forEach(changeScope::addItem)
-        }
+        result.scopes.forEach(changeScope::addItem)
 
         restoreFromParsedCommitMessage(commitMessage)
     }

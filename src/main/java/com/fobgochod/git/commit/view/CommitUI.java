@@ -95,10 +95,7 @@ public class CommitUI {
         }
 
         GitLog.Result result = new GitLog(project).execute();
-        if (result.isSuccess()) {
-            changeScope.addItem("");
-            result.getScopes().forEach(changeScope::addItem);
-        }
+        result.getScopes().forEach(changeScope::addItem);
 
         restoreFromParsedCommitMessage(commitMessage);
     }
