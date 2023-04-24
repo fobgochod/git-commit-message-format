@@ -16,8 +16,9 @@ class GitLog(private val project: Project?) {
     }
 
     fun execute(): Result {
-        val basePath = File(project?.basePath)
         try {
+            val basePath = File(project?.basePath)
+
             val osName: String = System.getProperty("os.name")
             val processBuilder: ProcessBuilder = if (osName.contains("Windows")) {
                 ProcessBuilder("cmd", "/C", GIT_LOG_COMMAND)
@@ -27,11 +28,9 @@ class GitLog(private val project: Project?) {
 
             val process: Process = processBuilder.directory(basePath).start()
             val reader = BufferedReader(InputStreamReader(process.inputStream, StandardCharsets.UTF_8))
-            val output: List<String> = reader.lines().toList();
+            val logs: List<String> = reader.lines().toList();
 
-            process.destroy()
-
-            return Result(process.exitValue(), output)
+            return Result(process.exitValue(), logs)
         } catch (e: Exception) {
             return Result(-1)
         }
@@ -39,20 +38,25 @@ class GitLog(private val project: Project?) {
 
     inner class Result(exitValue: Int, private val logs: List<String> = emptyList()) {
 
+        private val isPattern: Boolean = true;
         val scopes: MutableSet<String> = LinkedHashSet()
 
         init {
             scopes.add("")
             if (exitValue == 0) {
-                initScopesByPattern();
+                if (isPattern) {
+                    initScopesByPattern();
+                } else {
+                    initScopes()
+                }
             }
         }
 
         private fun initScopes() {
             logs.forEach { log ->
-                val header = log.split(" ")[0]
-                if (header.indexOf('(') > -1 && header.indexOf(')') > -1) {
-                    scopes.add(header.substring(header.indexOf('(') + 1, header.indexOf(')')))
+                val typeScope = log.split(" ")[0]
+                if (typeScope.indexOf('(') > -1 && typeScope.indexOf(')') > -1) {
+                    scopes.add(typeScope.substring(typeScope.indexOf('(') + 1, typeScope.indexOf(')')))
                 }
             }
         }

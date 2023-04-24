@@ -9,6 +9,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.ui.setEmptyState
 import com.intellij.ui.components.*
 import com.intellij.util.ui.FormBuilder
 import java.awt.BorderLayout
@@ -23,7 +24,7 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
 
     private var state: GitState = GitState.getInstance()
 
-    private val formBuilder = FormBuilder.createFormBuilder()
+    private val mainBuilder = FormBuilder.createFormBuilder()
 
     private val changeTypePanel = JPanel(GridLayout(0, 1))
     private val changeTypeGroup = ButtonGroup()
@@ -34,17 +35,17 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
 
     private val changeSubject = JBTextField()
     private val changeBody = JBTextArea(6, 0)
-    private val wrapText = JBCheckBox("Wrap text at 72 characters?", true)
+    private val wrapText = JBCheckBox(GitBundle.message("dialog.form.label.wrap.text"), true)
     private val breakingChanges = JBTextArea(3, 0)
     private val closedIssues = JBTextField()
 
     private val bottomPanel: JPanel = JPanel(BorderLayout())
-    private val skipCI = JBCheckBox("Skip CI?")
-    private val editSettings = JBLabel(AllIcons.General.Settings)
+    private val skipCI = JBCheckBox(GitBundle.message("dialog.form.label.skip.ci"))
+    private val settings = JBLabel(AllIcons.General.Settings)
 
     init {
         layout = BorderLayout()
-        add(formBuilder.panel, BorderLayout.CENTER)
+        add(mainBuilder.panel, BorderLayout.CENTER)
         initView()
         initEvent()
         initData()
@@ -71,17 +72,19 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
         changeBody.lineWrap = true
         breakingChanges.lineWrap = true
 
-        bottomPanel.add(skipCI, BorderLayout.CENTER)
-        bottomPanel.add(editSettings, BorderLayout.EAST)
+        closedIssues.setEmptyState("#124,#245")
 
-        formBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.type"), changeTypePanel)
-                .addLabeledComponent(GitBundle.message("dialog.form.label.scope"), changeScopePanel)
-                .addLabeledComponent(GitBundle.message("dialog.form.label.subject"), changeSubject)
-                .addLabeledComponent(GitBundle.message("dialog.form.label.body"), changeBody)
-                .addComponentToRightColumn(wrapText)
-                .addLabeledComponent(GitBundle.message("dialog.form.label.breaking"), breakingChanges)
-                .addLabeledComponent(GitBundle.message("dialog.form.label.issues"), closedIssues)
-                .addComponentToRightColumn(bottomPanel)
+        bottomPanel.add(skipCI, BorderLayout.CENTER)
+        bottomPanel.add(settings, BorderLayout.EAST)
+
+        mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.type"), changeTypePanel)
+            .addLabeledComponent(GitBundle.message("dialog.form.label.scope"), changeScopePanel)
+            .addLabeledComponent(GitBundle.message("dialog.form.label.subject"), changeSubject)
+            .addLabeledComponent(GitBundle.message("dialog.form.label.body"), changeBody)
+            .addComponentToRightColumn(wrapText)
+            .addLabeledComponent(GitBundle.message("dialog.form.label.breaking"), breakingChanges)
+            .addLabeledComponent(GitBundle.message("dialog.form.label.issues"), closedIssues)
+            .addComponentToRightColumn(bottomPanel)
     }
 
     private fun initEvent() {
@@ -106,7 +109,7 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
             }
         }
 
-        editSettings.addMouseListener(object : MouseAdapter() {
+        settings.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 ShowSettingsUtil.getInstance().showSettingsDialog(project, GitBundle.message("plugin.name"))
             }
@@ -119,22 +122,22 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
             changeType.addItem(typeRow)
         }
 
-        val result = GitLog(project).execute()
-        result.scopes.forEach(changeScope::addItem)
+        val gitLog = GitLog(project).execute()
+        gitLog.scopes.forEach(changeScope::addItem)
 
         restoreFromParsedCommitMessage(commitMessage)
     }
 
     fun getCommitMessage(): CommitMessage {
         return CommitMessage(
-                getChangeTypeName(),
-                getChangeScope(),
-                changeSubject.text.trim { it <= ' ' },
-                changeBody.text.trim { it <= ' ' },
-                wrapText.isSelected,
-                breakingChanges.text.trim { it <= ' ' },
-                closedIssues.text.trim { it <= ' ' },
-                skipCI.isSelected
+            getChangeTypeName(),
+            getChangeScope(),
+            changeSubject.text.trim { it <= ' ' },
+            changeBody.text.trim { it <= ' ' },
+            wrapText.isSelected,
+            breakingChanges.text.trim { it <= ' ' },
+            closedIssues.text.trim { it <= ' ' },
+            skipCI.isSelected
         )
     }
 
