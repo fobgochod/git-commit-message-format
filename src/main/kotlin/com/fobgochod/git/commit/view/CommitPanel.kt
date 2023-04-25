@@ -165,9 +165,9 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
     private fun getChangeTypeByName(name: String): TypeRow {
         for (typeRow in state.typeRows) {
             if (name == typeRow.name) {
-                return typeRow;
+                return typeRow
             }
         }
-        return state.typeRows[0];
+        return state.typeRows[0]
     }
 }

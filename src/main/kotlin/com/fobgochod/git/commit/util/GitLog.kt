@@ -28,7 +28,7 @@ class GitLog(private val project: Project?) {
 
             val process: Process = processBuilder.directory(basePath).start()
             val reader = BufferedReader(InputStreamReader(process.inputStream, StandardCharsets.UTF_8))
-            val logs: List<String> = reader.lines().toList();
+            val logs: List<String> = reader.lines().toList()
 
             return Result(process.exitValue(), logs)
         } catch (e: Exception) {
@@ -38,14 +38,14 @@ class GitLog(private val project: Project?) {
 
     inner class Result(exitValue: Int, private val logs: List<String> = emptyList()) {
 
-        private val isPattern: Boolean = true;
+        private val isPattern: Boolean = true
         val scopes: MutableSet<String> = LinkedHashSet()
 
         init {
             scopes.add("")
             if (exitValue == 0) {
                 if (isPattern) {
-                    initScopesByPattern();
+                    initScopesByPattern()
                 } else {
                     initScopes()
                 }

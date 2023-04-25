@@ -119,12 +119,12 @@ public class CommitUI {
 
     private String getChangeType() {
         Object selectedItem = changeType.getSelectedItem();
-        return ((TypeRow) selectedItem).getName();
+        return selectedItem == null ? "" : ((TypeRow) selectedItem).getName();
     }
 
     private String getChangeScope() {
         Object selectedItem = changeScope.getSelectedItem();
-        return selectedItem.toString();
+        return selectedItem == null ? "" : selectedItem.toString();
     }
 
     private void restoreFromParsedCommitMessage(CommitMessage commitMessage) {
