@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Added
+
+- 新增Float弹窗方式
+- 自定义隐藏不常用的栏位
+
 ## [2.0.1]
 
 ### Added

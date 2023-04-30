@@ -1,20 +1,28 @@
 package com.fobgochod.git.commit.action
 
 import com.fobgochod.git.commit.domain.CommitMessage
+import com.fobgochod.git.commit.domain.ViewMode
+import com.fobgochod.git.commit.settings.GitState
 import com.fobgochod.git.commit.util.GitBundle
 import com.fobgochod.git.commit.util.GitIcons
 import com.fobgochod.git.commit.view.CommitDialog
+import com.fobgochod.git.commit.view.CommitPanel
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.ui.popup.JBPopupListener
+import com.intellij.openapi.ui.popup.LightweightWindowEvent
 import com.intellij.openapi.vcs.CheckinProjectPanel
 import com.intellij.openapi.vcs.CommitMessageI
 import com.intellij.openapi.vcs.VcsDataKeys
 import com.intellij.openapi.vcs.ui.Refreshable
 
 class CreateCommitAction : AnAction(), DumbAware {
+
+    private val state: GitState = GitState.getInstance()
 
     init {
         templatePresentation.text = GitBundle.message("action.toolbar.create.commit.message.text")
@@ -23,7 +31,20 @@ class CreateCommitAction : AnAction(), DumbAware {
 
     override fun actionPerformed(event: AnActionEvent) {
         val commitPanel: CommitMessageI = getCommitPanel(event) ?: return
-        val commitMessage: CommitMessage = parseExistingCommitMessage(commitPanel)
+        val commitMessage: CommitMessage = parseCommitMessage(commitPanel)
+
+        if (state.viewMode == ViewMode.Float) {
+            openFloat(event, commitPanel, commitMessage)
+        } else {
+            openWindow(event, commitPanel, commitMessage)
+        }
+    }
+
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
+    }
+
+    private fun openWindow(event: AnActionEvent, commitPanel: CommitMessageI, commitMessage: CommitMessage) {
         val dialog = CommitDialog(event.project, commitMessage)
         dialog.show()
 
@@ -32,11 +53,27 @@ class CreateCommitAction : AnAction(), DumbAware {
         }
     }
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
+    private fun openFloat(event: AnActionEvent, commitPanel: CommitMessageI, commitMessage: CommitMessage) {
+        val project = event.project ?: return
+
+        val panel = CommitPanel(project, commitMessage)
+        val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(panel, panel.focusComponent())
+            .setProject(event.project)
+            .setResizable(true)
+            .setMovable(true)
+            .setTitle(GitBundle.message("action.toolbar.create.commit.message.text"))
+            .setFocusable(true)
+            .setRequestFocus(true)
+            .addListener(object : JBPopupListener {
+                override fun onClosed(event: LightweightWindowEvent) {
+                    commitPanel.setCommitMessage(panel.getCommitMessage().toString())
+                }
+            }).createPopup()
+        popup.showCenteredInCurrentWindow(project)
     }
 
-    private fun parseExistingCommitMessage(commitPanel: CommitMessageI): CommitMessage {
+
+    private fun parseCommitMessage(commitPanel: CommitMessageI): CommitMessage {
         if (commitPanel is CheckinProjectPanel) {
             return CommitMessage.parse(commitPanel.commitMessage)
         }

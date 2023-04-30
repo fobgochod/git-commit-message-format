@@ -1,8 +1,10 @@
 package com.fobgochod.git.commit.settings
 
 import com.fobgochod.git.commit.constant.GitConstant
-import com.fobgochod.git.commit.domain.TypeEnum
+import com.fobgochod.git.commit.domain.CommitType
 import com.fobgochod.git.commit.domain.TypeRow
+import com.fobgochod.git.commit.domain.ViewForm
+import com.fobgochod.git.commit.domain.ViewMode
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
@@ -18,10 +20,12 @@ class GitState : PersistentStateComponent<GitState> {
 
     var typeCount: Int = GitConstant.RADIO_BUTTON_TYPE_COUNT
     var typeRows: MutableList<TypeRow> = LinkedList()
+    var viewMode: ViewMode = ViewMode.Window
+    val viewForm: MutableMap<ViewForm, Boolean> = EnumMap(ViewForm::class.java)
 
     init {
         if (typeRows.isEmpty()) {
-            for (type in TypeEnum.values()) {
+            for (type in CommitType.values()) {
                 typeRows.add(TypeRow(type.type(), type.description()))
             }
         }
@@ -47,6 +51,14 @@ class GitState : PersistentStateComponent<GitState> {
             }
         }
         return typeRows[0]
+    }
+
+    fun isViewFormHidden(viewForm: ViewForm): Boolean {
+        return this.viewForm.getOrDefault(viewForm, false)
+    }
+
+    fun isViewFormShow(viewForm: ViewForm): Boolean {
+        return !this.viewForm.getOrDefault(viewForm, false)
     }
 
     companion object {

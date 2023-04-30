@@ -1,6 +1,6 @@
 package com.fobgochod.git.commit.action
 
-import com.fobgochod.git.commit.domain.TypeEnum
+import com.fobgochod.git.commit.domain.CommitType
 import com.fobgochod.git.commit.domain.TypeRow
 import com.fobgochod.git.commit.domain.TypeTable
 import com.fobgochod.git.commit.util.GitBundle
@@ -20,7 +20,7 @@ class RestoreTypesAction(private val typeTable: TypeTable) : AnActionButton(
 
     init {
         if (typeRows.isEmpty()) {
-            for (type in TypeEnum.values()) {
+            for (type in CommitType.values()) {
                 typeRows.add(TypeRow(type.type(), type.description()))
             }
         }

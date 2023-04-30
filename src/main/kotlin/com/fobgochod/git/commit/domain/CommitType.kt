@@ -3,7 +3,7 @@ package com.fobgochod.git.commit.domain
 import com.fobgochod.git.commit.util.GitBundle
 import java.util.*
 
-enum class TypeEnum {
+enum class CommitType {
 
     FEAT,
     FIX,

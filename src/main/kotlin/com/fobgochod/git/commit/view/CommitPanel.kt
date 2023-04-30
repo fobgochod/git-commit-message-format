@@ -2,6 +2,7 @@ package com.fobgochod.git.commit.view
 
 import com.fobgochod.git.commit.domain.CommitMessage
 import com.fobgochod.git.commit.domain.TypeRow
+import com.fobgochod.git.commit.domain.ViewForm
 import com.fobgochod.git.commit.settings.GitState
 import com.fobgochod.git.commit.util.GitBundle
 import com.fobgochod.git.commit.util.GitLog
@@ -18,11 +19,12 @@ import java.awt.event.ItemEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.ButtonGroup
+import javax.swing.JComponent
 import javax.swing.JPanel
 
 class CommitPanel(val project: Project?, private val commitMessage: CommitMessage) : JPanel() {
 
-    private var state: GitState = GitState.getInstance()
+    private val state: GitState = GitState.getInstance()
 
     private val mainBuilder = FormBuilder.createFormBuilder()
 
@@ -51,19 +53,27 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
         initData()
     }
 
+    fun focusComponent(): JComponent {
+        return changeSubject
+    }
+
     private fun initView() {
-        for ((index, type) in state.typeRows.withIndex()) {
-            if (index < state.typeCount) {
-                val radioButton = JBRadioButton(type.toString())
-                radioButton.toolTipText = type.toString()
-                changeTypeGroup.add(radioButton)
-                changeTypePanel.add(radioButton)
-            }
-        }
-        if (state.typeCount < state.typeRows.size) {
+        if (state.isViewFormHidden(ViewForm.TypeGroup)) {
             changeTypePanel.add(changeType)
         } else {
-            changeTypePanel.layout = GridLayout(0, 1, 0, 5)
+            for ((index, type) in state.typeRows.withIndex()) {
+                if (index < state.typeCount) {
+                    val radioButton = JBRadioButton(type.toString())
+                    radioButton.toolTipText = type.toString()
+                    changeTypeGroup.add(radioButton)
+                    changeTypePanel.add(radioButton)
+                }
+            }
+            if (state.typeCount < state.typeRows.size) {
+                changeTypePanel.add(changeType)
+            } else {
+                changeTypePanel.layout = GridLayout(0, 1, 0, 5)
+            }
         }
 
         changeScope.isEditable = true
@@ -78,13 +88,25 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
         bottomPanel.add(settings, BorderLayout.EAST)
 
         mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.type"), changeTypePanel)
-            .addLabeledComponent(GitBundle.message("dialog.form.label.scope"), changeScopePanel)
-            .addLabeledComponent(GitBundle.message("dialog.form.label.subject"), changeSubject)
-            .addLabeledComponent(GitBundle.message("dialog.form.label.body"), changeBody)
-            .addComponentToRightColumn(wrapText)
-            .addLabeledComponent(GitBundle.message("dialog.form.label.breaking"), breakingChanges)
-            .addLabeledComponent(GitBundle.message("dialog.form.label.issues"), closedIssues)
-            .addComponentToRightColumn(bottomPanel)
+        if (state.isViewFormShow(ViewForm.Scope)) {
+            mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.scope"), changeScopePanel)
+        }
+        mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.subject"), changeSubject)
+        if (state.isViewFormShow(ViewForm.Body)) {
+            mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.body"), changeBody)
+        }
+        if (state.isViewFormShow(ViewForm.WrapText)) {
+            mainBuilder.addComponentToRightColumn(wrapText)
+        }
+        if (state.isViewFormShow(ViewForm.Breaking)) {
+            mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.breaking"), breakingChanges)
+        }
+        if (state.isViewFormShow(ViewForm.Issues)) {
+            mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.issues"), closedIssues)
+        }
+        if (state.isViewFormShow(ViewForm.SkipCI)) {
+            mainBuilder.addComponentToRightColumn(bottomPanel)
+        }
     }
 
     private fun initEvent() {
@@ -125,7 +147,7 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
         val gitLog = GitLog(project).execute()
         gitLog.scopes.forEach(changeScope::addItem)
 
-        restoreFromParsedCommitMessage(commitMessage)
+        restoreCommitMessage(commitMessage)
     }
 
     fun getCommitMessage(): CommitMessage {
@@ -151,7 +173,7 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
         return selectedItem as String
     }
 
-    private fun restoreFromParsedCommitMessage(commitMessage: CommitMessage) {
+    private fun restoreCommitMessage(commitMessage: CommitMessage) {
         changeType.selectedItem = getChangeTypeByName(commitMessage.changeType)
         changeScope.selectedItem = commitMessage.changeScope
         changeSubject.text = commitMessage.changeSubject

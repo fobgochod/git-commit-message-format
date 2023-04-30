@@ -17,23 +17,24 @@ class GitLog(private val project: Project?) {
 
     fun execute(): Result {
         try {
-            val basePath = File(project?.basePath)
+            val basePath = project?.basePath?.let { File(it) }
+            if (basePath != null) {
+                val osName: String = System.getProperty("os.name")
+                val processBuilder: ProcessBuilder = if (osName.contains("Windows")) {
+                    ProcessBuilder("cmd", "/C", GIT_LOG_COMMAND)
+                } else {
+                    ProcessBuilder("sh", "-c", GIT_LOG_COMMAND)
+                }
 
-            val osName: String = System.getProperty("os.name")
-            val processBuilder: ProcessBuilder = if (osName.contains("Windows")) {
-                ProcessBuilder("cmd", "/C", GIT_LOG_COMMAND)
-            } else {
-                ProcessBuilder("sh", "-c", GIT_LOG_COMMAND)
+                val process: Process = processBuilder.directory(basePath).start()
+                val reader = BufferedReader(InputStreamReader(process.inputStream, StandardCharsets.UTF_8))
+                val logs: List<String> = reader.lines().toList()
+
+                return Result(process.exitValue(), logs)
             }
-
-            val process: Process = processBuilder.directory(basePath).start()
-            val reader = BufferedReader(InputStreamReader(process.inputStream, StandardCharsets.UTF_8))
-            val logs: List<String> = reader.lines().toList()
-
-            return Result(process.exitValue(), logs)
-        } catch (e: Exception) {
-            return Result(-1)
+        } catch (_: Exception) {
         }
+        return Result(-1)
     }
 
     inner class Result(exitValue: Int, private val logs: List<String> = emptyList()) {
