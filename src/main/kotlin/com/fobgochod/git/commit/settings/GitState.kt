@@ -1,43 +1,112 @@
 package com.fobgochod.git.commit.settings
 
-import com.fobgochod.git.commit.constant.GitConstant
-import com.fobgochod.git.commit.domain.CommitType
-import com.fobgochod.git.commit.domain.TypeRow
-import com.fobgochod.git.commit.domain.ViewForm
-import com.fobgochod.git.commit.domain.ViewMode
+import com.fobgochod.git.commit.domain.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.SettingsCategory
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil
-import java.util.*
 
 @State(
     name = GitState.NAME,
-    storages = [Storage(GitState.STORAGES)]
+    storages = [Storage(GitState.STORAGES)],
+    category = SettingsCategory.PLUGINS
 )
-class GitState : PersistentStateComponent<GitState> {
+class GitState : PersistentStateComponent<UIGitState> {
 
-    var typeCount: Int = GitConstant.RADIO_BUTTON_TYPE_COUNT
-    var typeRows: MutableList<TypeRow> = LinkedList()
-    var viewMode: ViewMode = ViewMode.Window
-    val viewForm: MutableMap<ViewForm, Boolean> = EnumMap(ViewForm::class.java)
+    private var state = UIGitState()
 
-    init {
-        if (typeRows.isEmpty()) {
-            for (type in CommitType.values()) {
-                typeRows.add(TypeRow(type.type(), type.description()))
+    var typeRows: MutableList<TypeRow>
+        get() {
+            return if (state.typeRows.isEmpty()) {
+                CommitType.typeRows
+            } else {
+                state.typeRows
             }
         }
-    }
+        set(value) {
+            if (value == CommitType.typeRows) {
+                state.typeRows.clear()
+            } else {
+                state.typeRows.clear()
+                state.typeRows.addAll(value)
+            }
+        }
 
-    override fun getState(): GitState {
-        return this
-    }
+    var typeCount: Int
+        get() = state.typeCount
+        set(value) {
+            state.typeCount = value
+        }
 
-    override fun loadState(state: GitState) {
-        XmlSerializerUtil.copyBean(state, this)
-    }
+    var skipCI: SkipCIWord
+        get() = state.skipCI
+        set(value) {
+            state.skipCI = value
+        }
+
+    var viewMode: ViewMode
+        get() = state.viewMode
+        set(value) {
+            state.viewMode = value
+        }
+
+
+    var hideTypeGroup: Boolean
+        get() = state.hideTypeGroup
+        set(value) {
+            state.hideTypeGroup = value
+        }
+
+    var hideType: Boolean
+        get() = state.hideType
+        set(value) {
+            state.hideType = value
+        }
+
+    var hideScope: Boolean
+        get() = state.hideScope
+        set(value) {
+            state.hideScope = value
+        }
+
+    var hideSubject: Boolean
+        get() = state.hideSubject
+        set(value) {
+            state.hideSubject = value
+        }
+
+    var hideBody: Boolean
+        get() = state.hideBody
+        set(value) {
+            state.hideBody = value
+        }
+
+    var hideWrapText: Boolean
+        get() = state.hideWrapText
+        set(value) {
+            state.hideWrapText = value
+        }
+
+    var hideBreaking: Boolean
+        get() = state.hideBreaking
+        set(value) {
+            state.hideBreaking = value
+        }
+
+    var hideIssues: Boolean
+        get() = state.hideIssues
+        set(value) {
+            state.hideIssues = value
+        }
+
+    var hideSkipCI: Boolean
+        get() = state.hideSkipCI
+        set(value) {
+            state.hideSkipCI = value
+        }
+
 
     fun isValidRow(index: Int): Boolean {
         return index >= 0 && index < typeRows.size
@@ -54,11 +123,29 @@ class GitState : PersistentStateComponent<GitState> {
     }
 
     fun isViewFormHidden(viewForm: ViewForm): Boolean {
-        return this.viewForm.getOrDefault(viewForm, false)
+        return when (viewForm) {
+            ViewForm.TypeGroup -> hideTypeGroup
+            ViewForm.Type -> hideType
+            ViewForm.Scope -> hideScope
+            ViewForm.Subject -> hideSubject
+            ViewForm.Body -> hideBody
+            ViewForm.WrapText -> hideWrapText
+            ViewForm.Breaking -> hideBreaking
+            ViewForm.Issues -> hideIssues
+            ViewForm.SkipCI -> hideSkipCI
+        }
     }
 
     fun isViewFormShow(viewForm: ViewForm): Boolean {
-        return !this.viewForm.getOrDefault(viewForm, false)
+        return !isViewFormHidden(viewForm)
+    }
+
+    override fun getState(): UIGitState {
+        return state
+    }
+
+    override fun loadState(state: UIGitState) {
+        XmlSerializerUtil.copyBean(state, this.state)
     }
 
     companion object {

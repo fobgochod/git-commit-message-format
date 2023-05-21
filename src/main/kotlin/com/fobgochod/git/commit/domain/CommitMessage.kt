@@ -19,6 +19,7 @@ data class CommitMessage(
 
     companion object {
         private val logger = Logger.getInstance(CommitMessage::class.java)
+        private val state: GitState = GitState.getInstance()
 
         fun parse(message: String): CommitMessage {
             val commitMessage = CommitMessage()
@@ -26,9 +27,9 @@ data class CommitMessage(
                 var matcher = GitConstant.HEADER_PATTERN.matcher(message)
                 if (!matcher.find()) return commitMessage
 
-                commitMessage.changeType = GitState.getInstance().getTypeFromName(matcher.group(1)).name
+                commitMessage.changeType = state.getTypeFromName(matcher.group(1)).name
                 commitMessage.changeScope = if (matcher.group(3) != null) matcher.group(3) else ""
-                commitMessage.changeSubject = matcher.group(4)
+                commitMessage.changeSubject = if (matcher.group(4) != null) matcher.group(4) else ""
 
                 val messages = message.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 if (messages.size < 2) {
@@ -41,7 +42,7 @@ data class CommitMessage(
                     val lineString = messages[pos]
                     if (lineString.startsWith(GitConstant.BREAKING_CHANGE_PREFIX)
                         || lineString.startsWith(GitConstant.CLOSES_PREFIX)
-                        || lineString.equals(GitConstant.SKIP_CI, ignoreCase = true)
+                        || lineString.equals(state.skipCI.label, ignoreCase = true)
                     ) break
                     builder.append(lineString).append('\n')
                     pos++
@@ -52,7 +53,7 @@ data class CommitMessage(
                 while (pos < messages.size) {
                     val lineString = messages[pos]
                     if (lineString.startsWith(GitConstant.CLOSES_PREFIX)
-                        || lineString.equals(GitConstant.SKIP_CI, ignoreCase = true)
+                        || lineString.equals(state.skipCI.label, ignoreCase = true)
                     ) break
                     builder.append(lineString).append('\n')
                     pos++
@@ -68,7 +69,7 @@ data class CommitMessage(
                 if (builder.isNotEmpty()) builder.delete(builder.length - 1, builder.length)
                 commitMessage.closedIssues = builder.toString()
 
-                commitMessage.skipCI = message.contains(GitConstant.SKIP_CI)
+                commitMessage.skipCI = message.contains(state.skipCI.label)
             } catch (e: RuntimeException) {
                 logger.error(e.message)
             }
@@ -112,7 +113,11 @@ data class CommitMessage(
         }
 
         if (skipCI) {
-            builder.append(System.lineSeparator()).append(System.lineSeparator()).append(GitConstant.SKIP_CI)
+            builder.append(System.lineSeparator()).append(System.lineSeparator())
+            if (state.skipCI.isTwoEmpty()) {
+                builder.append(System.lineSeparator())
+            }
+            builder.append(state.skipCI.label)
         }
 
         return builder.toString()

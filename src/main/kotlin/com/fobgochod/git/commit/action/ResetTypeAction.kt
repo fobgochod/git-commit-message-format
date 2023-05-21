@@ -1,6 +1,7 @@
 package com.fobgochod.git.commit.action
 
 import com.fobgochod.git.commit.domain.TypeTable
+import com.fobgochod.git.commit.settings.GitState
 import com.fobgochod.git.commit.util.GitBundle
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionUpdateThread
@@ -13,13 +14,22 @@ class ResetTypeAction(private val typeTable: TypeTable) : AnActionButton(
     AllIcons.Actions.Rollback
 ) {
 
+    private val state: GitState = GitState.getInstance()
+
     override fun actionPerformed(event: AnActionEvent) {
-        typeTable.resetRow()
+        val selectedRow = typeTable.selectedRow
+        if (state.isValidRow(selectedRow)) {
+            val oldTypeRow = state.typeRows[selectedRow]
+            typeTable.resetRow(oldTypeRow)
+        }
     }
 
     override fun updateButton(event: AnActionEvent) {
-        // super.update(event)
-        event.presentation.isEnabled = typeTable.isModified()
+        val selectedRow = typeTable.selectedRow
+        if (state.isValidRow(selectedRow)) {
+            val oldTypeRow = state.typeRows[selectedRow]
+            event.presentation.isEnabled = typeTable.isModified(oldTypeRow)
+        }
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread {

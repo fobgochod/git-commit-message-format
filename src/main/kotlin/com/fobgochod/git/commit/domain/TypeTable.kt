@@ -1,6 +1,5 @@
 package com.fobgochod.git.commit.domain
 
-import com.fobgochod.git.commit.settings.GitState
 import com.fobgochod.git.commit.util.GitBundle
 import com.fobgochod.git.commit.view.TypeDialog
 import com.intellij.ui.JBColor
@@ -21,7 +20,6 @@ import javax.swing.table.TableColumn
  */
 class TypeTable : JBTable() {
 
-    private var state: GitState = GitState.getInstance()
     private val myTableModel: MyTableModel = MyTableModel()
     val typeRows: MutableList<TypeRow> = LinkedList()
 
@@ -98,7 +96,8 @@ class TypeTable : JBTable() {
         }
         val selectedRow = selectedRow
         val typeRow = typeRows[selectedRow]
-        val typeDialog = TypeDialog(GitBundle.message("settings.type.dialog.edit.title"), typeRow.name, typeRow.description)
+        val typeDialog =
+            TypeDialog(GitBundle.message("settings.type.dialog.edit.title"), typeRow.name, typeRow.description)
         if (typeDialog.showAndGet()) {
             typeRow.name = typeDialog.name()
             typeRow.description = typeDialog.description()
@@ -125,19 +124,16 @@ class TypeTable : JBTable() {
         setRowSelectionInterval(index, index)
     }
 
-    fun isModified(): Boolean {
-        if (isValidRow(selectedRow) && state.isValidRow(selectedRow)) {
+    fun isModified(oldTypeRow: TypeRow): Boolean {
+        if (isValidRow(selectedRow)) {
             val typeRow = typeRows[selectedRow]
-            val oldTypeRow = state.typeRows[selectedRow]
             return typeRow != oldTypeRow
         }
         return false
     }
 
-    fun resetRow() {
-        val selectedRow = selectedRow
+    fun resetRow(oldTypeRow: TypeRow) {
         val typeRow = typeRows[selectedRow]
-        val oldTypeRow = state.typeRows[selectedRow]
         typeRow.name = oldTypeRow.name
         typeRow.description = oldTypeRow.description
         myTableModel.fireTableDataChanged()

@@ -2,8 +2,8 @@ package com.fobgochod.git.commit.view;
 
 import com.fobgochod.git.commit.domain.CommitMessage;
 import com.fobgochod.git.commit.domain.TypeRow;
+import com.fobgochod.git.commit.settings.GitConfigurable;
 import com.fobgochod.git.commit.settings.GitState;
-import com.fobgochod.git.commit.util.GitBundle;
 import com.fobgochod.git.commit.util.GitLog;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.options.ShowSettingsUtil;
@@ -84,7 +84,7 @@ public class CommitUI {
 
         editSettings.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                ShowSettingsUtil.getInstance().showSettingsDialog(project, GitBundle.message("plugin.name"));
+                ShowSettingsUtil.getInstance().showSettingsDialog(project, GitConfigurable.class);
             }
         });
     }

@@ -9,12 +9,13 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationConfigurable parentId="tools"
+                                 groupWeight="150"
                                  id="com.fobgochod.git.commit.settings.GitConfigurable"
                                  instance="com.fobgochod.git.commit.settings.GitConfigurable"
-                                 bundle="messages.GitBundle"
-                                 key="plugin.name"/>
+                                 key="configurable.display.name"
+                                 bundle="messages.GitBundle"/>
         <applicationService serviceImplementation="com.fobgochod.git.commit.settings.GitState"/>
-        <applicationService serviceImplementation="com.fobgochod.git.commit.settings.GitComponent"/>
+
     </extensions>
 
     <actions>

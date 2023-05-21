@@ -25,11 +25,15 @@ enum class ViewForm() {
         if (this.label == "") {
             return name.lowercase(Locale.getDefault())
         }
-        return label;
+        return label
     }
 
     fun description(): String {
         return GitBundle.message("dialog.form.label.${this.type()}")
+    }
+
+    fun isEnabled(): Boolean {
+        return this != Type && this != Subject
     }
 
     override fun toString(): String {

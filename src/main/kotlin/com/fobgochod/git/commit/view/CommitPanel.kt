@@ -3,6 +3,7 @@ package com.fobgochod.git.commit.view
 import com.fobgochod.git.commit.domain.CommitMessage
 import com.fobgochod.git.commit.domain.TypeRow
 import com.fobgochod.git.commit.domain.ViewForm
+import com.fobgochod.git.commit.settings.GitConfigurable
 import com.fobgochod.git.commit.settings.GitState
 import com.fobgochod.git.commit.util.GitBundle
 import com.fobgochod.git.commit.util.GitLog
@@ -133,7 +134,7 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
 
         settings.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
-                ShowSettingsUtil.getInstance().showSettingsDialog(project, GitBundle.message("plugin.name"))
+                ShowSettingsUtil.getInstance().showSettingsDialog(project, GitConfigurable::class.java)
             }
         })
     }
@@ -144,8 +145,10 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
             changeType.addItem(typeRow)
         }
 
-        val gitLog = GitLog(project).execute()
-        gitLog.scopes.forEach(changeScope::addItem)
+        if (state.isViewFormShow(ViewForm.Scope)) {
+            val gitLog = GitLog(project).execute()
+            gitLog.scopes.forEach(changeScope::addItem)
+        }
 
         restoreCommitMessage(commitMessage)
     }

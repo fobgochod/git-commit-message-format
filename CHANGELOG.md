@@ -6,8 +6,13 @@
 
 ### Added
 
-- 新增Float弹窗方式
-- 自定义隐藏不常用的栏位
+- open by float or window
+- hidden unnecessary component
+- add skipping workflow runs options
+
+### Fixed
+
+- fix restore data fail exception
 
 ## [2.0.1]
 

@@ -17,6 +17,18 @@ enum class CommitType {
     CHORE,
     REVERT;
 
+    companion object {
+        val typeRows: MutableList<TypeRow> = LinkedList()
+
+        init {
+            if (CommitType.typeRows.isEmpty()) {
+                values().forEach { type ->
+                    typeRows.add(TypeRow(type.type(), type.description()))
+                }
+            }
+        }
+    }
+
     fun type(): String {
         return name.lowercase(Locale.getDefault())
     }

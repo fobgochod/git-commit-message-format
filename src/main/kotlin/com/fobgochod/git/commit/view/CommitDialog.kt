@@ -4,7 +4,6 @@ import com.fobgochod.git.commit.domain.CommitMessage
 import com.fobgochod.git.commit.util.GitBundle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.util.ui.JBUI
 import javax.swing.JComponent
 
 class CommitDialog(project: Project?, commitMessage: CommitMessage) : DialogWrapper(project) {
