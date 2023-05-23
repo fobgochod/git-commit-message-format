@@ -1,16 +1,16 @@
 package com.fobgochod.git.commit.settings
 
 import com.fobgochod.git.commit.constant.GitConstant
-import com.fobgochod.git.commit.domain.SkipCIWord
 import com.fobgochod.git.commit.domain.TypeRow
-import com.fobgochod.git.commit.domain.ViewMode
+import com.fobgochod.git.commit.domain.option.SkipCI
+import com.fobgochod.git.commit.domain.option.ViewMode
 import com.intellij.openapi.components.BaseState
 import com.intellij.util.xmlb.annotations.OptionTag
 import com.intellij.util.xmlb.annotations.Tag
 import com.intellij.util.xmlb.annotations.XCollection
 
 
-class UIGitState : BaseState() {
+class GitSettingsState : BaseState() {
 
     @get:Tag("TYPE_ROWS")
     @get:XCollection(style = XCollection.Style.v2)
@@ -20,7 +20,7 @@ class UIGitState : BaseState() {
     var typeCount by property(GitConstant.RADIO_BUTTON_TYPE_COUNT)
 
     @get:OptionTag("SKIP_CI")
-    var skipCI by enum(SkipCIWord.SKIP_CI)
+    var skipCI by enum(SkipCI.SKIP_CI)
 
     @get:OptionTag("VIEW_MODE")
     var viewMode by enum(ViewMode.Window)

@@ -1,9 +1,9 @@
-package com.fobgochod.git.commit.domain
+package com.fobgochod.git.commit.domain.option
 
 /**
  * [Skipping workflow runs](https://docs.github.com/en/actions/managing-workflow-runs/skipping-workflow-runs)
  */
-enum class SkipCIWord(val label: String) {
+enum class SkipCI(val label: String) {
 
     SKIP_CI("[skip ci]"),
     CI_SKIP("[ci skip]"),

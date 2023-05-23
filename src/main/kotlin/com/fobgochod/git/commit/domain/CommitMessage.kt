@@ -1,7 +1,7 @@
 package com.fobgochod.git.commit.domain
 
 import com.fobgochod.git.commit.constant.GitConstant
-import com.fobgochod.git.commit.settings.GitState
+import com.fobgochod.git.commit.settings.GitSettings
 import com.intellij.openapi.diagnostic.Logger
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.WordUtils
@@ -19,7 +19,7 @@ data class CommitMessage(
 
     companion object {
         private val logger = Logger.getInstance(CommitMessage::class.java)
-        private val state: GitState = GitState.getInstance()
+        private val state: GitSettings = GitSettings.getInstance()
 
         fun parse(message: String): CommitMessage {
             val commitMessage = CommitMessage()

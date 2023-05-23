@@ -1,8 +1,8 @@
 package com.fobgochod.git.commit.action
 
 import com.fobgochod.git.commit.domain.CommitMessage
-import com.fobgochod.git.commit.domain.ViewMode
-import com.fobgochod.git.commit.settings.GitState
+import com.fobgochod.git.commit.domain.option.ViewMode
+import com.fobgochod.git.commit.settings.GitSettings
 import com.fobgochod.git.commit.util.GitBundle
 import com.fobgochod.git.commit.util.GitIcons
 import com.fobgochod.git.commit.view.CommitDialog
@@ -22,7 +22,7 @@ import com.intellij.openapi.vcs.ui.Refreshable
 
 class CreateCommitAction : AnAction(), DumbAware {
 
-    private val state: GitState = GitState.getInstance()
+    private val state: GitSettings = GitSettings.getInstance()
 
     init {
         templatePresentation.text = GitBundle.message("action.toolbar.create.commit.message.text")

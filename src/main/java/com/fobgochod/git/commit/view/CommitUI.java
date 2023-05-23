@@ -2,11 +2,11 @@ package com.fobgochod.git.commit.view;
 
 import com.fobgochod.git.commit.domain.CommitMessage;
 import com.fobgochod.git.commit.domain.TypeRow;
-import com.fobgochod.git.commit.settings.GitConfigurable;
-import com.fobgochod.git.commit.settings.GitState;
-import com.fobgochod.git.commit.util.GitLog;
+import com.fobgochod.git.commit.domain.option.ComponentType;
+import com.fobgochod.git.commit.settings.GitSettings;
+import com.fobgochod.git.commit.settings.GitSettingsDialog;
+import com.fobgochod.git.commit.util.GitUtil;
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBRadioButton;
 
@@ -19,7 +19,7 @@ import java.util.Enumeration;
 public class CommitUI {
 
     private final transient Project project;
-    private final GitState state = GitState.getInstance();
+    private final GitSettings state = GitSettings.getInstance();
     private final ButtonGroup changeTypeGroup = new ButtonGroup();
 
     private JPanel root;
@@ -84,7 +84,7 @@ public class CommitUI {
 
         editSettings.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                ShowSettingsUtil.getInstance().showSettingsDialog(project, GitConfigurable.class);
+                GitSettingsDialog.showSettingsDialog(project);
             }
         });
     }
@@ -94,8 +94,10 @@ public class CommitUI {
             changeType.addItem(typeRow);
         }
 
-        GitLog.Result result = new GitLog(project).execute();
-        result.getScopes().forEach(changeScope::addItem);
+        if (state.isComponentShow(ComponentType.Scope)) {
+            GitUtil.Result gitUtil = new GitUtil(project).logs();
+            gitUtil.getScopes().forEach(changeScope::addItem);
+        }
 
         restoreFromParsedCommitMessage(commitMessage);
     }

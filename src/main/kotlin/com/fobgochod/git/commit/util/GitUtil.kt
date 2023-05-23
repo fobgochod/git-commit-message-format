@@ -8,14 +8,14 @@ import java.nio.charset.StandardCharsets
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-class GitLog(private val project: Project?) {
+class GitUtil(private val project: Project?) {
 
     companion object {
         const val GIT_LOG_COMMAND: String = "git log --all --format=%s"
         val SCOPE_PATTERN: Pattern = Pattern.compile("^[a-z]+\\((.+)\\):.*")
     }
 
-    fun execute(): Result {
+    fun logs(): Result {
         try {
             val basePath = project?.basePath?.let { File(it) }
             if (basePath != null) {

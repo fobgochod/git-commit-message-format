@@ -1,7 +1,7 @@
 package com.fobgochod.git.commit.action
 
-import com.fobgochod.git.commit.domain.CommitType
 import com.fobgochod.git.commit.domain.TypeTable
+import com.fobgochod.git.commit.domain.option.CommitType
 import com.fobgochod.git.commit.util.GitBundle
 import com.fobgochod.git.commit.util.GitIcons
 import com.intellij.openapi.actionSystem.ActionUpdateThread

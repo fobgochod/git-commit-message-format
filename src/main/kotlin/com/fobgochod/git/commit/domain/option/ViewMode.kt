@@ -1,4 +1,4 @@
-package com.fobgochod.git.commit.domain
+package com.fobgochod.git.commit.domain.option
 
 enum class ViewMode {
 

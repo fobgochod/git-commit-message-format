@@ -1,5 +1,6 @@
-package com.fobgochod.git.commit.domain
+package com.fobgochod.git.commit.domain.option
 
+import com.fobgochod.git.commit.domain.TypeRow
 import com.fobgochod.git.commit.util.GitBundle
 import java.util.*
 
@@ -21,7 +22,7 @@ enum class CommitType {
         val typeRows: MutableList<TypeRow> = LinkedList()
 
         init {
-            if (CommitType.typeRows.isEmpty()) {
+            if (typeRows.isEmpty()) {
                 values().forEach { type ->
                     typeRows.add(TypeRow(type.type(), type.description()))
                 }

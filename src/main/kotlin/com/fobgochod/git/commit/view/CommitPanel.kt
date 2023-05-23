@@ -2,13 +2,12 @@ package com.fobgochod.git.commit.view
 
 import com.fobgochod.git.commit.domain.CommitMessage
 import com.fobgochod.git.commit.domain.TypeRow
-import com.fobgochod.git.commit.domain.ViewForm
-import com.fobgochod.git.commit.settings.GitConfigurable
-import com.fobgochod.git.commit.settings.GitState
+import com.fobgochod.git.commit.domain.option.ComponentType
+import com.fobgochod.git.commit.settings.GitSettings
+import com.fobgochod.git.commit.settings.GitSettingsDialog
 import com.fobgochod.git.commit.util.GitBundle
-import com.fobgochod.git.commit.util.GitLog
+import com.fobgochod.git.commit.util.GitUtil
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.setEmptyState
@@ -25,7 +24,7 @@ import javax.swing.JPanel
 
 class CommitPanel(val project: Project?, private val commitMessage: CommitMessage) : JPanel() {
 
-    private val state: GitState = GitState.getInstance()
+    private val state: GitSettings = GitSettings.getInstance()
 
     private val mainBuilder = FormBuilder.createFormBuilder()
 
@@ -59,7 +58,7 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
     }
 
     private fun initView() {
-        if (state.isViewFormHidden(ViewForm.TypeGroup)) {
+        if (state.isComponentHidden(ComponentType.TypeGroup)) {
             changeTypePanel.add(changeType)
         } else {
             for ((index, type) in state.typeRows.withIndex()) {
@@ -89,23 +88,23 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
         bottomPanel.add(settings, BorderLayout.EAST)
 
         mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.type"), changeTypePanel)
-        if (state.isViewFormShow(ViewForm.Scope)) {
+        if (state.isComponentShow(ComponentType.Scope)) {
             mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.scope"), changeScopePanel)
         }
         mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.subject"), changeSubject)
-        if (state.isViewFormShow(ViewForm.Body)) {
+        if (state.isComponentShow(ComponentType.Body)) {
             mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.body"), changeBody)
         }
-        if (state.isViewFormShow(ViewForm.WrapText)) {
+        if (state.isComponentShow(ComponentType.WrapText)) {
             mainBuilder.addComponentToRightColumn(wrapText)
         }
-        if (state.isViewFormShow(ViewForm.Breaking)) {
+        if (state.isComponentShow(ComponentType.Breaking)) {
             mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.breaking"), breakingChanges)
         }
-        if (state.isViewFormShow(ViewForm.Issues)) {
+        if (state.isComponentShow(ComponentType.Issues)) {
             mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.issues"), closedIssues)
         }
-        if (state.isViewFormShow(ViewForm.SkipCI)) {
+        if (state.isComponentShow(ComponentType.SkipCI)) {
             mainBuilder.addComponentToRightColumn(bottomPanel)
         }
     }
@@ -134,7 +133,7 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
 
         settings.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
-                ShowSettingsUtil.getInstance().showSettingsDialog(project, GitConfigurable::class.java)
+                GitSettingsDialog.showSettingsDialog(project)
             }
         })
     }
@@ -145,9 +144,9 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
             changeType.addItem(typeRow)
         }
 
-        if (state.isViewFormShow(ViewForm.Scope)) {
-            val gitLog = GitLog(project).execute()
-            gitLog.scopes.forEach(changeScope::addItem)
+        if (state.isComponentShow(ComponentType.Scope)) {
+            val gitUtil = GitUtil(project).logs()
+            gitUtil.scopes.forEach(changeScope::addItem)
         }
 
         restoreCommitMessage(commitMessage)

@@ -1,6 +1,10 @@
 package com.fobgochod.git.commit.settings
 
-import com.fobgochod.git.commit.domain.*
+import com.fobgochod.git.commit.domain.TypeRow
+import com.fobgochod.git.commit.domain.option.CommitType
+import com.fobgochod.git.commit.domain.option.ComponentType
+import com.fobgochod.git.commit.domain.option.SkipCI
+import com.fobgochod.git.commit.domain.option.ViewMode
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.SettingsCategory
@@ -9,13 +13,13 @@ import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil
 
 @State(
-    name = GitState.NAME,
-    storages = [Storage(GitState.STORAGES)],
+    name = GitSettings.NAME,
+    storages = [Storage(GitSettings.STORAGES)],
     category = SettingsCategory.PLUGINS
 )
-class GitState : PersistentStateComponent<UIGitState> {
+class GitSettings : PersistentStateComponent<GitSettingsState> {
 
-    private var state = UIGitState()
+    private var state = GitSettingsState()
 
     var typeRows: MutableList<TypeRow>
         get() {
@@ -40,7 +44,7 @@ class GitState : PersistentStateComponent<UIGitState> {
             state.typeCount = value
         }
 
-    var skipCI: SkipCIWord
+    var skipCI: SkipCI
         get() = state.skipCI
         set(value) {
             state.skipCI = value
@@ -122,29 +126,29 @@ class GitState : PersistentStateComponent<UIGitState> {
         return typeRows[0]
     }
 
-    fun isViewFormHidden(viewForm: ViewForm): Boolean {
-        return when (viewForm) {
-            ViewForm.TypeGroup -> hideTypeGroup
-            ViewForm.Type -> hideType
-            ViewForm.Scope -> hideScope
-            ViewForm.Subject -> hideSubject
-            ViewForm.Body -> hideBody
-            ViewForm.WrapText -> hideWrapText
-            ViewForm.Breaking -> hideBreaking
-            ViewForm.Issues -> hideIssues
-            ViewForm.SkipCI -> hideSkipCI
+    fun isComponentHidden(componentType: ComponentType): Boolean {
+        return when (componentType) {
+            ComponentType.TypeGroup -> hideTypeGroup
+            ComponentType.Type -> hideType
+            ComponentType.Scope -> hideScope
+            ComponentType.Subject -> hideSubject
+            ComponentType.Body -> hideBody
+            ComponentType.WrapText -> hideWrapText
+            ComponentType.Breaking -> hideBreaking
+            ComponentType.Issues -> hideIssues
+            ComponentType.SkipCI -> hideSkipCI
         }
     }
 
-    fun isViewFormShow(viewForm: ViewForm): Boolean {
-        return !isViewFormHidden(viewForm)
+    fun isComponentShow(componentType: ComponentType): Boolean {
+        return !isComponentHidden(componentType)
     }
 
-    override fun getState(): UIGitState {
+    override fun getState(): GitSettingsState {
         return state
     }
 
-    override fun loadState(state: UIGitState) {
+    override fun loadState(state: GitSettingsState) {
         XmlSerializerUtil.copyBean(state, this.state)
     }
 
@@ -154,7 +158,7 @@ class GitState : PersistentStateComponent<UIGitState> {
         const val STORAGES = "git.commit.message.format.xml"
 
         @JvmStatic
-        fun getInstance(): GitState =
-            ApplicationManager.getApplication().getService(GitState::class.java)
+        fun getInstance(): GitSettings =
+            ApplicationManager.getApplication().getService(GitSettings::class.java)
     }
 }

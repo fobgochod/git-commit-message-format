@@ -1,7 +1,11 @@
 package com.fobgochod.git.commit.settings.v1
 
 import com.fobgochod.git.commit.constant.GitConstant
-import com.fobgochod.git.commit.domain.*
+import com.fobgochod.git.commit.domain.TypeRow
+import com.fobgochod.git.commit.domain.option.CommitType
+import com.fobgochod.git.commit.domain.option.ComponentType
+import com.fobgochod.git.commit.domain.option.SkipCI
+import com.fobgochod.git.commit.domain.option.ViewMode
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.SettingsCategory
@@ -18,10 +22,10 @@ import java.util.*
 class GitState1 : PersistentStateComponent<GitState1> {
 
     var typeCount: Int = GitConstant.RADIO_BUTTON_TYPE_COUNT
-    var skipCI: SkipCIWord = SkipCIWord.SKIP_CI
+    var skipCI: SkipCI = SkipCI.SKIP_CI
     var viewMode: ViewMode = ViewMode.Window
     var typeRows: MutableList<TypeRow> = LinkedList()
-    val viewForm: MutableMap<ViewForm, Boolean> = EnumMap(ViewForm::class.java)
+    val componentType: MutableMap<ComponentType, Boolean> = EnumMap(ComponentType::class.java)
 
     init {
         if (typeRows.isEmpty()) {
@@ -30,7 +34,6 @@ class GitState1 : PersistentStateComponent<GitState1> {
             }
         }
     }
-
 
     fun isValidRow(index: Int): Boolean {
         return index >= 0 && index < typeRows.size
@@ -46,12 +49,12 @@ class GitState1 : PersistentStateComponent<GitState1> {
         return typeRows[0]
     }
 
-    fun isViewFormHidden(viewForm: ViewForm): Boolean {
-        return this.viewForm.getOrDefault(viewForm, false)
+    fun isComponentHidden(componentType: ComponentType): Boolean {
+        return this.componentType.getOrDefault(componentType, false)
     }
 
-    fun isViewFormShow(viewForm: ViewForm): Boolean {
-        return !isViewFormHidden(viewForm)
+    fun isComponentShow(componentType: ComponentType): Boolean {
+        return !isComponentHidden(componentType)
     }
 
     override fun getState(): GitState1 {

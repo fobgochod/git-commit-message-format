@@ -2,16 +2,18 @@ package com.fobgochod.git.commit.settings.v1
 
 import com.fobgochod.git.commit.action.ResetTypeAction
 import com.fobgochod.git.commit.action.RestoreTypesAction
-import com.fobgochod.git.commit.domain.SkipCIWord
 import com.fobgochod.git.commit.domain.TypeTable
-import com.fobgochod.git.commit.domain.ViewForm
-import com.fobgochod.git.commit.domain.ViewMode
+import com.fobgochod.git.commit.domain.option.ComponentType
+import com.fobgochod.git.commit.domain.option.SkipCI
+import com.fobgochod.git.commit.domain.option.ViewMode
 import com.fobgochod.git.commit.util.GitBundle
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.ui.DoubleClickListener
 import com.intellij.ui.SimpleListCellRenderer
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.layout.applyToComponent
 import com.intellij.ui.layout.panel
+import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.*
 
@@ -37,7 +39,7 @@ internal class GitComponent2 : GitComponent {
     /**
      *  skip workflow keywords
      */
-    private lateinit var skipCI: ComboBox<SkipCIWord>
+    private lateinit var skipCI: ComboBox<SkipCI>
 
     /**
      * 弹窗方式
@@ -49,7 +51,7 @@ internal class GitComponent2 : GitComponent {
      */
     private val viewForm: MutableList<JCheckBox> = LinkedList()
 
-    private val root: JPanel = panel {
+    private val panel: JPanel = panel {
         row {
             val typeTableToolbar: ToolbarDecorator = ToolbarDecorator.createDecorator(typeTable)
                 .setAddAction { typeTable.addRow() }
@@ -64,6 +66,11 @@ internal class GitComponent2 : GitComponent {
                 component(typeTableToolbar.createPanel()).constraints(grow, pushY)
                     .applyToComponent {
                         // this.border = IdeBorderFactory.createTitledBorder(GitBundle.message("settings.desc.text"), false, JBUI.insetsTop(8)).setShowLine(false)
+                        object : DoubleClickListener() {
+                            override fun onDoubleClick(event: MouseEvent): Boolean {
+                                return typeTable.editRow()
+                            }
+                        }.installOn(typeTable)
                         typeTablePanel = this
                     }
             }
@@ -75,21 +82,21 @@ internal class GitComponent2 : GitComponent {
                 typeCountField()
             }
             row(GitBundle.message("settings.common.hidden.ui")) {
-                ViewForm.values()
-                    .filter(ViewForm::isEnabled)
+                ComponentType.values()
+                    .filter(ComponentType::isEnabled)
                     .forEach { item ->
                         cell {
                             checkBox(item.name).applyToComponent {
                                 this.isEnabled = item.isEnabled()
                                 this.toolTipText = item.description()
-                                this.isSelected = state.isViewFormHidden(item)
+                                this.isSelected = state.isComponentHidden(item)
                                 viewForm.add(this)
                             }
                         }
                     }
             }
             row(GitBundle.message("settings.common.skip.ci.word")) {
-                component(ComboBox(DefaultComboBoxModel(SkipCIWord.values()), 140)).applyToComponent {
+                component(ComboBox(DefaultComboBoxModel(SkipCI.values()), 140)).applyToComponent {
                     this.renderer = SimpleListCellRenderer.create("") { it.label }
                     skipCI = this
                 }
@@ -105,11 +112,10 @@ internal class GitComponent2 : GitComponent {
 
 
     override fun getComponent(): JPanel {
-        return root
+        return panel
     }
 
     override fun isModified(): Boolean {
-
         val typeRows = typeTable.typeRows
         val typeCount: Int = typeCountField.text.toInt()
         val skipCI = getSkipCI()
@@ -128,8 +134,8 @@ internal class GitComponent2 : GitComponent {
         state.viewMode = getViewMode()
 
         for (checkBox in viewForm) {
-            val formItem = ViewForm.valueOf(checkBox.text)
-            state.viewForm[formItem] = checkBox.isSelected
+            val componentType = ComponentType.valueOf(checkBox.text)
+            state.componentType[componentType] = checkBox.isSelected
         }
     }
 
@@ -140,14 +146,14 @@ internal class GitComponent2 : GitComponent {
         viewMode.selectedItem = state.viewMode
 
         for (checkBox in viewForm) {
-            val viewForm = ViewForm.valueOf(checkBox.text)
-            checkBox.isSelected = state.isViewFormHidden(viewForm)
+            val componentType = ComponentType.valueOf(checkBox.text)
+            checkBox.isSelected = state.isComponentHidden(componentType)
         }
     }
 
-    private fun getSkipCI(): SkipCIWord {
+    private fun getSkipCI(): SkipCI {
         val selectedItem = skipCI.selectedItem
-        return selectedItem as SkipCIWord
+        return selectedItem as SkipCI
     }
 
     private fun getViewMode(): ViewMode {
@@ -157,8 +163,8 @@ internal class GitComponent2 : GitComponent {
 
     private fun isViewFormModified(state: GitState1): Boolean {
         for (checkBox in viewForm) {
-            val viewForm = ViewForm.valueOf(checkBox.text)
-            if (state.isViewFormHidden(viewForm) != checkBox.isSelected) {
+            val componentType = ComponentType.valueOf(checkBox.text)
+            if (state.isComponentHidden(componentType) != checkBox.isSelected) {
                 return true
             }
         }

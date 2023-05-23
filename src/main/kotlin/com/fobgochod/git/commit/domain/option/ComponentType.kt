@@ -1,9 +1,9 @@
-package com.fobgochod.git.commit.domain
+package com.fobgochod.git.commit.domain.option
 
 import com.fobgochod.git.commit.util.GitBundle
 import java.util.*
 
-enum class ViewForm() {
+enum class ComponentType() {
 
     TypeGroup("type"),
     Type,

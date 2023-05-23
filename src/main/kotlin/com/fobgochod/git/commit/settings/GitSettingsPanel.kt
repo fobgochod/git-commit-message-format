@@ -2,10 +2,10 @@ package com.fobgochod.git.commit.settings
 
 import com.fobgochod.git.commit.action.ResetTypeAction
 import com.fobgochod.git.commit.action.RestoreTypesAction
-import com.fobgochod.git.commit.domain.SkipCIWord
 import com.fobgochod.git.commit.domain.TypeTable
-import com.fobgochod.git.commit.domain.ViewForm
-import com.fobgochod.git.commit.domain.ViewMode
+import com.fobgochod.git.commit.domain.option.ComponentType
+import com.fobgochod.git.commit.domain.option.SkipCI
+import com.fobgochod.git.commit.domain.option.ViewMode
 import com.fobgochod.git.commit.util.GitBundle
 import com.intellij.application.options.editor.CheckboxDescriptor
 import com.intellij.application.options.editor.checkBox
@@ -17,29 +17,32 @@ import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import java.awt.event.MouseEvent
-import java.util.*
-import javax.swing.*
+import javax.swing.DefaultComboBoxModel
 
-private val state: GitState get() = GitState.getInstance()
+private val state: GitSettings get() = GitSettings.getInstance()
 
-private val hideTypeGroup get() = CheckboxDescriptor(ViewForm.TypeGroup.name, state::hideTypeGroup)
-private val hideType get() = CheckboxDescriptor(ViewForm.Type.name, state::hideType)
-private val hideScope get() = CheckboxDescriptor(ViewForm.Scope.name, state::hideScope)
-private val hideSubject get() = CheckboxDescriptor(ViewForm.Subject.name, state::hideSubject)
-private val hideBody get() = CheckboxDescriptor(ViewForm.Body.name, state::hideBody)
-private val hideWrapText get() = CheckboxDescriptor(ViewForm.WrapText.name, state::hideWrapText)
-private val hideBreaking get() = CheckboxDescriptor(ViewForm.Breaking.name, state::hideBreaking)
-private val hideIssues get() = CheckboxDescriptor(ViewForm.Issues.name, state::hideIssues)
-private val hideSkipCI get() = CheckboxDescriptor(ViewForm.SkipCI.name, state::hideSkipCI)
+private val hideTypeGroup get() = CheckboxDescriptor(ComponentType.TypeGroup.name, state::hideTypeGroup)
+private val hideType get() = CheckboxDescriptor(ComponentType.Type.name, state::hideType)
+private val hideScope get() = CheckboxDescriptor(ComponentType.Scope.name, state::hideScope)
+private val hideSubject get() = CheckboxDescriptor(ComponentType.Subject.name, state::hideSubject)
+private val hideBody get() = CheckboxDescriptor(ComponentType.Body.name, state::hideBody)
+private val hideWrapText get() = CheckboxDescriptor(ComponentType.WrapText.name, state::hideWrapText)
+private val hideBreaking get() = CheckboxDescriptor(ComponentType.Breaking.name, state::hideBreaking)
+private val hideIssues get() = CheckboxDescriptor(ComponentType.Issues.name, state::hideIssues)
+private val hideSkipCI get() = CheckboxDescriptor(ComponentType.SkipCI.name, state::hideSkipCI)
 
 
 /**
- * git setting panel
- * @see ApplicationBundle.properties
- * @see PlatformExtensions.xml
+ * git settings panel
+ *
+ * [ApplicationBundle](app.jar://messages/ApplicationBundle.xml)
+ *
+ * [PlatformExtensions](app.jar://META-INF/PlatformExtensions.xml)
+ *
+ * @See com.intellij.ide.ui.AppearanceConfigurable
  * @See com.intellij.application.options.editor.EditorOptionsPanel
  */
-internal class GitPanel {
+internal class GitSettingsPanel {
 
     /**
      * type标签
@@ -72,41 +75,41 @@ internal class GitPanel {
         group(GitBundle.message("settings.commit.panel.ui.hidden")) {
             row {
                 checkBox(hideTypeGroup).applyToComponent {
-                    this.toolTipText = ViewForm.TypeGroup.description()
+                    this.toolTipText = ComponentType.TypeGroup.description()
                 }.gap(RightGap.SMALL)
 
                 checkBox(hideType).applyToComponent {
                     this.isEnabled = false
-                    this.toolTipText = ViewForm.Type.description()
+                    this.toolTipText = ComponentType.Type.description()
                 }.gap(RightGap.SMALL)
 
                 checkBox(hideScope).applyToComponent {
-                    this.toolTipText = ViewForm.Scope.description()
+                    this.toolTipText = ComponentType.Scope.description()
                 }.gap(RightGap.SMALL)
 
                 checkBox(hideSubject).applyToComponent {
                     this.isEnabled = false
-                    this.toolTipText = ViewForm.Subject.description()
+                    this.toolTipText = ComponentType.Subject.description()
                 }.gap(RightGap.SMALL)
 
                 checkBox(hideBody).applyToComponent {
-                    this.toolTipText = ViewForm.Body.description()
+                    this.toolTipText = ComponentType.Body.description()
                 }.gap(RightGap.SMALL)
 
                 checkBox(hideWrapText).applyToComponent {
-                    this.toolTipText = ViewForm.WrapText.description()
+                    this.toolTipText = ComponentType.WrapText.description()
                 }.gap(RightGap.SMALL)
 
                 checkBox(hideBreaking).applyToComponent {
-                    this.toolTipText = ViewForm.Breaking.description()
+                    this.toolTipText = ComponentType.Breaking.description()
                 }.gap(RightGap.SMALL)
 
                 checkBox(hideIssues).applyToComponent {
-                    this.toolTipText = ViewForm.Issues.description()
+                    this.toolTipText = ComponentType.Issues.description()
                 }.gap(RightGap.SMALL)
 
                 checkBox(hideSkipCI).applyToComponent {
-                    this.toolTipText = ViewForm.SkipCI.description()
+                    this.toolTipText = ComponentType.SkipCI.description()
                 }
             }.layout(RowLayout.PARENT_GRID)
         }
@@ -118,7 +121,8 @@ internal class GitPanel {
                     .bindIntText(state::typeCount).columns(5)
                     .gap(RightGap.COLUMNS)
 
-                comboBox<SkipCIWord>(DefaultComboBoxModel(SkipCIWord.values()),
+                comboBox<SkipCI>(
+                    DefaultComboBoxModel(SkipCI.values()),
                     renderer = SimpleListCellRenderer.create("") { it.label })
                     .label(GitBundle.message("settings.common.skip.ci.word"))
                     .bindItem(state::skipCI.toNullableProperty())

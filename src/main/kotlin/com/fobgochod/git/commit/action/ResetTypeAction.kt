@@ -1,7 +1,7 @@
 package com.fobgochod.git.commit.action
 
 import com.fobgochod.git.commit.domain.TypeTable
-import com.fobgochod.git.commit.settings.GitState
+import com.fobgochod.git.commit.settings.GitSettings
 import com.fobgochod.git.commit.util.GitBundle
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionUpdateThread
@@ -14,7 +14,7 @@ class ResetTypeAction(private val typeTable: TypeTable) : AnActionButton(
     AllIcons.Actions.Rollback
 ) {
 
-    private val state: GitState = GitState.getInstance()
+    private val state: GitSettings = GitSettings.getInstance()
 
     override fun actionPerformed(event: AnActionEvent) {
         val selectedRow = typeTable.selectedRow
