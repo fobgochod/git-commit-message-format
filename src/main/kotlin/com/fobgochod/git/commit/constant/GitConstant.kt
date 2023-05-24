@@ -7,7 +7,7 @@ object GitConstant {
     const val RADIO_BUTTON_TYPE_COUNT = 3
 
     /**
-     * https://stackoverflow.com/a/2120040/5138796
+     * [How to wrap git commit comments?](https://stackoverflow.com/a/2120040/5138796)
      */
     const val MAX_LINE_LENGTH = 72
 

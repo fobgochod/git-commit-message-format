@@ -1,10 +1,20 @@
 package com.fobgochod.git.commit.settings
 
 import com.fobgochod.git.commit.util.GitBundle
+
 import com.intellij.openapi.options.BoundSearchableConfigurable
 import com.intellij.openapi.ui.DialogPanel
 import org.jetbrains.annotations.NonNls
 
+/**
+ * Git Settings Configurable
+ *
+ * See [Settings](https://plugins.jetbrains.com/docs/intellij/settings.html)
+ *
+ * @author fobgochod
+ * @since 2023/5/24 23:43
+ * @see com.intellij.ide.ui.AppearanceConfigurable
+ */
 class GitSettingsConfigurable : BoundSearchableConfigurable(DISPLAY_NAME, HELP_ID, ID) {
 
     companion object {

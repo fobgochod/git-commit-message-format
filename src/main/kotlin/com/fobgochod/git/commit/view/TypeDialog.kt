@@ -11,9 +11,9 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 
 class TypeDialog(
-        title: String,
-        private val name: String,
-        private val description: String
+    title: String,
+    private val name: String = "",
+    private val description: String = ""
 ) : DialogWrapper(true) {
 
     private val root: JPanel = JPanel(BorderLayout())
@@ -33,7 +33,7 @@ class TypeDialog(
         nameField.text = name
         descriptionField.text = description
         formBuilder.addLabeledComponent(nameLabel, nameField)
-                .addLabeledComponent(descriptionLabel, descriptionField)
+            .addLabeledComponent(descriptionLabel, descriptionField)
         root.add(formBuilder.panel, BorderLayout.CENTER)
         root.preferredSize = JBUI.size(500, 0)
     }

@@ -9,7 +9,6 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationConfigurable parentId="tools"
-                                 groupWeight="150"
                                  id="git.commit.message"
                                  instance="com.fobgochod.git.commit.settings.GitSettingsConfigurable"
                                  key="configurable.display.name"

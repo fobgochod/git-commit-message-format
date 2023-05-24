@@ -33,14 +33,13 @@ private val hideSkipCI get() = CheckboxDescriptor(ComponentType.SkipCI.name, sta
 
 
 /**
- * git settings panel
+ * Git settings panel
  *
- * [ApplicationBundle](app.jar://messages/ApplicationBundle.xml)
+ * See [Kotlin UI DSL Version 2](https://plugins.jetbrains.com/docs/intellij/kotlin-ui-dsl-version-2.html)
  *
- * [PlatformExtensions](app.jar://META-INF/PlatformExtensions.xml)
- *
- * @See com.intellij.ide.ui.AppearanceConfigurable
- * @See com.intellij.application.options.editor.EditorOptionsPanel
+ * @author fobgochod
+ * @since 2023/5/24 23:43
+ * @see com.intellij.application.options.editor.EditorOptionsPanel
  */
 internal class GitSettingsPanel {
 

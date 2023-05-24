@@ -16,7 +16,7 @@ import javax.swing.table.TableColumn
  * commit type table
  *
  * @author fobgochod
- * @date 2022/12/13 2:13
+ * @since 2022/12/13 2:13
  */
 class TypeTable : JBTable() {
 
@@ -58,7 +58,7 @@ class TypeTable : JBTable() {
     }
 
     fun addRow() {
-        val typeDialog = TypeDialog(GitBundle.message("settings.type.dialog.add.title"), "", "")
+        val typeDialog = TypeDialog(GitBundle.message("settings.type.dialog.add.title"))
         if (typeDialog.showAndGet()) {
             val name = typeDialog.name()
             typeRows.add(TypeRow(name, typeDialog.description()))

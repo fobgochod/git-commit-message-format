@@ -1,10 +1,10 @@
 package com.fobgochod.git.commit.domain
 
 /**
- * commit type
+ * commit type row
  *
  * @author fobgochod
- * @date 2022/12/11 23:16
+ * @since 2022/12/11 23:16
  */
 data class TypeRow(
     var name: String = "",
