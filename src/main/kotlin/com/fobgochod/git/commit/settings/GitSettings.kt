@@ -13,9 +13,9 @@ import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil
 
 @State(
-    name = GitSettings.NAME,
-    storages = [Storage(GitSettings.STORAGES)],
-    category = SettingsCategory.PLUGINS
+        name = GitSettings.NAME,
+        storages = [Storage(GitSettings.STORAGES)],
+        category = SettingsCategory.PLUGINS
 )
 class GitSettings : PersistentStateComponent<GitSettingsState> {
 
@@ -159,6 +159,6 @@ class GitSettings : PersistentStateComponent<GitSettingsState> {
 
         @JvmStatic
         fun getInstance(): GitSettings =
-            ApplicationManager.getApplication().getService(GitSettings::class.java)
+                ApplicationManager.getApplication().getService(GitSettings::class.java)
     }
 }

@@ -10,6 +10,11 @@
 - hidden unnecessary component
 - add skipping workflow runs options
 
+### Changed
+
+- Rewritten settings ui using Kotlin UI DSL Version 2
+- Rewritten commit ui using Kotlin UI DSL Version 2
+
 ### Fixed
 
 - fix restore data fail exception

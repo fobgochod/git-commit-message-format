@@ -1,5 +1,7 @@
 package com.fobgochod.git.commit.domain
 
+import com.fobgochod.git.commit.domain.option.CommitType
+
 /**
  * commit type row
  *
@@ -7,9 +9,14 @@ package com.fobgochod.git.commit.domain
  * @since 2022/12/11 23:16
  */
 data class TypeRow(
-    var name: String = "",
-    var description: String = ""
+        var name: String = "",
+        var description: String = ""
 ) {
+
+    constructor(commitType: CommitType) : this() {
+        this.name = commitType.type()
+        this.description = commitType.description()
+    }
 
     override fun toString(): String {
         return String.format("%s - %s", name, description)

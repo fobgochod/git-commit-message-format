@@ -22,5 +22,12 @@
             <keyboard-shortcut keymap="$default" first-keystroke="alt Q"/>
             <add-to-group group-id="Vcs.MessageActionGroup" anchor="first"/>
         </action>
+
+        <!-- UI DSL Examples  -->
+        <!--
+        <action class="com.intellij.internal.ui.uiDslShowcase.UiDslShowcaseAction">
+            <add-to-group group-id="Vcs.MessageActionGroup" anchor="last"/>
+        </action>
+        -->
     </actions>
 </idea-plugin>

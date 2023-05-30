@@ -16,4 +16,12 @@ object GitConstant {
 
     val HEADER_PATTERN: Pattern = Pattern.compile("^([a-z]+)(\\((.+)?\\))?: (.+)?")
     val CLOSED_ISSUES_PATTERN: Pattern = Pattern.compile("Closes (.+)")
+
+    /**
+     * commit ui default size
+     */
+    const val PREFERRED_WIDTH: Int = 800
+    const val PREFERRED_HEIGHT: Int = 560
+    const val MINIMUM_WIDTH: Int = 600
+    const val MINIMUM_HEIGHT: Int = 420
 }

@@ -1,197 +1,171 @@
 package com.fobgochod.git.commit.view
 
+import com.fobgochod.git.commit.constant.GitConstant
 import com.fobgochod.git.commit.domain.CommitMessage
 import com.fobgochod.git.commit.domain.TypeRow
-import com.fobgochod.git.commit.domain.option.ComponentType
 import com.fobgochod.git.commit.settings.GitSettings
 import com.fobgochod.git.commit.settings.GitSettingsDialog
 import com.fobgochod.git.commit.util.GitBundle
 import com.fobgochod.git.commit.util.GitUtil
 import com.intellij.icons.AllIcons
+import com.intellij.ide.IdeBundle
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.setEmptyState
-import com.intellij.ui.components.*
-import com.intellij.util.ui.FormBuilder
-import java.awt.BorderLayout
-import java.awt.GridLayout
-import java.awt.event.ItemEvent
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
+import com.intellij.ui.components.JBTextField
+import com.intellij.ui.dsl.builder.*
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
+import com.intellij.ui.dsl.gridLayout.VerticalAlign
+import com.intellij.util.ui.JBEmptyBorder
+import java.awt.event.ItemListener
+import javax.swing.AbstractButton
 import javax.swing.ButtonGroup
 import javax.swing.JComponent
-import javax.swing.JPanel
+import javax.swing.event.ChangeListener
 
-class CommitPanel(val project: Project?, private val commitMessage: CommitMessage) : JPanel() {
+/**
+ * Git Commit Format panel
+ *
+ * See [Kotlin UI DSL Version 2](https://plugins.jetbrains.com/docs/intellij/kotlin-ui-dsl-version-2.html)
+ *
+ * @author fobgochod
+ * @date 2023/5/30 22:21
+ * @see com.intellij.internal.ui.uiDslShowcase.UiDslShowcaseAction
+ */
+class CommitPanel(val project: Project?, private val commitMessage: CommitMessage) {
 
     private val state: GitSettings = GitSettings.getInstance()
+    private lateinit var changeSubject: JBTextField
 
-    private val mainBuilder = FormBuilder.createFormBuilder()
+    private val root: DialogPanel = panel {
+        row(GitBundle.message("dialog.form.label.type")) {
+            panel {
+                lateinit var comboBox: ComboBox<TypeRow>
+                val changeTypeGroup = ButtonGroup()
 
-    private val changeTypePanel = JPanel(GridLayout(0, 1))
-    private val changeTypeGroup = ButtonGroup()
-    private val changeType: ComboBox<TypeRow> = ComboBox()
+                panel {
+                    buttonsGroup {
+                        state.typeRows.forEachIndexed { index, type ->
+                            row {
+                                val lister = ChangeListener {
+                                    val button = it.source as AbstractButton
+                                    if (button.isSelected) {
+                                        comboBox.selectedItem = type
+                                    }
+                                }
 
-    private val changeScopePanel = JPanel(BorderLayout())
-    private val changeScope: ComboBox<String> = ComboBox()
+                                radioButton(type.toString(), type)
+                                        .applyToComponent {
+                                            changeTypeGroup.add(this)
+                                            addChangeListener(lister)
+                                        }
+                            }.visible(index < state.typeCount)
+                        }
+                    }.bind(commitMessage::changeType)
+                }.visible(!state.hideTypeGroup)
 
-    private val changeSubject = JBTextField()
-    private val changeBody = JBTextArea(6, 0)
-    private val wrapText = JBCheckBox(GitBundle.message("dialog.form.label.wrap.text"), true)
-    private val breakingChanges = JBTextArea(3, 0)
-    private val closedIssues = JBTextField()
+                row {
+                    val lister = ItemListener {
+                        val item: TypeRow = it?.item as TypeRow
+                        for (element in changeTypeGroup.elements) {
+                            if (item.toString() == element.text) {
+                                element.isSelected = true
+                            }
+                        }
+                    }
 
-    private val bottomPanel: JPanel = JPanel(BorderLayout())
-    private val skipCI = JBCheckBox(GitBundle.message("dialog.form.label.skip.ci"))
-    private val settings = JBLabel(AllIcons.General.Settings)
+                    comboBox(state.typeRows)
+                            .applyToComponent {
+                                comboBox = this
+                                addItemListener(lister)
+                            }
+                            .horizontalAlign(HorizontalAlign.FILL)
+                            .bindItem(commitMessage::changeType.toNullableProperty())
+                }.visible(!state.hideType && state.typeRows.size > state.typeCount)
+            }
+        }
 
-    init {
-        layout = BorderLayout()
-        add(mainBuilder.panel, BorderLayout.CENTER)
-        initView()
-        initEvent()
-        initData()
+        row(GitBundle.message("dialog.form.label.scope")) {
+            val gitUtil = GitUtil(project).logs()
+
+            comboBox(gitUtil.scopes)
+                    .horizontalAlign(HorizontalAlign.FILL)
+                    .bindItem(commitMessage::changeScope.toNullableProperty())
+        }.visible(!state.hideScope)
+
+        row(GitBundle.message("dialog.form.label.subject")) {
+            textField().horizontalAlign(HorizontalAlign.FILL)
+                    .applyToComponent { changeSubject = this }
+                    .bindText(commitMessage::changeSubject)
+        }.visible(!state.hideSubject)
+
+        row {
+            label(GitBundle.message("dialog.form.label.body"))
+                    .verticalAlign(VerticalAlign.TOP)
+                    .gap(RightGap.SMALL)
+            textArea()
+                    .rows(6)
+                    .horizontalAlign(HorizontalAlign.FILL)
+                    .bindText(commitMessage::changeBody)
+        }.layout(RowLayout.PARENT_GRID).visible(!state.hideBody)
+
+        row(EMPTY_LABEL) {
+            checkBox(GitBundle.message("dialog.form.label.wrap.text"))
+                    .horizontalAlign(HorizontalAlign.FILL)
+                    .bindSelected(commitMessage::wrapText)
+        }.visible(!state.hideWrapText)
+
+        row {
+            label(GitBundle.message("dialog.form.label.breaking"))
+                    .verticalAlign(VerticalAlign.TOP)
+                    .gap(RightGap.SMALL)
+            textArea()
+                    .rows(3)
+                    .resizableColumn()
+                    .horizontalAlign(HorizontalAlign.FILL)
+                    .bindText(commitMessage::breakingChanges)
+        }.layout(RowLayout.PARENT_GRID).visible(!state.hideBreaking)
+
+        row(GitBundle.message("dialog.form.label.issues")) {
+            textField()
+                    .horizontalAlign(HorizontalAlign.FILL)
+                    .bindText(commitMessage::closedIssues)
+                    .applyToComponent {
+                        setEmptyState("#124,#245")
+                    }
+        }.visible(!state.hideIssues)
+
+        row(EMPTY_LABEL) {
+            checkBox(GitBundle.message("dialog.form.label.skip.ci")).bindSelected(commitMessage::skipCI)
+
+            val action = object : DumbAwareAction(IdeBundle.message("settings.entry.point.tooltip"), null, AllIcons.General.Settings) {
+                override fun actionPerformed(e: AnActionEvent) {
+                    if (project != null) {
+                        GitSettingsDialog.showSettingsDialog(project)
+                    }
+                }
+            }
+            actionButton(action).horizontalAlign(HorizontalAlign.RIGHT)
+        }.visible(!state.hideSkipCI)
+    }.apply {
+        withPreferredWidth(GitConstant.PREFERRED_WIDTH)
+        border = JBEmptyBorder(10)
+    }
+
+
+    fun createPanel(): JComponent {
+        return root
     }
 
     fun focusComponent(): JComponent {
         return changeSubject
     }
 
-    private fun initView() {
-        if (state.isComponentHidden(ComponentType.TypeGroup)) {
-            changeTypePanel.add(changeType)
-        } else {
-            for ((index, type) in state.typeRows.withIndex()) {
-                if (index < state.typeCount) {
-                    val radioButton = JBRadioButton(type.toString())
-                    radioButton.toolTipText = type.toString()
-                    changeTypeGroup.add(radioButton)
-                    changeTypePanel.add(radioButton)
-                }
-            }
-            if (state.typeCount < state.typeRows.size) {
-                changeTypePanel.add(changeType)
-            } else {
-                changeTypePanel.layout = GridLayout(0, 1, 0, 5)
-            }
-        }
-
-        changeScope.isEditable = true
-        changeScopePanel.add(changeScope, BorderLayout.CENTER)
-
-        changeBody.lineWrap = true
-        breakingChanges.lineWrap = true
-
-        closedIssues.setEmptyState("#124,#245")
-
-        bottomPanel.add(skipCI, BorderLayout.CENTER)
-        bottomPanel.add(settings, BorderLayout.EAST)
-
-        mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.type"), changeTypePanel)
-        if (state.isComponentShow(ComponentType.Scope)) {
-            mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.scope"), changeScopePanel)
-        }
-        mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.subject"), changeSubject)
-        if (state.isComponentShow(ComponentType.Body)) {
-            mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.body"), changeBody)
-        }
-        if (state.isComponentShow(ComponentType.WrapText)) {
-            mainBuilder.addComponentToRightColumn(wrapText)
-        }
-        if (state.isComponentShow(ComponentType.Breaking)) {
-            mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.breaking"), breakingChanges)
-        }
-        if (state.isComponentShow(ComponentType.Issues)) {
-            mainBuilder.addLabeledComponent(GitBundle.message("dialog.form.label.issues"), closedIssues)
-        }
-        if (state.isComponentShow(ComponentType.SkipCI)) {
-            mainBuilder.addComponentToRightColumn(bottomPanel)
-        }
-    }
-
-    private fun initEvent() {
-        for (element in changeTypeGroup.elements) {
-            element.addChangeListener {
-                if (element.isSelected) {
-                    changeType.selectedItem = state.getTypeFromName(element.text)
-                }
-            }
-        }
-
-        changeType.addItemListener { e: ItemEvent ->
-            val item: TypeRow = e.item as TypeRow
-            if (state.typeRows.indexOf(item) > state.typeCount) {
-                changeTypeGroup.clearSelection()
-            } else {
-                for (element in changeTypeGroup.elements) {
-                    if (item == state.getTypeFromName(element.text)) {
-                        element.isSelected = true
-                    }
-                }
-            }
-        }
-
-        settings.addMouseListener(object : MouseAdapter() {
-            override fun mouseClicked(e: MouseEvent) {
-                GitSettingsDialog.showSettingsDialog(project)
-            }
-        })
-    }
-
-    // 恢复数据
-    private fun initData() {
-        for (typeRow in state.typeRows) {
-            changeType.addItem(typeRow)
-        }
-
-        if (state.isComponentShow(ComponentType.Scope)) {
-            val gitUtil = GitUtil(project).logs()
-            gitUtil.scopes.forEach(changeScope::addItem)
-        }
-
-        restoreCommitMessage(commitMessage)
-    }
-
     fun getCommitMessage(): CommitMessage {
-        return CommitMessage(
-            getChangeTypeName(),
-            getChangeScope(),
-            changeSubject.text.trim { it <= ' ' },
-            changeBody.text.trim { it <= ' ' },
-            wrapText.isSelected,
-            breakingChanges.text.trim { it <= ' ' },
-            closedIssues.text.trim { it <= ' ' },
-            skipCI.isSelected
-        )
-    }
-
-    private fun getChangeTypeName(): String {
-        val selectedItem = changeType.selectedItem
-        return (selectedItem as TypeRow).name
-    }
-
-    private fun getChangeScope(): String {
-        val selectedItem = changeScope.selectedItem
-        return selectedItem as String
-    }
-
-    private fun restoreCommitMessage(commitMessage: CommitMessage) {
-        changeType.selectedItem = getChangeTypeByName(commitMessage.changeType)
-        changeScope.selectedItem = commitMessage.changeScope
-        changeSubject.text = commitMessage.changeSubject
-        changeBody.text = commitMessage.changeBody
-        wrapText.isSelected = commitMessage.wrapText
-        breakingChanges.text = commitMessage.breakingChanges
-        closedIssues.text = commitMessage.closedIssues
-        skipCI.isSelected = commitMessage.skipCI
-    }
-
-    private fun getChangeTypeByName(name: String): TypeRow {
-        for (typeRow in state.typeRows) {
-            if (name == typeRow.name) {
-                return typeRow
-            }
-        }
-        return state.typeRows[0]
+        root.apply()
+        return commitMessage
     }
 }

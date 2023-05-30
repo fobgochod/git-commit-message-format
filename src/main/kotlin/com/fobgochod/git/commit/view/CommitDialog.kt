@@ -14,15 +14,10 @@ class CommitDialog(project: Project?, commitMessage: CommitMessage) : DialogWrap
         panel = CommitPanel(project, commitMessage)
         title = GitBundle.message("action.toolbar.create.commit.message.text")
         init()
-
-        // val rootPane = peer.rootPane
-        // if (rootPane != null) {
-        //     rootPane.minimumSize = JBUI.size(600, 420)
-        // }
     }
 
     override fun createCenterPanel(): JComponent {
-        return panel
+        return panel.createPanel()
     }
 
     fun getCommitMessage(): String {

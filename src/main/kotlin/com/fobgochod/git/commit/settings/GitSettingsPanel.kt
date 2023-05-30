@@ -31,7 +31,6 @@ private val hideBreaking get() = CheckboxDescriptor(ComponentType.Breaking.name,
 private val hideIssues get() = CheckboxDescriptor(ComponentType.Issues.name, state::hideIssues)
 private val hideSkipCI get() = CheckboxDescriptor(ComponentType.SkipCI.name, state::hideSkipCI)
 
-
 /**
  * Git settings panel
  *
@@ -39,7 +38,7 @@ private val hideSkipCI get() = CheckboxDescriptor(ComponentType.SkipCI.name, sta
  *
  * @author fobgochod
  * @since 2023/5/24 23:43
- * @see com.intellij.application.options.editor.EditorOptionsPanel
+ * @see com.intellij.internal.ui.uiDslShowcase.UiDslShowcaseAction
  */
 internal class GitSettingsPanel {
 
@@ -52,15 +51,15 @@ internal class GitSettingsPanel {
         row {
             typeTable.reset(state.typeRows)
             cell(
-                ToolbarDecorator.createDecorator(typeTable)
-                    .setAddAction { typeTable.addRow() }
-                    .setRemoveAction { typeTable.removeRow() }
-                    .setEditAction { typeTable.editRow() }
-                    .setMoveUpAction { typeTable.moveUp() }
-                    .setMoveDownAction { typeTable.moveDown() }
-                    .addExtraAction(ResetTypeAction(typeTable))
-                    .addExtraAction(RestoreTypesAction(typeTable))
-                    .createPanel()
+                    ToolbarDecorator.createDecorator(typeTable)
+                            .setAddAction { typeTable.addRow() }
+                            .setRemoveAction { typeTable.removeRow() }
+                            .setEditAction { typeTable.editRow() }
+                            .setMoveUpAction { typeTable.moveUp() }
+                            .setMoveDownAction { typeTable.moveDown() }
+                            .addExtraAction(ResetTypeAction(typeTable))
+                            .addExtraAction(RestoreTypesAction(typeTable))
+                            .createPanel()
             ).apply {
                 object : DoubleClickListener() {
                     override fun onDoubleClick(event: MouseEvent): Boolean {
@@ -68,17 +67,16 @@ internal class GitSettingsPanel {
                     }
                 }.installOn(typeTable)
             }.horizontalAlign(HorizontalAlign.FILL)
-                .verticalAlign(VerticalAlign.FILL)
+                    .verticalAlign(VerticalAlign.FILL)
         }.resizableRow()
 
-        group(GitBundle.message("settings.commit.panel.ui.hidden")) {
+        group(GitBundle.message("settings.group.hidden.options")) {
             row {
                 checkBox(hideTypeGroup).applyToComponent {
                     this.toolTipText = ComponentType.TypeGroup.description()
                 }.gap(RightGap.SMALL)
 
                 checkBox(hideType).applyToComponent {
-                    this.isEnabled = false
                     this.toolTipText = ComponentType.Type.description()
                 }.gap(RightGap.SMALL)
 
@@ -113,24 +111,24 @@ internal class GitSettingsPanel {
             }.layout(RowLayout.PARENT_GRID)
         }
 
-        group(GitBundle.message("settings.commit.panel.behavior")) {
+        group(GitBundle.message("settings.group.common.settings")) {
             row {
                 intTextField()
-                    .label(GitBundle.message("settings.common.type.count"))
-                    .bindIntText(state::typeCount).columns(5)
-                    .gap(RightGap.COLUMNS)
+                        .label(GitBundle.message("settings.common.type.count"))
+                        .bindIntText(state::typeCount).columns(5)
+                        .gap(RightGap.COLUMNS)
 
                 comboBox<SkipCI>(
-                    DefaultComboBoxModel(SkipCI.values()),
-                    renderer = SimpleListCellRenderer.create("") { it.label })
-                    .label(GitBundle.message("settings.common.skip.ci.word"))
-                    .bindItem(state::skipCI.toNullableProperty())
-                    .gap(RightGap.COLUMNS)
+                        DefaultComboBoxModel(SkipCI.values()),
+                        renderer = SimpleListCellRenderer.create("") { it.label })
+                        .label(GitBundle.message("settings.common.skip.ci.word"))
+                        .bindItem(state::skipCI.toNullableProperty())
+                        .gap(RightGap.COLUMNS)
 
                 comboBox<ViewMode>(DefaultComboBoxModel(ViewMode.values()),
-                    renderer = SimpleListCellRenderer.create("") { it.name })
-                    .label(GitBundle.message("settings.common.view.mode"))
-                    .bindItem(state::viewMode.toNullableProperty())
+                        renderer = SimpleListCellRenderer.create("") { it.name })
+                        .label(GitBundle.message("settings.common.view.mode"))
+                        .bindItem(state::viewMode.toNullableProperty())
             }
         }.layout(RowLayout.INDEPENDENT)
     }

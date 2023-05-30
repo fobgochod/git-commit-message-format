@@ -33,10 +33,10 @@ class CreateCommitAction : AnAction(), DumbAware {
         val commitPanel: CommitMessageI = getCommitPanel(event) ?: return
         val commitMessage: CommitMessage = parseCommitMessage(commitPanel)
 
-        if (state.viewMode == ViewMode.Float) {
-            openFloat(event, commitPanel, commitMessage)
-        } else {
-            openWindow(event, commitPanel, commitMessage)
+
+        when (state.viewMode) {
+            ViewMode.Float -> openFloat(event, commitPanel, commitMessage)
+            ViewMode.Window -> openWindow(event, commitPanel, commitMessage)
         }
     }
 
@@ -57,21 +57,24 @@ class CreateCommitAction : AnAction(), DumbAware {
         val project = event.project ?: return
 
         val panel = CommitPanel(project, commitMessage)
-        val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(panel, panel.focusComponent())
-            .setProject(event.project)
-            .setResizable(true)
-            .setMovable(true)
-            .setTitle(GitBundle.message("action.toolbar.create.commit.message.text"))
-            .setFocusable(true)
-            .setRequestFocus(true)
-            .addListener(object : JBPopupListener {
-                override fun onClosed(event: LightweightWindowEvent) {
-                    commitPanel.setCommitMessage(panel.getCommitMessage().toString())
-                }
-            }).createPopup()
-        popup.showCenteredInCurrentWindow(project)
+        JBPopupFactory.getInstance()
+                .createComponentPopupBuilder(panel.createPanel(), panel.focusComponent())
+                .setProject(event.project)
+                .setTitle(GitBundle.message("action.toolbar.create.commit.message.text"))
+                .setResizable(true)
+                .setMovable(true)
+                .setFocusable(true)
+                .setRequestFocus(true)
+                .setShowShadow(true)
+                .setCancelOnClickOutside(true)
+                .addListener(object : JBPopupListener {
+                    override fun onClosed(event: LightweightWindowEvent) {
+                        commitPanel.setCommitMessage(panel.getCommitMessage().toString())
+                    }
+                })
+                .createPopup()
+                .showCenteredInCurrentWindow(project)
     }
-
 
     private fun parseCommitMessage(commitPanel: CommitMessageI): CommitMessage {
         if (commitPanel is CheckinProjectPanel) {

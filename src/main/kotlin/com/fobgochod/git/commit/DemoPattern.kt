@@ -7,7 +7,7 @@ class DemoPattern {
 
     companion object {
 
-        private val HEADER_PATTERN: Pattern = Pattern.compile("^([a-z]+)(\\((.+)?\\))?:( )?(.+)?")
+        private val HEADER_PATTERN: Pattern = Pattern.compile("^([a-z]+)(\\((.+)?\\))?: (.+)?")
 
         /**
          * 匹配如下：
@@ -19,7 +19,7 @@ class DemoPattern {
         @JvmStatic
         fun main(args: Array<String>) {
             val message1 = "feat(compile): hello world"
-            val message2 = "feat(compile):"
+            val message2 = "feat(compile): "
             val message3 = "feat(): hello world"
             val message4 = "feat: "
 

@@ -1,20 +1,21 @@
 package com.fobgochod.git.commit.domain
 
 import com.fobgochod.git.commit.constant.GitConstant
+import com.fobgochod.git.commit.domain.option.CommitType
 import com.fobgochod.git.commit.settings.GitSettings
 import com.intellij.openapi.diagnostic.Logger
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.WordUtils
 
 data class CommitMessage(
-    var changeType: String = "",
-    var changeScope: String = "",
-    var changeSubject: String = "",
-    var changeBody: String = "",
-    var wrapText: Boolean = true,
-    var breakingChanges: String = "",
-    var closedIssues: String = "",
-    var skipCI: Boolean = false
+        var changeType: TypeRow = TypeRow(CommitType.FEAT),
+        var changeScope: String = "",
+        var changeSubject: String = "",
+        var changeBody: String = "",
+        var wrapText: Boolean = true,
+        var breakingChanges: String = "",
+        var closedIssues: String = "",
+        var skipCI: Boolean = false
 ) {
 
     companion object {
@@ -27,7 +28,7 @@ data class CommitMessage(
                 var matcher = GitConstant.HEADER_PATTERN.matcher(message)
                 if (!matcher.find()) return commitMessage
 
-                commitMessage.changeType = state.getTypeFromName(matcher.group(1)).name
+                commitMessage.changeType = state.getTypeFromName(matcher.group(1))
                 commitMessage.changeScope = if (matcher.group(3) != null) matcher.group(3) else ""
                 commitMessage.changeSubject = if (matcher.group(4) != null) matcher.group(4) else ""
 
@@ -41,8 +42,8 @@ data class CommitMessage(
                 while (pos < messages.size) {
                     val lineString = messages[pos]
                     if (lineString.startsWith(GitConstant.BREAKING_CHANGE_PREFIX)
-                        || lineString.startsWith(GitConstant.CLOSES_PREFIX)
-                        || lineString.equals(state.skipCI.label, ignoreCase = true)
+                            || lineString.startsWith(GitConstant.CLOSES_PREFIX)
+                            || lineString.equals(state.skipCI.label, ignoreCase = true)
                     ) break
                     builder.append(lineString).append('\n')
                     pos++
@@ -53,13 +54,13 @@ data class CommitMessage(
                 while (pos < messages.size) {
                     val lineString = messages[pos]
                     if (lineString.startsWith(GitConstant.CLOSES_PREFIX)
-                        || lineString.equals(state.skipCI.label, ignoreCase = true)
+                            || lineString.equals(state.skipCI.label, ignoreCase = true)
                     ) break
                     builder.append(lineString).append('\n')
                     pos++
                 }
                 commitMessage.breakingChanges =
-                    builder.toString().trim { it <= ' ' }.replace(GitConstant.BREAKING_CHANGE_PREFIX, "")
+                        builder.toString().trim { it <= ' ' }.replace(GitConstant.BREAKING_CHANGE_PREFIX, "")
 
                 matcher = GitConstant.CLOSED_ISSUES_PATTERN.matcher(message)
                 builder = StringBuilder()
@@ -79,7 +80,7 @@ data class CommitMessage(
 
     override fun toString(): String {
         val builder: StringBuilder = StringBuilder()
-        builder.append(changeType)
+        builder.append(changeType.name)
         if (StringUtils.isNotBlank(changeScope)) {
             builder.append('(').append(changeScope).append(')')
         }
@@ -108,7 +109,7 @@ data class CommitMessage(
             builder.append(System.lineSeparator())
             for (closedIssue: String in closedIssues.split(",")) {
                 builder.append(System.lineSeparator()).append(GitConstant.CLOSES_PREFIX)
-                    .append(formatClosedIssue(closedIssue))
+                        .append(formatClosedIssue(closedIssue))
             }
         }
 

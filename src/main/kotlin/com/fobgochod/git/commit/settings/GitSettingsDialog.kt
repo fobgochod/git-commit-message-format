@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project
 object GitSettingsDialog {
 
     @JvmStatic
-    fun showSettingsDialog(project: Project?) =
+    fun showSettingsDialog(project: Project?) {
         ShowSettingsUtil.getInstance().showSettingsDialog(project, GitSettingsConfigurable::class.java)
+    }
 }
