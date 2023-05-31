@@ -4,11 +4,13 @@
 
 ## [Unreleased]
 
+## [2.0.2]
+
 ### Added
 
-- open by float or window
-- hidden unnecessary component
-- add skipping workflow runs options
+- Open by float or window
+- Hidden unnecessary component
+- Add skipping workflow runs options
 
 ### Changed
 
@@ -17,7 +19,7 @@
 
 ### Fixed
 
-- fix restore data fail exception
+- Fix restore data fail exception
 
 ## [2.0.1]
 

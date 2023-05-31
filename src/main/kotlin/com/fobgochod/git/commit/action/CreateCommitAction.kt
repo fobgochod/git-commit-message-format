@@ -62,31 +62,31 @@ class CreateCommitAction : AnAction(), DumbAware {
 
         val panel = CommitPanel(project, commitMessage)
         val popup = JBPopupFactory.getInstance()
-            .createComponentPopupBuilder(panel.createPanel(), panel.focusComponent())
-            .setProject(event.project)
-            .setTitle(GitBundle.message("action.toolbar.create.commit.message.text"))
-            .setResizable(true)
-            .setMovable(true)
-            .setFocusable(true)
-            .setRequestFocus(true)
-            .setShowShadow(true)
-            .setCancelOnClickOutside(true)
-            .addListener(object : JBPopupListener {
-                override fun onClosed(event: LightweightWindowEvent) {
-                    commitPanel.setCommitMessage(panel.getCommitMessage().toString())
+                .createComponentPopupBuilder(panel.createPanel(), panel.focusComponent())
+                .setProject(event.project)
+                .setTitle(GitBundle.message("action.toolbar.create.commit.message.text"))
+                .setResizable(true)
+                .setMovable(true)
+                .setFocusable(true)
+                .setRequestFocus(true)
+                .setShowShadow(true)
+                .setCancelOnClickOutside(true)
+                .addListener(object : JBPopupListener {
+                    override fun onClosed(event: LightweightWindowEvent) {
+                        commitPanel.setCommitMessage(panel.getCommitMessage().toString())
+                    }
+                })
+                .createPopup()
+                .also { popup ->
+                    panel.focusComponent()
+                            .addKeyListener(object : KeyAdapter() {
+                                override fun keyPressed(e: KeyEvent?) {
+                                    if (e?.keyCode == KeyEvent.VK_ENTER && e.isAltDown) {
+                                        popup.closeOk(null)
+                                    }
+                                }
+                            })
                 }
-            })
-            .createPopup()
-            .also { popup ->
-                panel.focusComponent()
-                    .addKeyListener(object : KeyAdapter() {
-                        override fun keyPressed(e: KeyEvent?) {
-                            if (e?.keyCode == KeyEvent.VK_ENTER) {
-                                popup.closeOk(null)
-                            }
-                        }
-                    })
-            }
 
         if (appSettings.COMMIT_FROM_LOCAL_CHANGES) {
             popup.showCenteredInCurrentWindow(project)
