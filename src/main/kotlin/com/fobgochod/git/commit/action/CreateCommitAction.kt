@@ -17,12 +17,16 @@ import com.intellij.openapi.ui.popup.JBPopupListener
 import com.intellij.openapi.ui.popup.LightweightWindowEvent
 import com.intellij.openapi.vcs.CheckinProjectPanel
 import com.intellij.openapi.vcs.CommitMessageI
+import com.intellij.openapi.vcs.VcsApplicationSettings
 import com.intellij.openapi.vcs.VcsDataKeys
 import com.intellij.openapi.vcs.ui.Refreshable
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
 
 class CreateCommitAction : AnAction(), DumbAware {
 
     private val state: GitSettings = GitSettings.getInstance()
+    private val appSettings = VcsApplicationSettings.getInstance()
 
     init {
         templatePresentation.text = GitBundle.message("action.toolbar.create.commit.message.text")
@@ -57,23 +61,38 @@ class CreateCommitAction : AnAction(), DumbAware {
         val project = event.project ?: return
 
         val panel = CommitPanel(project, commitMessage)
-        JBPopupFactory.getInstance()
-                .createComponentPopupBuilder(panel.createPanel(), panel.focusComponent())
-                .setProject(event.project)
-                .setTitle(GitBundle.message("action.toolbar.create.commit.message.text"))
-                .setResizable(true)
-                .setMovable(true)
-                .setFocusable(true)
-                .setRequestFocus(true)
-                .setShowShadow(true)
-                .setCancelOnClickOutside(true)
-                .addListener(object : JBPopupListener {
-                    override fun onClosed(event: LightweightWindowEvent) {
-                        commitPanel.setCommitMessage(panel.getCommitMessage().toString())
-                    }
-                })
-                .createPopup()
-                .showCenteredInCurrentWindow(project)
+        val popup = JBPopupFactory.getInstance()
+            .createComponentPopupBuilder(panel.createPanel(), panel.focusComponent())
+            .setProject(event.project)
+            .setTitle(GitBundle.message("action.toolbar.create.commit.message.text"))
+            .setResizable(true)
+            .setMovable(true)
+            .setFocusable(true)
+            .setRequestFocus(true)
+            .setShowShadow(true)
+            .setCancelOnClickOutside(true)
+            .addListener(object : JBPopupListener {
+                override fun onClosed(event: LightweightWindowEvent) {
+                    commitPanel.setCommitMessage(panel.getCommitMessage().toString())
+                }
+            })
+            .createPopup()
+            .also { popup ->
+                panel.focusComponent()
+                    .addKeyListener(object : KeyAdapter() {
+                        override fun keyPressed(e: KeyEvent?) {
+                            if (e?.keyCode == KeyEvent.VK_ENTER) {
+                                popup.closeOk(null)
+                            }
+                        }
+                    })
+            }
+
+        if (appSettings.COMMIT_FROM_LOCAL_CHANGES) {
+            popup.showCenteredInCurrentWindow(project)
+        } else {
+            popup.showInFocusCenter()
+        }
     }
 
     private fun parseCommitMessage(commitPanel: CommitMessageI): CommitMessage {
