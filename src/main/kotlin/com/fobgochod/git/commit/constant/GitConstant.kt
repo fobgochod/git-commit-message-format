@@ -21,7 +21,4 @@ object GitConstant {
      * commit ui default size
      */
     const val PREFERRED_WIDTH: Int = 800
-    const val PREFERRED_HEIGHT: Int = 560
-    const val MINIMUM_WIDTH: Int = 600
-    const val MINIMUM_HEIGHT: Int = 420
 }

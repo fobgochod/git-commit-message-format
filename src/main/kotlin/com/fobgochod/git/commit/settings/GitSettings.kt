@@ -2,7 +2,6 @@ package com.fobgochod.git.commit.settings
 
 import com.fobgochod.git.commit.domain.TypeRow
 import com.fobgochod.git.commit.domain.option.CommitType
-import com.fobgochod.git.commit.domain.option.ComponentType
 import com.fobgochod.git.commit.domain.option.SkipCI
 import com.fobgochod.git.commit.domain.option.ViewMode
 import com.intellij.openapi.application.ApplicationManager
@@ -13,9 +12,9 @@ import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil
 
 @State(
-        name = GitSettings.NAME,
-        storages = [Storage(GitSettings.STORAGES)],
-        category = SettingsCategory.PLUGINS
+    name = GitSettings.NAME,
+    storages = [Storage(GitSettings.STORAGES)],
+    category = SettingsCategory.PLUGINS
 )
 class GitSettings : PersistentStateComponent<GitSettingsState> {
 
@@ -126,24 +125,6 @@ class GitSettings : PersistentStateComponent<GitSettingsState> {
         return typeRows[0]
     }
 
-    fun isComponentHidden(componentType: ComponentType): Boolean {
-        return when (componentType) {
-            ComponentType.TypeGroup -> hideTypeGroup
-            ComponentType.Type -> hideType
-            ComponentType.Scope -> hideScope
-            ComponentType.Subject -> hideSubject
-            ComponentType.Body -> hideBody
-            ComponentType.WrapText -> hideWrapText
-            ComponentType.Breaking -> hideBreaking
-            ComponentType.Issues -> hideIssues
-            ComponentType.SkipCI -> hideSkipCI
-        }
-    }
-
-    fun isComponentShow(componentType: ComponentType): Boolean {
-        return !isComponentHidden(componentType)
-    }
-
     override fun getState(): GitSettingsState {
         return state
     }
@@ -159,6 +140,6 @@ class GitSettings : PersistentStateComponent<GitSettingsState> {
 
         @JvmStatic
         fun getInstance(): GitSettings =
-                ApplicationManager.getApplication().getService(GitSettings::class.java)
+            ApplicationManager.getApplication().getService(GitSettings::class.java)
     }
 }

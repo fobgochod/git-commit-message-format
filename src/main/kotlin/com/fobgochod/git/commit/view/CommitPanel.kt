@@ -28,7 +28,6 @@ import java.awt.KeyboardFocusManager
 import java.awt.event.ItemListener
 import javax.swing.AbstractButton
 import javax.swing.ButtonGroup
-import javax.swing.JComponent
 import javax.swing.LayoutFocusTraversalPolicy
 import javax.swing.event.ChangeListener
 
@@ -41,12 +40,12 @@ import javax.swing.event.ChangeListener
  * @date 2023/5/30 22:21
  * @see com.intellij.internal.ui.uiDslShowcase.UiDslShowcaseAction
  */
-class CommitPanel(val project: Project?, private val commitMessage: CommitMessage) {
+class CommitPanel(private val project: Project, private val commitMessage: CommitMessage) {
 
     private val state: GitSettings = GitSettings.getInstance()
-    private lateinit var changeSubject: JBTextField
+    lateinit var changeSubject: JBTextField
 
-    private val root: DialogPanel = panel {
+    val root: DialogPanel = panel {
         row(GitBundle.message("dialog.form.label.type")) {
             panel {
                 lateinit var comboBox: ComboBox<TypeRow>
@@ -64,10 +63,10 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
                                 }
 
                                 radioButton(type.toString(), type)
-                                        .applyToComponent {
-                                            changeTypeGroup.add(this)
-                                            addChangeListener(lister)
-                                        }
+                                    .applyToComponent {
+                                        changeTypeGroup.add(this)
+                                        addChangeListener(lister)
+                                    }
                             }.visible(index < state.typeCount)
                         }
                     }.bind(commitMessage::changeType)
@@ -84,12 +83,12 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
                     }
 
                     comboBox(state.typeRows)
-                            .applyToComponent {
-                                comboBox = this
-                                addItemListener(lister)
-                            }
-                            .horizontalAlign(HorizontalAlign.FILL)
-                            .bindItem(commitMessage::changeType.toNullableProperty())
+                        .applyToComponent {
+                            comboBox = this
+                            addItemListener(lister)
+                        }
+                        .horizontalAlign(HorizontalAlign.FILL)
+                        .bindItem(commitMessage::changeType.toNullableProperty())
                 }.visible(!state.hideType && state.typeRows.size > state.typeCount)
             }
         }
@@ -98,61 +97,62 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
             val gitUtil = GitUtil(project).logs()
 
             comboBox(gitUtil.scopes)
-                    .horizontalAlign(HorizontalAlign.FILL)
-                    .bindItem(commitMessage::changeScope.toNullableProperty())
+                .horizontalAlign(HorizontalAlign.FILL)
+                .bindItem(commitMessage::changeScope.toNullableProperty())
         }.visible(!state.hideScope)
 
         row(GitBundle.message("dialog.form.label.subject")) {
             textField().horizontalAlign(HorizontalAlign.FILL)
-                    .applyToComponent {
-                        changeSubject = this
-                        if (state.viewMode == ViewMode.Float) {
-                            setEmptyState("Press Alt + Enter or click outside to close")
-                        }
+                .applyToComponent {
+                    changeSubject = this
+                    if (state.viewMode == ViewMode.Float) {
+                        setEmptyState("Press Alt + Enter or click outside to close")
                     }
-                    .bindText(commitMessage::changeSubject)
+                }
+                .bindText(commitMessage::changeSubject)
         }.visible(!state.hideSubject)
 
         row {
             label(GitBundle.message("dialog.form.label.body"))
-                    .verticalAlign(VerticalAlign.TOP)
-                    .gap(RightGap.SMALL)
+                .verticalAlign(VerticalAlign.TOP)
+                .gap(RightGap.SMALL)
             textArea()
-                    .rows(6)
-                    .horizontalAlign(HorizontalAlign.FILL)
-                    .bindText(commitMessage::changeBody)
+                .rows(6)
+                .horizontalAlign(HorizontalAlign.FILL)
+                .bindText(commitMessage::changeBody)
         }.layout(RowLayout.PARENT_GRID).visible(!state.hideBody)
 
         row(EMPTY_LABEL) {
             checkBox(GitBundle.message("dialog.form.label.wrap.text"))
-                    .horizontalAlign(HorizontalAlign.FILL)
-                    .bindSelected(commitMessage::wrapText)
+                .horizontalAlign(HorizontalAlign.FILL)
+                .bindSelected(commitMessage::wrapText)
         }.visible(!state.hideWrapText)
 
         row {
             label(GitBundle.message("dialog.form.label.breaking"))
-                    .verticalAlign(VerticalAlign.TOP)
-                    .gap(RightGap.SMALL)
+                .verticalAlign(VerticalAlign.TOP)
+                .gap(RightGap.SMALL)
             textArea()
-                    .rows(3)
-                    .resizableColumn()
-                    .horizontalAlign(HorizontalAlign.FILL)
-                    .bindText(commitMessage::breakingChanges)
+                .rows(3)
+                .resizableColumn()
+                .horizontalAlign(HorizontalAlign.FILL)
+                .bindText(commitMessage::breakingChanges)
         }.layout(RowLayout.PARENT_GRID).visible(!state.hideBreaking)
 
         row(GitBundle.message("dialog.form.label.issues")) {
             textField()
-                    .horizontalAlign(HorizontalAlign.FILL)
-                    .bindText(commitMessage::closedIssues)
-                    .applyToComponent {
-                        setEmptyState("#124,#245")
-                    }
+                .horizontalAlign(HorizontalAlign.FILL)
+                .bindText(commitMessage::closedIssues)
+                .applyToComponent {
+                    setEmptyState("#124,#245")
+                }
         }.visible(!state.hideIssues)
 
         row(EMPTY_LABEL) {
             checkBox(GitBundle.message("dialog.form.label.skip.ci")).bindSelected(commitMessage::skipCI)
 
-            val action = object : DumbAwareAction(IdeBundle.message("settings.entry.point.tooltip"), null, AllIcons.General.Settings) {
+            val action = object :
+                DumbAwareAction(IdeBundle.message("settings.entry.point.tooltip"), null, AllIcons.General.Settings) {
                 override fun actionPerformed(e: AnActionEvent) {
                     ShowSettingsUtil.getInstance().showSettingsDialog(project, GitSettingsConfigurable::class.java)
                 }
@@ -160,8 +160,9 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
             actionButton(action).horizontalAlign(HorizontalAlign.RIGHT)
         }.visible(!state.hideSkipCI)
     }.apply {
-        withPreferredWidth(GitConstant.PREFERRED_WIDTH)
+        preferredFocusedComponent = changeSubject
         border = JBUI.Borders.empty(8, 8, 0, 8)
+        withPreferredWidth(GitConstant.PREFERRED_WIDTH)
     }
 
     init {
@@ -178,25 +179,17 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
     private fun resetDefaultFocusTraversalKeys(container: Container) {
         val focusManager = KeyboardFocusManager.getCurrentKeyboardFocusManager()
         listOf(
-                KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS,
-                KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS,
-                KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS,
-                KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS
+            KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS,
+            KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS,
+            KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS,
+            KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS
         ).forEach { each ->
             container.setFocusTraversalKeys(each, focusManager.getDefaultFocusTraversalKeys(each))
         }
     }
 
-    fun createPanel(): JComponent {
-        return root
-    }
-
-    fun focusComponent(): JComponent {
-        return changeSubject
-    }
-
-    fun getCommitMessage(): CommitMessage {
+    fun getCommitMessage(): String {
         root.apply()
-        return commitMessage
+        return commitMessage.toString()
     }
 }

@@ -5,28 +5,20 @@ import com.fobgochod.git.commit.domain.option.ViewMode
 import com.fobgochod.git.commit.settings.GitSettings
 import com.fobgochod.git.commit.util.GitBundle
 import com.fobgochod.git.commit.util.GitIcons
-import com.fobgochod.git.commit.view.CommitDialog
-import com.fobgochod.git.commit.view.CommitPanel
+import com.fobgochod.git.commit.view.CommitPanelDialog
+import com.fobgochod.git.commit.view.CommitPanelPopup
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
-import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.ui.popup.JBPopupListener
-import com.intellij.openapi.ui.popup.LightweightWindowEvent
 import com.intellij.openapi.vcs.CheckinProjectPanel
 import com.intellij.openapi.vcs.CommitMessageI
-import com.intellij.openapi.vcs.VcsApplicationSettings
 import com.intellij.openapi.vcs.VcsDataKeys
 import com.intellij.openapi.vcs.ui.Refreshable
-import java.awt.event.KeyAdapter
-import java.awt.event.KeyEvent
 
 class CreateCommitAction : AnAction(), DumbAware {
 
     private val state: GitSettings = GitSettings.getInstance()
-    private val appSettings = VcsApplicationSettings.getInstance()
 
     init {
         templatePresentation.text = GitBundle.message("action.toolbar.create.commit.message.text")
@@ -34,65 +26,18 @@ class CreateCommitAction : AnAction(), DumbAware {
     }
 
     override fun actionPerformed(event: AnActionEvent) {
+        val project = event.project ?: return
         val commitPanel: CommitMessageI = getCommitPanel(event) ?: return
         val commitMessage: CommitMessage = parseCommitMessage(commitPanel)
 
-
         when (state.viewMode) {
-            ViewMode.Float -> openFloat(event, commitPanel, commitMessage)
-            ViewMode.Window -> openWindow(event, commitPanel, commitMessage)
+            ViewMode.Float -> CommitPanelPopup(project, commitPanel, commitMessage).show()
+            ViewMode.Window -> CommitPanelDialog(project, commitPanel, commitMessage).show()
         }
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.BGT
-    }
-
-    private fun openWindow(event: AnActionEvent, commitPanel: CommitMessageI, commitMessage: CommitMessage) {
-        val dialog = CommitDialog(event.project, commitMessage)
-        dialog.show()
-
-        if (dialog.exitCode == DialogWrapper.OK_EXIT_CODE) {
-            commitPanel.setCommitMessage(dialog.getCommitMessage())
-        }
-    }
-
-    private fun openFloat(event: AnActionEvent, commitPanel: CommitMessageI, commitMessage: CommitMessage) {
-        val project = event.project ?: return
-
-        val panel = CommitPanel(project, commitMessage)
-        val popup = JBPopupFactory.getInstance()
-                .createComponentPopupBuilder(panel.createPanel(), panel.focusComponent())
-                .setProject(event.project)
-                .setTitle(GitBundle.message("action.toolbar.create.commit.message.text"))
-                .setResizable(true)
-                .setMovable(true)
-                .setFocusable(true)
-                .setRequestFocus(true)
-                .setShowShadow(true)
-                .setCancelOnClickOutside(true)
-                .addListener(object : JBPopupListener {
-                    override fun onClosed(event: LightweightWindowEvent) {
-                        commitPanel.setCommitMessage(panel.getCommitMessage().toString())
-                    }
-                })
-                .createPopup()
-                .also { popup ->
-                    panel.focusComponent()
-                            .addKeyListener(object : KeyAdapter() {
-                                override fun keyPressed(e: KeyEvent?) {
-                                    if (e?.keyCode == KeyEvent.VK_ENTER && e.isAltDown) {
-                                        popup.closeOk(null)
-                                    }
-                                }
-                            })
-                }
-
-        if (appSettings.COMMIT_FROM_LOCAL_CHANGES) {
-            popup.showCenteredInCurrentWindow(project)
-        } else {
-            popup.showInFocusCenter()
-        }
     }
 
     private fun parseCommitMessage(commitPanel: CommitMessageI): CommitMessage {

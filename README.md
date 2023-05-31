@@ -4,7 +4,7 @@
 [![Version](https://img.shields.io/jetbrains/plugin/v/20935.svg)][jb:git-commit-message-format]
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/20935.svg)][jb:git-commit-message-format]
 
-![pluginIcon](src/main/resources/META-INF/pluginIcon.svg)
+[![pluginIcon](doc/flogo.svg)][gh:landscape:flogo]
 
 <!-- Plugin description -->
 
@@ -132,6 +132,8 @@ Plugin based on the [IntelliJ Platform Plugin Template][gh:intellij-platform-plu
 [gh:commit-template-idea-plugin]: https://github.com/MobileTribe/commit-template-idea-plugin
 [gh:git-commit-message-helper]: https://github.com/AutismSuperman/git-commit-message-helper
 [gh:intellij-platform-plugin-template]: https://github.com/JetBrains/intellij-platform-plugin-template
+
+[gh:landscape:flogo]: https://github.com/cncf/landscape/blob/master/hosted_logos/flogo.svg
 [jb:git-commit-message-format]: https://plugins.jetbrains.com/plugin/20935
 [docs:commit-message-format]: https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#
 [docs:commit-message-change-log]: http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html

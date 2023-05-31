@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-class GitUtil(private val project: Project?) {
+class GitUtil(private val project: Project) {
 
     companion object {
         const val GIT_LOG_COMMAND: String = "git log --all --format=%s"
@@ -17,7 +17,7 @@ class GitUtil(private val project: Project?) {
 
     fun logs(): Result {
         try {
-            val basePath = project?.basePath?.let { File(it) }
+            val basePath = project.basePath?.let { File(it) }
             if (basePath != null) {
                 val osName: String = System.getProperty("os.name")
                 val processBuilder: ProcessBuilder = if (osName.contains("Windows")) {
