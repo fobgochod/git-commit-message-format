@@ -1,24 +1,21 @@
-# Git Commit Message Format
+# [![Plugin Logo](doc/flogo.svg)][plugin:logo] Git Commit Message Format
 
-[![Build](https://github.com/fobgochod/git-commit-message-format/workflows/Build/badge.svg)][gh:build]
-[![Version](https://img.shields.io/jetbrains/plugin/v/20935.svg)][jb:git-commit-message-format]
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/20935.svg)][jb:git-commit-message-format]
+[![Build Status][badge:build]][gh:workflow-build]
+[![License][badge:license]][gh:license]
+[![GitHub releases][badge:release]][gh:releases]
+[![Plugin Version][badge:version]][plugin:versions]
+[![Plugin Downloads][badge:downloads]][plugin:homepage]
 
-[![pluginIcon](doc/flogo.svg)][gh:landscape:flogo]
+
 
 <!-- Plugin description -->
 
-## Git Commit Guidelines
+## Usage
 
-We have very precise rules over how our git commit messages can be formatted. This leads to **more
-readable messages** that are easy to follow when looking through the **project history**. But also,
-we use the git commit messages to **generate the AngularJS change log**.
+- Click birdie or Press <kbd>Alt</kbd>+<kbd>Q</kbd> open formatter dialog
+- Click outside or Press <kbd>Alt</kbd>+<kbd>Enter</kbd> to be completed
 
-The commit message formatting can be added using a typical git workflow or through the use of a CLI
-wizard ([Commitizen][gh:cz-cli]). To use the wizard, run `yarn run commit`
-in your terminal after staging your changes in git.
-
-### Commit Message Format
+## Commit Message Format
 
 Each commit message consists of a **header**, a **body** and a **footer**. The header has a special
 format that includes a **type**, a **scope** and a **subject**:
@@ -100,8 +97,7 @@ this [document][docs:commit-message-format].
   <kbd>Install Plugin</kbd>
 
 - Manually:
-
-  Download the [latest release][gh:releases-latest] and install it
+  Download the [latest release][gh:releases] or [JetBrains Plugin Marketplace][plugin:versions] and install it
   manually using <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from
   disk...</kbd>
 
@@ -115,26 +111,37 @@ this [document][docs:commit-message-format].
 
 ## Reference
 
+- [Git Commit Template][plugin:commit-template-idea-plugin]
+- [Git Commit Message Helper][plugin:git-commit-message-helper]
+- [The commitizen command line utility][plugin:cz-cli]
 - [AngularJS's commit message convention][docs:commit-message-convention]
-- [The commitizen command line utility][gh:cz-cli]
 - [Commit message 和 Change log 编写指南][docs:commit-message-change-log]
-- [Git Commit Template][gh:commit-template-idea-plugin]
-- [Git Commit Message Helper][gh:git-commit-message-helper]
 
----
-Plugin based on the [IntelliJ Platform Plugin Template][gh:intellij-platform-plugin-template].
+## License
+
+The Git Commit Message Format is released under version 2.0 of
+the [Apache License](https://www.apache.org/licenses/LICENSE-2.0).
 
 
-[gh:build]: https://github.com/fobgochod/git-commit-message-format/actions?query=workflow%3ABuild
+[//]: # (@formatter:off)
+[badge:build]: https://github.com/fobgochod/git-commit-message-format/workflows/Build/badge.svg
+[badge:license]: https://img.shields.io/github/license/fobgochod/git-commit-message-format.svg?color=4D7A97&logo=apache
+[badge:release]: https://img.shields.io/github/release/fobgochod/git-commit-message-format.svg?colorB=0097A7
+[badge:version]: https://img.shields.io/jetbrains/plugin/v/20935.svg
+[badge:downloads]: https://img.shields.io/jetbrains/plugin/d/20935.svg
+
+[gh:workflow-build]: https://github.com/fobgochod/git-commit-message-format/actions?query=workflow%3ABuild
+[gh:license]: https://github.com/fobgochod/git-commit-message-format/blob/main/LICENSE
+[gh:releases]: https://github.com/fobgochod/git-commit-message-format/releases
 [gh:closing-issues]: https://help.github.com/articles/closing-issues-via-commit-messages/
-[gh:releases-latest]:https://github.com/fobgochod/git-commit-message-format/releases/latest
-[gh:cz-cli]: https://github.com/commitizen/cz-cli
-[gh:commit-template-idea-plugin]: https://github.com/MobileTribe/commit-template-idea-plugin
-[gh:git-commit-message-helper]: https://github.com/AutismSuperman/git-commit-message-helper
-[gh:intellij-platform-plugin-template]: https://github.com/JetBrains/intellij-platform-plugin-template
 
-[gh:landscape:flogo]: https://github.com/cncf/landscape/blob/master/hosted_logos/flogo.svg
-[jb:git-commit-message-format]: https://plugins.jetbrains.com/plugin/20935
+[plugin:logo]: https://github.com/cncf/landscape/blob/master/hosted_logos/flogo.svg
+[plugin:homepage]: https://plugins.jetbrains.com/plugin/20935
+[plugin:versions]: https://plugins.jetbrains.com/plugin/20935/versions
+[plugin:cz-cli]: https://github.com/commitizen/cz-cli
+[plugin:git-commit-message-helper]: https://github.com/AutismSuperman/git-commit-message-helper
+[plugin:commit-template-idea-plugin]: https://github.com/MobileTribe/commit-template-idea-plugin
+
 [docs:commit-message-format]: https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#
 [docs:commit-message-change-log]: http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html
 [docs:commit-message-convention]: https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines

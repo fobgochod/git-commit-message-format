@@ -21,7 +21,7 @@ enum class ComponentType() {
         this.label = label
     }
 
-    fun type(): String {
+    private fun type(): String {
         if (this.label == "") {
             return name.lowercase(Locale.getDefault())
         }
