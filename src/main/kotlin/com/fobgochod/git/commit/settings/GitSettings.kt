@@ -4,21 +4,17 @@ import com.fobgochod.git.commit.domain.TypeRow
 import com.fobgochod.git.commit.domain.option.CommitType
 import com.fobgochod.git.commit.domain.option.SkipCI
 import com.fobgochod.git.commit.domain.option.ViewMode
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.SettingsCategory
-import com.intellij.openapi.components.State
-import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.*
 import com.intellij.util.xmlb.XmlSerializerUtil
 
-@State(
-    name = GitSettings.NAME,
-    storages = [Storage(GitSettings.STORAGES)],
-    category = SettingsCategory.PLUGINS
-)
+@State(name = GitSettings.NAME, storages = [Storage(GitSettings.STORAGES)], category = SettingsCategory.TOOLS)
 class GitSettings : PersistentStateComponent<GitSettingsState> {
 
-    private var state = GitSettingsState()
+    private val state = GitSettingsState()
+
+    override fun getState() = state
+
+    override fun loadState(state: GitSettingsState) = XmlSerializerUtil.copyBean(state, this.state)
 
     var typeRows: MutableList<TypeRow>
         get() {
@@ -125,21 +121,13 @@ class GitSettings : PersistentStateComponent<GitSettingsState> {
         return typeRows[0]
     }
 
-    override fun getState(): GitSettingsState {
-        return state
-    }
-
-    override fun loadState(state: GitSettingsState) {
-        XmlSerializerUtil.copyBean(state, this.state)
-    }
-
     companion object {
 
         const val NAME = "GitCommitMessageFormat"
         const val STORAGES = "git.commit.message.format.xml"
 
         @JvmStatic
-        fun getInstance(): GitSettings =
-            ApplicationManager.getApplication().getService(GitSettings::class.java)
+        val instance: GitSettings
+            get() = service()
     }
 }

@@ -5,9 +5,14 @@ import com.fobgochod.git.commit.view.TypeDialog
 import com.intellij.ui.JBColor
 import com.intellij.ui.table.JBTable
 import java.awt.Component
-import java.util.*
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
+import java.util.Arrays
+import java.util.Collections
+import java.util.LinkedList
 import javax.swing.JTable
 import javax.swing.ListSelectionModel
+import javax.swing.SwingUtilities
 import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.TableColumn
@@ -51,6 +56,15 @@ class TypeTable : JBTable() {
         setColumnSize(nameColumn, 150, 250, 150)
         setColumnSize(descriptionColumn, 550, 750, 550)
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
+
+        addMouseListener(object : MouseAdapter() {
+            override fun mousePressed(mouseEvent: MouseEvent) {
+                if (mouseEvent.clickCount == 2 && SwingUtilities.isLeftMouseButton(mouseEvent)) {
+                    editRow()
+                }
+            }
+        })
+
     }
 
     fun getNameValueAt(row: Int): String {

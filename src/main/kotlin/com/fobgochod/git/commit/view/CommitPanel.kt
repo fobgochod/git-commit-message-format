@@ -5,7 +5,6 @@ import com.fobgochod.git.commit.domain.CommitMessage
 import com.fobgochod.git.commit.domain.TypeRow
 import com.fobgochod.git.commit.domain.option.ViewMode
 import com.fobgochod.git.commit.settings.GitSettings
-import com.fobgochod.git.commit.settings.GitSettingsConfigurable
 import com.fobgochod.git.commit.util.GitBundle
 import com.fobgochod.git.commit.util.GitUtil
 import com.intellij.icons.AllIcons
@@ -42,7 +41,7 @@ import javax.swing.event.ChangeListener
  */
 class CommitPanel(private val project: Project, private val commitMessage: CommitMessage) {
 
-    private val state: GitSettings = GitSettings.getInstance()
+    private val state: GitSettings = GitSettings.instance
     lateinit var changeSubject: JBTextField
 
     val root: DialogPanel = panel {
@@ -151,10 +150,12 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
         row(EMPTY_LABEL) {
             checkBox(GitBundle.message("dialog.form.label.skip.ci")).bindSelected(commitMessage::skipCI)
 
-            val action = object :
-                DumbAwareAction(IdeBundle.message("settings.entry.point.tooltip"), null, AllIcons.General.Settings) {
+            val action = object : DumbAwareAction(
+                IdeBundle.message("settings.entry.point.tooltip"), null, AllIcons.General.Settings
+            ) {
                 override fun actionPerformed(e: AnActionEvent) {
-                    ShowSettingsUtil.getInstance().showSettingsDialog(project, GitSettingsConfigurable::class.java)
+                    ShowSettingsUtil.getInstance()
+                        .showSettingsDialog(project, GitBundle.message("configurable.display.name"))
                 }
             }
             actionButton(action).horizontalAlign(HorizontalAlign.RIGHT)

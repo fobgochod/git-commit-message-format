@@ -21,11 +21,13 @@
 ## [2.0.1]
 
 ### Added
-- Closed Issues添加Placeholder
-- 部分属性加入Resource Bundle
+
+- Closed issues add placeholder info
+- Add some resource bundle
 
 ### Fixed
-- 获取不到scope下拉选项
+
+- unable to obtain scope items
 
 ## [2.0.0]
 

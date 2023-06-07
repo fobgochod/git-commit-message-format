@@ -7,6 +7,8 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.vcs</depends>
 
+    <resource-bundle>messages.GitBundle</resource-bundle>
+
     <extensions defaultExtensionNs="com.intellij">
         <applicationConfigurable parentId="tools"
                                  id="git.commit.message"
@@ -14,7 +16,6 @@
                                  key="configurable.display.name"
                                  bundle="messages.GitBundle"/>
         <applicationService serviceImplementation="com.fobgochod.git.commit.settings.GitSettings"/>
-
     </extensions>
 
     <actions>

@@ -9,7 +9,6 @@ import com.intellij.util.xmlb.annotations.OptionTag
 import com.intellij.util.xmlb.annotations.Tag
 import com.intellij.util.xmlb.annotations.XCollection
 
-
 class GitSettingsState : BaseState() {
 
     @get:Tag("TYPE_ROWS")

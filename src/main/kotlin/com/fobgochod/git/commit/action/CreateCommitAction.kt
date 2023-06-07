@@ -18,7 +18,7 @@ import com.intellij.openapi.vcs.ui.Refreshable
 
 class CreateCommitAction : AnAction(), DumbAware {
 
-    private val state: GitSettings = GitSettings.getInstance()
+    private val state: GitSettings = GitSettings.instance
 
     init {
         templatePresentation.text = GitBundle.message("action.toolbar.create.commit.message.text")

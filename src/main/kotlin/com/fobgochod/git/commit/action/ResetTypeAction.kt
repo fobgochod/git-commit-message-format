@@ -14,7 +14,7 @@ class ResetTypeAction(private val typeTable: TypeTable) : AnActionButton(
     AllIcons.Actions.Rollback
 ) {
 
-    private val state: GitSettings = GitSettings.getInstance()
+    private val state: GitSettings = GitSettings.instance
 
     override fun actionPerformed(event: AnActionEvent) {
         val selectedRow = typeTable.selectedRow
