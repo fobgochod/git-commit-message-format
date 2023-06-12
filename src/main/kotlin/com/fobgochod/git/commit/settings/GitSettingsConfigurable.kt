@@ -1,8 +1,5 @@
 package com.fobgochod.git.commit.settings
 
-import com.fobgochod.git.commit.action.ResetTypeAction
-import com.fobgochod.git.commit.action.RestoreTypesAction
-import com.fobgochod.git.commit.domain.TypeTable
 import com.fobgochod.git.commit.domain.option.ComponentType
 import com.fobgochod.git.commit.domain.option.SkipCI
 import com.fobgochod.git.commit.domain.option.ViewMode
@@ -12,12 +9,10 @@ import com.intellij.application.options.editor.checkBox
 import com.intellij.openapi.options.BoundSearchableConfigurable
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.SimpleListCellRenderer
-import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import javax.swing.DefaultComboBoxModel
-
 
 /**
  * Git Settings Configurable
@@ -50,23 +45,13 @@ internal class GitSettingsConfigurable : BoundSearchableConfigurable(
     override fun createPanel(): DialogPanel {
         return panel {
             row {
-                val typeTable = TypeTable()
-                typeTable.reset(state.typeRows)
-                cell(
-                    ToolbarDecorator.createDecorator(typeTable)
-                        .setAddAction { typeTable.addRow() }
-                        .setRemoveAction { typeTable.removeRow() }
-                        .setEditAction { typeTable.editRow() }
-                        .setMoveUpAction { typeTable.moveUp() }
-                        .setMoveDownAction { typeTable.moveDown() }
-                        .addExtraAction(ResetTypeAction(typeTable))
-                        .addExtraAction(RestoreTypesAction(typeTable))
-                        .createPanel()
-                ).horizontalAlign(HorizontalAlign.FILL)
+                val typeToolbar = TypeToolbarDecorator()
+                cell(typeToolbar.decorator.createPanel())
+                    .horizontalAlign(HorizontalAlign.FILL)
                     .verticalAlign(VerticalAlign.FILL)
-                    .onIsModified { typeTable.typeRows != state.typeRows }
-                    .onApply { state.typeRows = typeTable.typeRows }
-                    .onReset { typeTable.reset(state.typeRows) }
+                    .onIsModified { typeToolbar.isModified() }
+                    .onApply { typeToolbar.apply() }
+                    .onReset { typeToolbar.reset() }
             }.resizableRow()
 
             group(GitBundle.message("settings.group.hidden.options")) {
@@ -106,8 +91,8 @@ internal class GitSettingsConfigurable : BoundSearchableConfigurable(
 
                     checkBox(hideSkipCI).applyToComponent {
                         this.toolTipText = ComponentType.SkipCI.description()
-                    }
-                }.layout(RowLayout.PARENT_GRID)
+                    }.gap(RightGap.SMALL)
+                }
             }
 
             group(GitBundle.message("settings.group.common.settings")) {
@@ -115,22 +100,18 @@ internal class GitSettingsConfigurable : BoundSearchableConfigurable(
                     intTextField()
                         .label(GitBundle.message("settings.common.type.count"))
                         .bindIntText(state::typeCount).columns(5)
-                        .gap(RightGap.COLUMNS)
 
                     comboBox<SkipCI>(
                         DefaultComboBoxModel(SkipCI.values()),
                         renderer = SimpleListCellRenderer.create("") { it.label })
                         .label(GitBundle.message("settings.common.skip.ci.word"))
                         .bindItem(state::skipCI.toNullableProperty())
-                        .gap(RightGap.COLUMNS)
 
-                    comboBox<ViewMode>(
-                        DefaultComboBoxModel(ViewMode.values()),
-                        renderer = SimpleListCellRenderer.create("") { it.name })
+                    comboBox(ViewMode.values().toList())
                         .label(GitBundle.message("settings.common.view.mode"))
                         .bindItem(state::viewMode.toNullableProperty())
                 }
-            }.layout(RowLayout.INDEPENDENT)
+            }
         }
     }
 }

@@ -90,7 +90,7 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
                         .bindItem(commitMessage::changeType.toNullableProperty())
                 }.visible(!state.hideType && state.typeRows.size > state.typeCount)
             }
-        }
+        }.visible(!state.hideTypeGroup || !state.hideType)
 
         row(GitBundle.message("dialog.form.label.scope")) {
             val gitUtil = GitUtil(project).logs()
@@ -101,7 +101,8 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
         }.visible(!state.hideScope)
 
         row(GitBundle.message("dialog.form.label.subject")) {
-            textField().horizontalAlign(HorizontalAlign.FILL)
+            textField()
+                .horizontalAlign(HorizontalAlign.FILL)
                 .applyToComponent {
                     changeSubject = this
                     if (state.viewMode == ViewMode.Float) {
@@ -118,8 +119,9 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
             textArea()
                 .rows(6)
                 .horizontalAlign(HorizontalAlign.FILL)
+                .verticalAlign(VerticalAlign.FILL)
                 .bindText(commitMessage::changeBody)
-        }.layout(RowLayout.PARENT_GRID).visible(!state.hideBody)
+        }.layout(RowLayout.PARENT_GRID).resizableRow().visible(!state.hideBody)
 
         row(EMPTY_LABEL) {
             checkBox(GitBundle.message("dialog.form.label.wrap.text"))
@@ -133,10 +135,10 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
                 .gap(RightGap.SMALL)
             textArea()
                 .rows(3)
-                .resizableColumn()
                 .horizontalAlign(HorizontalAlign.FILL)
+                .verticalAlign(VerticalAlign.FILL)
                 .bindText(commitMessage::breakingChanges)
-        }.layout(RowLayout.PARENT_GRID).visible(!state.hideBreaking)
+        }.layout(RowLayout.PARENT_GRID).resizableRow().visible(!state.hideBreaking)
 
         row(GitBundle.message("dialog.form.label.issues")) {
             textField()
