@@ -1,22 +1,23 @@
-package com.fobgochod.git.commit.domain
+package com.fobgochod.git.commit.settings.type
 
+import com.fobgochod.git.commit.domain.TypeRow
 import com.fobgochod.git.commit.domain.option.CommitType
 import com.fobgochod.git.commit.settings.GitSettings
 import com.fobgochod.git.commit.util.GitBundle
 import java.util.LinkedList
 import javax.swing.table.AbstractTableModel
 
-private class Column(private val key: String, val type: Class<*>, val editable: Boolean) {
-    val name: String
-        get() = GitBundle.message(key)
-}
-
-private val columns = arrayOf(
-    Column("settings.type.table.column.1", String::class.java, false),
-    Column("settings.type.table.column.2", String::class.java, false)
-)
-
 class TypeModel : AbstractTableModel() {
+
+    private inner class Column(private val key: String, val type: Class<*>, val editable: Boolean) {
+        val name: String
+            get() = GitBundle.message(key)
+    }
+
+    private val columns = arrayOf(
+        Column("settings.type.table.column.1", String::class.java, false),
+        Column("settings.type.table.column.2", String::class.java, false)
+    )
 
     private val state: GitSettings get() = GitSettings.instance
     val typeRows: MutableList<TypeRow> = LinkedList()
@@ -47,8 +48,8 @@ class TypeModel : AbstractTableModel() {
         fireTableRowsInserted(lastRow, lastRow)
     }
 
-    fun removeRows(rows: IntArray) {
-        val nonSelected = typeRows.filterIndexed { id, _ -> id !in rows }
+    fun removeRow(row: Int) {
+        val nonSelected = typeRows.filterIndexed { id, _ -> id != row }
         typeRows.clear()
         typeRows.addAll(nonSelected)
         fireTableDataChanged()

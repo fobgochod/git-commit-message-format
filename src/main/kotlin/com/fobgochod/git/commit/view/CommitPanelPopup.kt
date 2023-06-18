@@ -42,14 +42,13 @@ class CommitPanelPopup(
             .addListener(listener)
             .createPopup()
             .also { popup ->
-                panel.changeSubject
-                    .addKeyListener(object : KeyAdapter() {
-                        override fun keyPressed(e: KeyEvent?) {
-                            if (e?.keyCode == KeyEvent.VK_ENTER && e.isAltDown) {
-                                popup.closeOk(null)
-                            }
+                panel.changeSubject.addKeyListener(object : KeyAdapter() {
+                    override fun keyPressed(e: KeyEvent?) {
+                        if (e?.keyCode == KeyEvent.VK_ENTER && e.isAltDown) {
+                            popup.closeOk(null)
                         }
-                    })
+                    }
+                })
             }
     }
 

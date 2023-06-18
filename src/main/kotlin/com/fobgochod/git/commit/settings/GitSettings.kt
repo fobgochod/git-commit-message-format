@@ -106,6 +106,17 @@ class GitSettings : PersistentStateComponent<GitSettingsState> {
             state.hideSkipCI = value
         }
 
+    var scopeEnabled: Boolean
+        get() = state.scopeEnabled
+        set(value) {
+            state.scopeEnabled = value
+        }
+
+    var scopeRows: MutableList<String>
+        get() = state.scopeRows
+        set(value) {
+            state.scopeRows = value
+        }
 
     fun isValidRow(index: Int): Boolean {
         return index >= 0 && index < typeRows.size

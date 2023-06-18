@@ -3,16 +3,20 @@ package com.fobgochod.git.commit.settings
 import com.fobgochod.git.commit.domain.option.ComponentType
 import com.fobgochod.git.commit.domain.option.SkipCI
 import com.fobgochod.git.commit.domain.option.ViewMode
-import com.fobgochod.git.commit.util.GitBundle
+import com.fobgochod.git.commit.settings.scope.ScopeToolbarDecorator
+import com.fobgochod.git.commit.settings.type.TypeToolbarDecorator
+import com.fobgochod.git.commit.util.GitBundle.message
 import com.intellij.application.options.editor.CheckboxDescriptor
 import com.intellij.application.options.editor.checkBox
 import com.intellij.openapi.options.BoundSearchableConfigurable
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.ui.EnumComboBoxModel
 import com.intellij.ui.SimpleListCellRenderer
+import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.ui.dsl.gridLayout.VerticalAlign
-import javax.swing.DefaultComboBoxModel
+
 
 /**
  * Git Settings Configurable
@@ -24,10 +28,10 @@ import javax.swing.DefaultComboBoxModel
  * See [Sample usages in IntelliJ Platform IDEs](https://plugins.jetbrains.com/docs/intellij/kotlin-ui-dsl.html#examples)
  *
  * @author fobgochod
- * @since 2023/5/24 23:43
+ * @date 2023/5/24 23:43
  */
 internal class GitSettingsConfigurable : BoundSearchableConfigurable(
-    GitBundle.message("configurable.display.name"),
+    message("configurable.display.name"),
     "git.commit.message"
 ) {
     private val state: GitSettings get() = GitSettings.instance
@@ -41,20 +45,39 @@ internal class GitSettingsConfigurable : BoundSearchableConfigurable(
     private val hideBreaking get() = CheckboxDescriptor(ComponentType.Breaking.name, state::hideBreaking)
     private val hideIssues get() = CheckboxDescriptor(ComponentType.Issues.name, state::hideIssues)
     private val hideSkipCI get() = CheckboxDescriptor(ComponentType.SkipCI.name, state::hideSkipCI)
+    private val scopeEnabled get() = CheckboxDescriptor(message("settings.scope.enabled"), state::scopeEnabled)
 
     override fun createPanel(): DialogPanel {
         return panel {
             row {
-                val typeToolbar = TypeToolbarDecorator()
-                cell(typeToolbar.decorator.createPanel())
+                val typeTable = TypeToolbarDecorator()
+                cell(typeTable.decorator.createPanel())
                     .horizontalAlign(HorizontalAlign.FILL)
                     .verticalAlign(VerticalAlign.FILL)
-                    .onIsModified { typeToolbar.isModified() }
-                    .onApply { typeToolbar.apply() }
-                    .onReset { typeToolbar.reset() }
-            }.resizableRow()
+                    .resizableColumn()
+                    .onIsModified { typeTable.isModified() }
+                    .onApply { typeTable.apply() }
+                    .onReset { typeTable.reset() }
 
-            group(GitBundle.message("settings.group.hidden.options")) {
+                panel {
+                    lateinit var scopeCheckBox: Cell<JBCheckBox>
+                    row {
+                        scopeCheckBox = checkBox(scopeEnabled)
+                    }
+                    row {
+                        val scopeTable = ScopeToolbarDecorator()
+                        cell(scopeTable.decorator.createPanel())
+                            .horizontalAlign(HorizontalAlign.FILL)
+                            .verticalAlign(VerticalAlign.FILL)
+                            .onIsModified { scopeTable.isModified() }
+                            .onApply { scopeTable.apply() }
+                            .onReset { scopeTable.reset() }
+                    }.resizableRow().enabledIf(scopeCheckBox.selected)
+                }.horizontalAlign(HorizontalAlign.FILL)
+                    .verticalAlign(VerticalAlign.FILL)
+            }.resizableRow().layout(RowLayout.INDEPENDENT)
+
+            group(message("settings.group.hidden.options")) {
                 row {
                     checkBox(hideTypeGroup).applyToComponent {
                         this.toolTipText = ComponentType.TypeGroup.description()
@@ -91,24 +114,25 @@ internal class GitSettingsConfigurable : BoundSearchableConfigurable(
 
                     checkBox(hideSkipCI).applyToComponent {
                         this.toolTipText = ComponentType.SkipCI.description()
-                    }.gap(RightGap.SMALL)
+                    }
                 }
             }
 
-            group(GitBundle.message("settings.group.common.settings")) {
+            group(message("settings.group.common.settings")) {
                 row {
                     intTextField()
-                        .label(GitBundle.message("settings.common.type.count"))
-                        .bindIntText(state::typeCount).columns(5)
+                        .label(message("settings.common.group.count"))
+                        .bindIntText(state::typeCount)
 
                     comboBox<SkipCI>(
-                        DefaultComboBoxModel(SkipCI.values()),
-                        renderer = SimpleListCellRenderer.create("") { it.label })
-                        .label(GitBundle.message("settings.common.skip.ci.word"))
+                        EnumComboBoxModel(SkipCI::class.java),
+                        SimpleListCellRenderer.create("", SkipCI::label)
+                    )
+                        .label(message("settings.common.skip.ci.word"))
                         .bindItem(state::skipCI.toNullableProperty())
 
                     comboBox(ViewMode.values().toList())
-                        .label(GitBundle.message("settings.common.view.mode"))
+                        .label(message("settings.common.view.mode"))
                         .bindItem(state::viewMode.toNullableProperty())
                 }
             }

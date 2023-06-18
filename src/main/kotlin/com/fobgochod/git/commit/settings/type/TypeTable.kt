@@ -1,5 +1,6 @@
-package com.fobgochod.git.commit.domain
+package com.fobgochod.git.commit.settings.type
 
+import com.fobgochod.git.commit.domain.TypeRow
 import com.fobgochod.git.commit.util.GitBundle
 import com.fobgochod.git.commit.view.TypeDialog
 import com.intellij.ui.table.JBTable
@@ -13,7 +14,7 @@ import javax.swing.SwingUtilities
  * commit type table
  *
  * @author fobgochod
- * @since 2022/12/13 2:13
+ * @date 2022/12/13 2:13
  */
 class TypeTable(private val typeModel: TypeModel) : JBTable(typeModel) {
 
@@ -45,14 +46,11 @@ class TypeTable(private val typeModel: TypeModel) : JBTable(typeModel) {
     }
 
     fun removeRow() {
-        val selectedRows = selectedRows
-        if (selectedRows.isEmpty()) return
-        val originalRow = selectedRows[0]
+        val selectedRow = selectedRow
+        typeModel.removeRow(selectedRow)
 
-        typeModel.removeRows(selectedRows)
-
-        if (originalRow < rowCount) {
-            setRowSelectionInterval(originalRow, originalRow)
+        if (selectedRow < rowCount) {
+            setRowSelectionInterval(selectedRow, selectedRow)
         } else if (rowCount > 0) {
             val index = rowCount - 1
             setRowSelectionInterval(index, index)

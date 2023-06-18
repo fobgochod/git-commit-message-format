@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add custom scope
+
 ## [2.0.2]
 
 ### Added

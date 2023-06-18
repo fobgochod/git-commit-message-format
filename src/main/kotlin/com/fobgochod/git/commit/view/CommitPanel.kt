@@ -25,6 +25,7 @@ import java.awt.Container
 import java.awt.FocusTraversalPolicy
 import java.awt.KeyboardFocusManager
 import java.awt.event.ItemListener
+import java.util.LinkedList
 import javax.swing.AbstractButton
 import javax.swing.ButtonGroup
 import javax.swing.LayoutFocusTraversalPolicy
@@ -85,17 +86,22 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
                         .applyToComponent {
                             comboBox = this
                             addItemListener(lister)
-                        }
-                        .horizontalAlign(HorizontalAlign.FILL)
+                        }.horizontalAlign(HorizontalAlign.FILL)
                         .bindItem(commitMessage::changeType.toNullableProperty())
                 }.visible(!state.hideType && state.typeRows.size > state.typeCount)
             }
         }.visible(!state.hideTypeGroup || !state.hideType)
 
         row(GitBundle.message("dialog.form.label.scope")) {
-            val gitUtil = GitUtil(project).logs()
-
-            comboBox(gitUtil.scopes)
+            val scopes: MutableList<String> = LinkedList()
+            scopes.add("")
+            if (state.scopeEnabled) {
+                scopes.addAll(state.scopeRows)
+            } else {
+                val gitUtil = GitUtil(project).logs()
+                scopes.addAll(gitUtil.scopes)
+            }
+            comboBox(scopes)
                 .horizontalAlign(HorizontalAlign.FILL)
                 .bindItem(commitMessage::changeScope.toNullableProperty())
         }.visible(!state.hideScope)

@@ -43,7 +43,6 @@ class GitUtil(private val project: Project) {
         val scopes: MutableSet<String> = LinkedHashSet()
 
         init {
-            scopes.add("")
             if (exitValue == 0) {
                 if (isPattern) {
                     initScopesByPattern()

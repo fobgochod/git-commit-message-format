@@ -1,9 +1,7 @@
-package com.fobgochod.git.commit.settings
+package com.fobgochod.git.commit.settings.type
 
 import com.fobgochod.git.commit.action.ResetTypeAction
 import com.fobgochod.git.commit.action.RestoreTypesAction
-import com.fobgochod.git.commit.domain.TypeModel
-import com.fobgochod.git.commit.domain.TypeTable
 import com.intellij.openapi.actionSystem.ActionToolbarPosition
 import com.intellij.ui.ToolbarDecorator
 
@@ -11,7 +9,7 @@ import com.intellij.ui.ToolbarDecorator
  *  TypeToolbarDecorator.java
  *
  * @author fobgochod
- * @since 2023/6/12 23:45
+ * @date 2023/6/12 23:45
  */
 class TypeToolbarDecorator {
 

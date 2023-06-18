@@ -50,4 +50,11 @@ class GitSettingsState : BaseState() {
 
     @get:OptionTag("HIDE_SKIP_CI")
     var hideSkipCI by property(false)
+
+    @get:OptionTag("SCOPE_ENABLED")
+    var scopeEnabled by property(false)
+
+    @get:Tag("SCOPE_ROWS")
+    @get:XCollection(style = XCollection.Style.v2)
+    var scopeRows by list<String>()
 }
