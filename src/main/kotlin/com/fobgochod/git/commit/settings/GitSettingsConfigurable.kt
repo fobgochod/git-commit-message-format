@@ -3,19 +3,19 @@ package com.fobgochod.git.commit.settings
 import com.fobgochod.git.commit.domain.option.ComponentType
 import com.fobgochod.git.commit.domain.option.SkipCI
 import com.fobgochod.git.commit.domain.option.ViewMode
-import com.fobgochod.git.commit.settings.scope.ScopeToolbarDecorator
+import com.fobgochod.git.commit.settings.scope.ScopeListTable
 import com.fobgochod.git.commit.settings.type.TypeToolbarDecorator
 import com.fobgochod.git.commit.util.GitBundle.message
 import com.intellij.application.options.editor.CheckboxDescriptor
 import com.intellij.application.options.editor.checkBox
 import com.intellij.openapi.options.BoundSearchableConfigurable
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.ui.EnumComboBoxModel
 import com.intellij.ui.SimpleListCellRenderer
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.ui.dsl.gridLayout.VerticalAlign
+import javax.swing.DefaultComboBoxModel
 
 
 /**
@@ -65,8 +65,8 @@ internal class GitSettingsConfigurable : BoundSearchableConfigurable(
                         scopeCheckBox = checkBox(scopeEnabled)
                     }
                     row {
-                        val scopeTable = ScopeToolbarDecorator()
-                        cell(scopeTable.decorator.createPanel())
+                        val scopeTable = ScopeListTable()
+                        cell(scopeTable.component)
                             .horizontalAlign(HorizontalAlign.FILL)
                             .verticalAlign(VerticalAlign.FILL)
                             .onIsModified { scopeTable.isModified() }
@@ -125,7 +125,8 @@ internal class GitSettingsConfigurable : BoundSearchableConfigurable(
                         .bindIntText(state::typeCount)
 
                     comboBox<SkipCI>(
-                        EnumComboBoxModel(SkipCI::class.java),
+                        // EnumComboBoxModel(SkipCI::class.java),
+                        DefaultComboBoxModel(SkipCI.values()),
                         SimpleListCellRenderer.create("", SkipCI::label)
                     )
                         .label(message("settings.common.skip.ci.word"))
