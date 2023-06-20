@@ -17,6 +17,7 @@ You can contribute and support this project by doing any of the following:
 
 | [![WeChat][wechat:logo]][wechat:donate] | [![Alipay][alipay:logo]][alipay:donate] |
 |:---------------------------------------:|:---------------------------------------:|
+|       [**WeChat**][wechat:donate]       |       [**Alipay**][alipay:donate]       |
 
 > **Note**
 >
@@ -62,14 +63,14 @@ You can contribute and support this project by doing any of the following:
 
 [jb:homepage]: https://plugins.jetbrains.com/plugin/20935
 
-[collective:logo]: https://github.com/cncf/landscape/blob/master/hosted_logos/donate-opencollective.svg
+[collective:logo]: https://raw.githubusercontent.com/fobgochod/git-commit-message-format/main/doc/donate-opencollective.svg
 [collective:donate]: https://opencollective.com/git-commit-message-format/donate
 [collective:backer]: https://opencollective.com/git-commit-message-format/individuals.svg?width=800
 
-[wechat:logo]: https://github.com/cncf/landscape/blob/master/hosted_logos/donate-wechat.jpg
+[wechat:logo]: https://raw.githubusercontent.com/fobgochod/git-commit-message-format/main/doc/donate-wechat.jpg
 [wechat:donate]: https://pay.weixin.qq.com/index.php/public/wechatpay_en
 
-[alipay:logo]: https://github.com/cncf/landscape/blob/master/hosted_logos/donate-alipay.jpg
+[alipay:logo]: https://raw.githubusercontent.com/fobgochod/git-commit-message-format/main/doc/donate-alipay.jpg
 [alipay:donate]: https://global.alipay.com
 
 [mailto]: mailto:fobgochod@gmail.com?subject=Donate&body=Name%2FNickname%3Cwebsite%3E%3A%20%3Cmessage%3E%0D%0DDonation%20Amount%3A%20%3Camount%3E%0DPayment%20Platform%3A%20Alipay%2FWeChat%20Reward%0DPayment%20Number%20%28last%205%20digits%29%3A%20%3Cnumber%3E%0D%0D
