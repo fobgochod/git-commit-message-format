@@ -40,7 +40,7 @@
 
 ### Fixed
 
-- unable to obtain scope items
+- Unable to obtain scope items
 
 ## [2.0.0]
 
