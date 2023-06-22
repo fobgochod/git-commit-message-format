@@ -127,7 +127,7 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
                 .horizontalAlign(HorizontalAlign.FILL)
                 .verticalAlign(VerticalAlign.FILL)
                 .bindText(commitMessage::changeBody)
-        }.layout(RowLayout.PARENT_GRID).resizableRow().visible(!state.hideBody)
+        }.layout(RowLayout.PARENT_GRID).visible(!state.hideBody)
 
         row(EMPTY_LABEL) {
             checkBox(GitBundle.message("dialog.form.label.wrap.text"))
@@ -144,7 +144,7 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
                 .horizontalAlign(HorizontalAlign.FILL)
                 .verticalAlign(VerticalAlign.FILL)
                 .bindText(commitMessage::breakingChanges)
-        }.layout(RowLayout.PARENT_GRID).resizableRow().visible(!state.hideBreaking)
+        }.layout(RowLayout.PARENT_GRID).visible(!state.hideBreaking)
 
         row(GitBundle.message("dialog.form.label.issues")) {
             textField()
