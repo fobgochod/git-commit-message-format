@@ -1,7 +1,7 @@
 package com.fobgochod.git.commit.view
 
 import com.fobgochod.git.commit.domain.CommitMessage
-import com.fobgochod.git.commit.util.GitBundle
+import com.fobgochod.git.commit.util.GitBundle.message
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.vcs.CommitMessageI
@@ -13,7 +13,7 @@ class CommitPanelDialog(project: Project, private val commitPanel: CommitMessage
     private var panel: CommitPanel
 
     init {
-        title = GitBundle.message("action.toolbar.create.commit.message.text")
+        title = message("action.toolbar.create.commit.message.text")
         panel = CommitPanel(project, commitMessage)
         init()
     }

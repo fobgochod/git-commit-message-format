@@ -1,7 +1,7 @@
 package com.fobgochod.git.commit.view
 
 import com.fobgochod.git.commit.domain.CommitMessage
-import com.fobgochod.git.commit.util.GitBundle
+import com.fobgochod.git.commit.util.GitBundle.message
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -32,7 +32,7 @@ class CommitPanelPopup(
         popup = JBPopupFactory.getInstance()
             .createComponentPopupBuilder(panel.root, panel.changeSubject)
             .setProject(project)
-            .setTitle(GitBundle.message("action.toolbar.create.commit.message.text"))
+            .setTitle(message("action.toolbar.create.commit.message.text"))
             .setResizable(true)
             .setMovable(true)
             .setFocusable(true)

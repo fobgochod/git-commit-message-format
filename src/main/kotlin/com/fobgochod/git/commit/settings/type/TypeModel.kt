@@ -3,7 +3,7 @@ package com.fobgochod.git.commit.settings.type
 import com.fobgochod.git.commit.domain.TypeRow
 import com.fobgochod.git.commit.domain.option.CommitType
 import com.fobgochod.git.commit.settings.GitSettings
-import com.fobgochod.git.commit.util.GitBundle
+import com.fobgochod.git.commit.util.GitBundle.message
 import java.util.LinkedList
 import javax.swing.table.AbstractTableModel
 
@@ -11,7 +11,7 @@ class TypeModel : AbstractTableModel() {
 
     private inner class Column(private val key: String, val type: Class<*>, val editable: Boolean) {
         val name: String
-            get() = GitBundle.message(key)
+            get() = message(key)
     }
 
     private val columns = arrayOf(

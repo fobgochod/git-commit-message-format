@@ -22,7 +22,7 @@ class GitSettingsState : BaseState() {
     var skipCI by enum(SkipCI.SKIP_CI)
 
     @get:OptionTag("VIEW_MODE")
-    var viewMode by enum(ViewMode.Window)
+    var viewMode by enum(ViewMode.Float)
 
     @get:OptionTag("HIDE_TYPE_GROUP")
     var hideTypeGroup by property(false)

@@ -12,8 +12,8 @@
 
 ## Usage
 
-- Click birdie or Press <kbd>Alt</kbd>+<kbd>Q</kbd> open formatter dialog
-- Click outside or Press <kbd>Alt</kbd>+<kbd>Enter</kbd> to be completed
+- Click birdie or press **Alt + Q** open formatter dialog
+- Click outside or press **Alt + Enter** to be completed
 
 ## Commit Message Format
 
@@ -47,8 +47,7 @@ Must be one of the following:
 * **feat**: A new feature
 * **fix**: A bug fix
 * **docs**: Documentation only changes
-* **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing
-  semi-colons, etc)
+* **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
 * **refactor**: A code change that neither fixes a bug nor adds a feature
 * **perf**: A code change that improves performance
 * **test**: Adding missing or correcting existing tests
@@ -78,13 +77,13 @@ The body should include the motivation for the change and contrast this with pre
 ### Footer
 
 The footer should contain any information about **Breaking Changes** and is also the place to
-[reference GitHub issues that this commit closes][gh:closing-issues].
+[reference GitHub issues that this commit closes](https://help.github.com/articles/closing-issues-via-commit-messages).
 
 **Breaking Changes** should start with the word `BREAKING CHANGE:` with a space or two newlines.
 The rest of the commit message is then used for this.
 
 A detailed explanation can be found in
-this [document][docs:commit-message-format].
+this [document](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#).
 
 <!-- Plugin description end -->
 
@@ -133,7 +132,6 @@ the [Apache License](https://www.apache.org/licenses/LICENSE-2.0).
 [gh:workflow-build]: https://github.com/fobgochod/git-commit-message-format/actions?query=workflow%3ABuild
 [gh:license]: https://github.com/fobgochod/git-commit-message-format/blob/main/LICENSE
 [gh:releases]: https://github.com/fobgochod/git-commit-message-format/releases
-[gh:closing-issues]: https://help.github.com/articles/closing-issues-via-commit-messages/
 
 [plugin:logo]: https://github.com/cncf/landscape/blob/master/hosted_logos/flogo.svg
 [plugin:homepage]: https://plugins.jetbrains.com/plugin/20935
@@ -142,6 +140,5 @@ the [Apache License](https://www.apache.org/licenses/LICENSE-2.0).
 [plugin:git-commit-message-helper]: https://github.com/AutismSuperman/git-commit-message-helper
 [plugin:commit-template-idea-plugin]: https://github.com/MobileTribe/commit-template-idea-plugin
 
-[docs:commit-message-format]: https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#
 [docs:commit-message-change-log]: http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html
 [docs:commit-message-convention]: https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines

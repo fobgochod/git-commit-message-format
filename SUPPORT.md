@@ -7,7 +7,6 @@ You can contribute and support this project by doing any of the following:
 * [Commit PR][gh:pulls]
 * [Rate this plugin on JetBrains Marketplace][jb:homepage]
 * Share the plugin with your friends/colleagues
-* If you love this plugin, please consider donating. It will inspire me to continue development on the project:
 
 ## Donate via OpenCollective
 

@@ -1,8 +1,9 @@
 package com.fobgochod.git.commit.domain.option
 
 import com.fobgochod.git.commit.domain.TypeRow
-import com.fobgochod.git.commit.util.GitBundle
-import java.util.*
+import com.fobgochod.git.commit.util.GitBundle.message
+import java.util.LinkedList
+import java.util.Locale
 
 enum class CommitType {
 
@@ -35,7 +36,7 @@ enum class CommitType {
     }
 
     fun description(): String {
-        return GitBundle.message("change.type.${this.type()}")
+        return message("change.type.${this.type()}")
     }
 
     override fun toString(): String {

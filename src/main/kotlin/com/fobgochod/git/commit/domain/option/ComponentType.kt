@@ -1,6 +1,6 @@
 package com.fobgochod.git.commit.domain.option
 
-import com.fobgochod.git.commit.util.GitBundle
+import com.fobgochod.git.commit.util.GitBundle.message
 import java.util.Locale
 
 enum class ComponentType() {
@@ -29,7 +29,7 @@ enum class ComponentType() {
     }
 
     fun description(): String {
-        return GitBundle.message("dialog.form.label.${this.type()}")
+        return message("dialog.form.label.${this.type()}")
     }
 
     override fun toString(): String {

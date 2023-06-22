@@ -1,7 +1,7 @@
 package com.fobgochod.git.commit.settings.type
 
 import com.fobgochod.git.commit.domain.TypeRow
-import com.fobgochod.git.commit.util.GitBundle
+import com.fobgochod.git.commit.util.GitBundle.message
 import com.fobgochod.git.commit.view.TypeDialog
 import com.intellij.ui.table.JBTable
 import java.awt.event.MouseAdapter
@@ -39,7 +39,7 @@ class TypeTable(private val typeModel: TypeModel) : JBTable(typeModel) {
 
     fun addRow() {
         val typeRow = TypeRow()
-        val typeDialog = TypeDialog(GitBundle.message("settings.type.dialog.add.title"), typeRow)
+        val typeDialog = TypeDialog(message("settings.type.dialog.add.title"), typeRow)
         if (typeDialog.showAndGet()) {
             typeModel.addRow(typeRow)
         }
@@ -62,7 +62,7 @@ class TypeTable(private val typeModel: TypeModel) : JBTable(typeModel) {
             return false
         }
         val typeRow = typeModel.typeRows[selectedRow].copy()
-        val typeDialog = TypeDialog(GitBundle.message("settings.type.dialog.edit.title"), typeRow)
+        val typeDialog = TypeDialog(message("settings.type.dialog.edit.title"), typeRow)
         if (typeDialog.showAndGet()) {
             typeModel.editRow(selectedRow, typeRow)
         }

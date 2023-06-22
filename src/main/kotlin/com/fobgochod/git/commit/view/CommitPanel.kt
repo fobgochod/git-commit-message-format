@@ -5,7 +5,7 @@ import com.fobgochod.git.commit.domain.CommitMessage
 import com.fobgochod.git.commit.domain.TypeRow
 import com.fobgochod.git.commit.domain.option.ViewMode
 import com.fobgochod.git.commit.settings.GitSettings
-import com.fobgochod.git.commit.util.GitBundle
+import com.fobgochod.git.commit.util.GitBundle.message
 import com.fobgochod.git.commit.util.GitUtil
 import com.intellij.icons.AllIcons
 import com.intellij.ide.IdeBundle
@@ -18,8 +18,6 @@ import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.setEmptyState
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
-import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import com.intellij.util.ui.JBUI
 import java.awt.Container
 import java.awt.FocusTraversalPolicy
@@ -46,7 +44,7 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
     lateinit var changeSubject: JBTextField
 
     val root: DialogPanel = panel {
-        row(GitBundle.message("dialog.form.label.type")) {
+        row(message("dialog.form.label.type")) {
             panel {
                 lateinit var comboBox: ComboBox<TypeRow>
                 val changeTypeGroup = ButtonGroup()
@@ -86,13 +84,13 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
                         .applyToComponent {
                             comboBox = this
                             addItemListener(lister)
-                        }.horizontalAlign(HorizontalAlign.FILL)
+                        }.align(AlignX.FILL)
                         .bindItem(commitMessage::changeType.toNullableProperty())
                 }.visible(!state.hideType && state.typeRows.size > state.typeCount)
             }
         }.visible(!state.hideTypeGroup || !state.hideType)
 
-        row(GitBundle.message("dialog.form.label.scope")) {
+        row(message("dialog.form.label.scope")) {
             val scopes: MutableList<String> = LinkedList()
             scopes.add("")
             if (state.scopeEnabled) {
@@ -102,13 +100,13 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
                 scopes.addAll(gitUtil.scopes)
             }
             comboBox(scopes)
-                .horizontalAlign(HorizontalAlign.FILL)
+                .align(AlignX.FILL)
                 .bindItem(commitMessage::changeScope.toNullableProperty())
         }.visible(!state.hideScope)
 
-        row(GitBundle.message("dialog.form.label.subject")) {
+        row(message("dialog.form.label.subject")) {
             textField()
-                .horizontalAlign(HorizontalAlign.FILL)
+                .align(AlignX.FILL)
                 .applyToComponent {
                     changeSubject = this
                     if (state.viewMode == ViewMode.Float) {
@@ -119,54 +117,52 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
         }.visible(!state.hideSubject)
 
         row {
-            label(GitBundle.message("dialog.form.label.body"))
-                .verticalAlign(VerticalAlign.TOP)
+            label(message("dialog.form.label.body"))
+                .align(AlignY.TOP)
                 .gap(RightGap.SMALL)
             textArea()
                 .rows(6)
-                .horizontalAlign(HorizontalAlign.FILL)
-                .verticalAlign(VerticalAlign.FILL)
+                .align(Align.FILL)
                 .bindText(commitMessage::changeBody)
-        }.layout(RowLayout.PARENT_GRID).visible(!state.hideBody)
+        }.layout(RowLayout.PARENT_GRID).resizableRow().visible(!state.hideBody)
 
-        row(EMPTY_LABEL) {
-            checkBox(GitBundle.message("dialog.form.label.wrap.text"))
-                .horizontalAlign(HorizontalAlign.FILL)
+        row("") {
+            checkBox(message("dialog.form.label.wrap.text"))
+                .align(AlignX.FILL)
                 .bindSelected(commitMessage::wrapText)
         }.visible(!state.hideWrapText)
 
         row {
-            label(GitBundle.message("dialog.form.label.breaking"))
-                .verticalAlign(VerticalAlign.TOP)
+            label(message("dialog.form.label.breaking"))
+                .align(AlignY.TOP)
                 .gap(RightGap.SMALL)
             textArea()
                 .rows(3)
-                .horizontalAlign(HorizontalAlign.FILL)
-                .verticalAlign(VerticalAlign.FILL)
+                .align(Align.FILL)
                 .bindText(commitMessage::breakingChanges)
-        }.layout(RowLayout.PARENT_GRID).visible(!state.hideBreaking)
+        }.layout(RowLayout.PARENT_GRID).resizableRow().visible(!state.hideBreaking)
 
-        row(GitBundle.message("dialog.form.label.issues")) {
+        row(message("dialog.form.label.issues")) {
             textField()
-                .horizontalAlign(HorizontalAlign.FILL)
+                .align(AlignX.FILL)
                 .bindText(commitMessage::closedIssues)
                 .applyToComponent {
                     setEmptyState("#124,#245")
                 }
         }.visible(!state.hideIssues)
 
-        row(EMPTY_LABEL) {
-            checkBox(GitBundle.message("dialog.form.label.skip.ci")).bindSelected(commitMessage::skipCI)
+        row("") {
+            checkBox(message("dialog.form.label.skip.ci")).bindSelected(commitMessage::skipCI)
 
             val action = object : DumbAwareAction(
                 IdeBundle.message("settings.entry.point.tooltip"), null, AllIcons.General.Settings
             ) {
                 override fun actionPerformed(e: AnActionEvent) {
                     ShowSettingsUtil.getInstance()
-                        .showSettingsDialog(project, GitBundle.message("configurable.display.name"))
+                        .showSettingsDialog(project, message("configurable.display.name"))
                 }
             }
-            actionButton(action).horizontalAlign(HorizontalAlign.RIGHT)
+            actionButton(action).align(AlignX.RIGHT)
         }.visible(!state.hideSkipCI)
     }.apply {
         preferredFocusedComponent = changeSubject

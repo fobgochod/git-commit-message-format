@@ -13,8 +13,6 @@ import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.SimpleListCellRenderer
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.dsl.builder.*
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
-import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import javax.swing.DefaultComboBoxModel
 
 
@@ -52,8 +50,7 @@ internal class GitSettingsConfigurable : BoundSearchableConfigurable(
             row {
                 val typeTable = TypeToolbarDecorator()
                 cell(typeTable.decorator.createPanel())
-                    .horizontalAlign(HorizontalAlign.FILL)
-                    .verticalAlign(VerticalAlign.FILL)
+                    .align(Align.FILL)
                     .resizableColumn()
                     .onIsModified { typeTable.isModified() }
                     .onApply { typeTable.apply() }
@@ -67,14 +64,12 @@ internal class GitSettingsConfigurable : BoundSearchableConfigurable(
                     row {
                         val scopeTable = ScopeListTable()
                         cell(scopeTable.component)
-                            .horizontalAlign(HorizontalAlign.FILL)
-                            .verticalAlign(VerticalAlign.FILL)
+                            .align(Align.FILL)
                             .onIsModified { scopeTable.isModified() }
                             .onApply { scopeTable.apply() }
                             .onReset { scopeTable.reset() }
                     }.resizableRow().enabledIf(scopeCheckBox.selected)
-                }.horizontalAlign(HorizontalAlign.FILL)
-                    .verticalAlign(VerticalAlign.FILL)
+                }.align(Align.FILL)
             }.resizableRow().layout(RowLayout.INDEPENDENT)
 
             group(message("settings.group.hidden.options")) {
