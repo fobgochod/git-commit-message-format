@@ -7,6 +7,7 @@ import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import java.util.stream.Collectors
 
 class GitUtil(private val project: Project) {
 
@@ -28,7 +29,7 @@ class GitUtil(private val project: Project) {
 
                 val process: Process = processBuilder.directory(basePath).start()
                 val reader = BufferedReader(InputStreamReader(process.inputStream, StandardCharsets.UTF_8))
-                val logs: List<String> = reader.lines().toList()
+                val logs: List<String> = reader.lines().collect(Collectors.toList())
 
                 return Result(process.exitValue(), logs)
             }
@@ -39,25 +40,11 @@ class GitUtil(private val project: Project) {
 
     inner class Result(exitValue: Int, private val logs: List<String> = emptyList()) {
 
-        private val isPattern: Boolean = true
         val scopes: MutableSet<String> = LinkedHashSet()
 
         init {
             if (exitValue == 0) {
-                if (isPattern) {
-                    initScopesByPattern()
-                } else {
-                    initScopes()
-                }
-            }
-        }
-
-        private fun initScopes() {
-            logs.forEach { log ->
-                val typeScope = log.split(" ")[0]
-                if (typeScope.indexOf('(') > -1 && typeScope.indexOf(')') > -1) {
-                    scopes.add(typeScope.substring(typeScope.indexOf('(') + 1, typeScope.indexOf(')')))
-                }
+                initScopesByPattern()
             }
         }
 
