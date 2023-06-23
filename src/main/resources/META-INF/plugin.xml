@@ -12,7 +12,7 @@
                                  id="com.fobgochod.git.commit.settings.GitConfigurable"
                                  instance="com.fobgochod.git.commit.settings.GitConfigurable"
                                  bundle="messages.GitBundle"
-                                 key="plugin.name"/>
+                                 key="configurable.display.name"/>
         <applicationService serviceImplementation="com.fobgochod.git.commit.settings.GitState"/>
         <applicationService serviceImplementation="com.fobgochod.git.commit.settings.GitComponent"/>
     </extensions>

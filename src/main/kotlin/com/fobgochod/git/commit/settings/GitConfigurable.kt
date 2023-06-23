@@ -2,7 +2,6 @@ package com.fobgochod.git.commit.settings
 
 import com.fobgochod.git.commit.util.GitBundle
 import com.intellij.openapi.options.SearchableConfigurable
-import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 
 class GitConfigurable : SearchableConfigurable {
@@ -18,8 +17,8 @@ class GitConfigurable : SearchableConfigurable {
         return component.mainPanel
     }
 
-    override fun getDisplayName(): @Nls(capitalization = Nls.Capitalization.Title) String {
-        return GitBundle.message("plugin.name")
+    override fun getDisplayName(): String {
+        return GitBundle.message("configurable.display.name")
     }
 
     override fun reset() {

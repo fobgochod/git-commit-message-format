@@ -28,7 +28,7 @@ data class CommitMessage(
 
                 commitMessage.changeType = GitState.getInstance().getTypeFromName(matcher.group(1)).name
                 commitMessage.changeScope = if (matcher.group(3) != null) matcher.group(3) else ""
-                commitMessage.changeSubject = matcher.group(4)
+                commitMessage.changeSubject = if (matcher.group(4) != null) matcher.group(4) else ""
 
                 val messages = message.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 if (messages.size < 2) {

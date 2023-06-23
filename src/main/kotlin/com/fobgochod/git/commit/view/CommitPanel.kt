@@ -119,11 +119,8 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
             changeType.addItem(typeRow)
         }
 
-        val result = GitLog(project).execute()
-        if (result.isSuccess()) {
-            changeScope.addItem("") // no value by default
-            result.getScopes().forEach(changeScope::addItem)
-        }
+        val gitUtil = GitLog(project).logs()
+        gitUtil.scopes.forEach(changeScope::addItem)
 
         restoreFromParsedCommitMessage(commitMessage)
     }
@@ -165,9 +162,9 @@ class CommitPanel(val project: Project?, private val commitMessage: CommitMessag
     private fun getChangeTypeByName(name: String): TypeRow {
         for (typeRow in state.typeRows) {
             if (name == typeRow.name) {
-                return typeRow;
+                return typeRow
             }
         }
-        return state.typeRows[0];
+        return state.typeRows[0]
     }
 }

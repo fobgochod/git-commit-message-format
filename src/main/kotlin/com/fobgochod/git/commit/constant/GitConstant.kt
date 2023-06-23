@@ -15,6 +15,6 @@ object GitConstant {
     const val CLOSES_PREFIX = "Closes "
     const val SKIP_CI = "[skip ci]"
 
-    val HEADER_PATTERN: Pattern = Pattern.compile("^([a-z]+)(\\((.+)\\))?: (.+)")
+    val HEADER_PATTERN: Pattern = Pattern.compile("^([a-z]+)(\\((.+)?\\))?: (.+)?")
     val CLOSED_ISSUES_PATTERN: Pattern = Pattern.compile("Closes (.+)")
 }
