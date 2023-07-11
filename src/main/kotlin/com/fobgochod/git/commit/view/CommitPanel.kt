@@ -23,7 +23,7 @@ import java.awt.Container
 import java.awt.FocusTraversalPolicy
 import java.awt.KeyboardFocusManager
 import java.awt.event.ItemListener
-import java.util.LinkedList
+import java.util.*
 import javax.swing.AbstractButton
 import javax.swing.ButtonGroup
 import javax.swing.LayoutFocusTraversalPolicy
@@ -84,7 +84,8 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
                         .applyToComponent {
                             comboBox = this
                             addItemListener(lister)
-                        }.align(AlignX.FILL)
+                        }
+                        .align(AlignX.FILL)
                         .bindItem(commitMessage::changeType.toNullableProperty())
                 }.visible(!state.hideType && state.typeRows.size > state.typeCount)
             }
@@ -100,19 +101,20 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
                 scopes.addAll(gitUtil.scopes)
             }
             comboBox(scopes)
+                .applyToComponent { isEditable = true }
                 .align(AlignX.FILL)
                 .bindItem(commitMessage::changeScope.toNullableProperty())
         }.visible(!state.hideScope)
 
         row(message("dialog.form.label.subject")) {
             textField()
-                .align(AlignX.FILL)
                 .applyToComponent {
                     changeSubject = this
                     if (state.viewMode == ViewMode.Float) {
                         setEmptyState("Press Alt + Enter or click outside to close")
                     }
                 }
+                .align(AlignX.FILL)
                 .bindText(commitMessage::changeSubject)
         }.visible(!state.hideSubject)
 
@@ -144,11 +146,9 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
 
         row(message("dialog.form.label.issues")) {
             textField()
+                .applyToComponent { setEmptyState("#124,#245") }
                 .align(AlignX.FILL)
                 .bindText(commitMessage::closedIssues)
-                .applyToComponent {
-                    setEmptyState("#124,#245")
-                }
         }.visible(!state.hideIssues)
 
         row("") {

@@ -7,10 +7,9 @@
 [![Plugin Downloads][badge:downloads]][plugin:homepage]
 
 
-
 <!-- Plugin description -->
 
-## Usage
+Create a commit message with the following template.
 
 - Click birdie or press **Alt + Q** open formatter dialog
 - Click outside or press **Alt + Enter** to be completed
@@ -99,14 +98,6 @@ this [document](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHOR
   Download the [latest release][gh:releases] or [JetBrains Plugin Marketplace][plugin:versions] and install it
   manually using <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from
   disk...</kbd>
-
-## Usage
-
-![commit-step1](doc/commit-template-1.png)
-
-![commit-step2](doc/commit-template-2.png)
-
-![commit-step3](doc/commit-template-3.png)
 
 ## Reference
 
