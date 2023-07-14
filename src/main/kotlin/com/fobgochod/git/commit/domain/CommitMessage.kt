@@ -7,15 +7,25 @@ import com.intellij.openapi.diagnostic.Logger
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.WordUtils
 
+/**
+ * <type>(<scope>): <subject>
+ * <BLANK LINE>
+ * <body>
+ * <BLANK LINE>
+ * <footer>
+ *
+ * @author fobgochod
+ * @date 2023/7/13 22:00
+ */
 data class CommitMessage(
-        var changeType: TypeRow = TypeRow(CommitType.FEAT),
-        var changeScope: String = "",
-        var changeSubject: String = "",
-        var changeBody: String = "",
-        var wrapText: Boolean = true,
-        var breakingChanges: String = "",
-        var closedIssues: String = "",
-        var skipCI: Boolean = false
+    var changeType: TypeRow = TypeRow(CommitType.FEAT),
+    var changeScope: String = "",
+    var changeSubject: String = "",
+    var changeBody: String = "",
+    var wrapText: Boolean = true,
+    var breakingChanges: String = "",
+    var closedIssues: String = "",
+    var skipCI: Boolean = false
 ) {
 
     companion object {
@@ -23,98 +33,127 @@ data class CommitMessage(
         private val state: GitSettings = GitSettings.instance
 
         fun parse(message: String): CommitMessage {
-            val commitMessage = CommitMessage()
+            val commit = CommitMessage()
             try {
-                var matcher = GitConstant.HEADER_PATTERN.matcher(message)
-                if (!matcher.find()) return commitMessage
+                val messages = message.split(GitConstant.NEWLINE).toList().dropWhile { it.isEmpty() }
+                val messageGroup = messages
+                    .flatMapIndexed { index, it ->
+                        when {
+                            index == 0 || index == messages.lastIndex -> listOf(index)
+                            it.isEmpty() -> listOf(index - 1, index + 1)
+                            else -> emptyList()
+                        }
+                    }
+                    .windowed(size = 2, step = 2) { (from, to) -> messages.slice(from..to) }
+                    .filter { it.isNotEmpty() }
 
-                commitMessage.changeType = state.getTypeFromName(matcher.group(1))
-                commitMessage.changeScope = if (matcher.group(3) != null) matcher.group(3) else ""
-                commitMessage.changeSubject = if (matcher.group(4) != null) matcher.group(4) else ""
+                // analysis one line data
+                messageGroup.filter { it.size == 1 }.map { it[0] }
+                    .forEachIndexed { index, row ->
+                        if (index == 0) {
+                            val matcher = GitConstant.HEADER_PATTERN.matcher(row)
+                            if (matcher.find()) {
+                                commit.changeType = state.getTypeFromName(matcher.group(1))
+                                commit.changeScope = matcher.group(3) ?: GitConstant.EMPTY
+                                commit.changeSubject = matcher.group(4) ?: GitConstant.EMPTY
+                            }
+                        } else if (row.startsWith(GitConstant.BREAKING_CHANGE)) {
+                            commit.breakingChanges = row.replace(GitConstant.BREAKING_CHANGE, GitConstant.EMPTY).trim()
+                        } else if (row.startsWith(GitConstant.CLOSES)) {
+                            commit.closedIssues = formatClosedIssue(row.replace(GitConstant.CLOSES, GitConstant.EMPTY))
+                        } else if (row.equals(state.skipCI.label, ignoreCase = true)) {
+                            commit.skipCI = true
+                        } else {
+                            commit.changeBody = row.trim()
+                        }
+                    }
 
-                val messages = message.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                if (messages.size < 2) {
-                    return commitMessage
+                // analysis multi line data
+                messageGroup.filter { it.size > 1 }.forEach { row ->
+                    val firstRow = row[0]
+                    if (firstRow.startsWith(GitConstant.BREAKING_CHANGE)) {
+                        commit.breakingChanges = row.joinToString(System.lineSeparator())
+                            .replace(GitConstant.BREAKING_CHANGE, GitConstant.EMPTY)
+                            .trim()
+                    } else if (firstRow.startsWith(GitConstant.CLOSES)) {
+                        commit.closedIssues = row.map {
+                            formatClosedIssue(it.replace(GitConstant.CLOSES, GitConstant.EMPTY))
+                        }.filter { it.isNotBlank() }.joinToString(GitConstant.COMMA)
+                    } else {
+                        commit.changeBody = row.joinToString(System.lineSeparator()).trim()
+                    }
                 }
-
-                var pos = 1
-                var builder: StringBuilder = StringBuilder()
-                while (pos < messages.size) {
-                    val lineString = messages[pos]
-                    if (lineString.startsWith(GitConstant.BREAKING_CHANGE_PREFIX)
-                            || lineString.startsWith(GitConstant.CLOSES_PREFIX)
-                            || lineString.equals(state.skipCI.label, ignoreCase = true)
-                    ) break
-                    builder.append(lineString).append('\n')
-                    pos++
-                }
-                commitMessage.changeBody = builder.toString().trim { it <= ' ' }
-
-                builder = StringBuilder()
-                while (pos < messages.size) {
-                    val lineString = messages[pos]
-                    if (lineString.startsWith(GitConstant.CLOSES_PREFIX)
-                            || lineString.equals(state.skipCI.label, ignoreCase = true)
-                    ) break
-                    builder.append(lineString).append('\n')
-                    pos++
-                }
-                commitMessage.breakingChanges =
-                        builder.toString().trim { it <= ' ' }.replace(GitConstant.BREAKING_CHANGE_PREFIX, "")
-
-                matcher = GitConstant.CLOSED_ISSUES_PATTERN.matcher(message)
-                builder = StringBuilder()
-                while (matcher.find()) {
-                    builder.append(matcher.group(1)).append(',')
-                }
-                if (builder.isNotEmpty()) builder.delete(builder.length - 1, builder.length)
-                commitMessage.closedIssues = builder.toString()
-
-                commitMessage.skipCI = message.contains(state.skipCI.label)
             } catch (e: RuntimeException) {
                 logger.error(e.message)
             }
-            return commitMessage
+            return commit
+        }
+
+        fun formatClosedIssue(closedIssue: String): String {
+            val issue = closedIssue.trim()
+            val issueNum = issue.trim('#').trim()
+            return when {
+                StringUtils.isNumeric(issue) -> "#$issue"
+                StringUtils.isNumeric(issueNum) -> "#$issueNum"
+                else -> GitConstant.EMPTY
+            }
         }
     }
 
     override fun toString(): String {
         val builder: StringBuilder = StringBuilder()
+        // header
         builder.append(changeType.name)
-        if (StringUtils.isNotBlank(changeScope)) {
+        if (changeScope.isNotBlank()) {
             builder.append('(').append(changeScope).append(')')
         }
-        builder.append(": ").append(changeSubject)
+        builder.append(GitConstant.COLON_EMPTY)
+        builder.append(changeSubject)
 
-        if (StringUtils.isNotBlank(changeBody)) {
-            builder.append(System.lineSeparator()).append(System.lineSeparator())
+        // body
+        if (changeBody.isNotBlank()) {
+            builder.append(System.lineSeparator())
+            builder.append(System.lineSeparator())
             if (wrapText) {
-                builder.append(WordUtils.wrap(changeBody, GitConstant.MAX_LINE_LENGTH))
+                val wrapBody = changeBody.split(System.lineSeparator()).toList()
+                    .flatMap { WordUtils.wrap(it, GitConstant.MAX_LINE_LENGTH).split(System.lineSeparator()).toList() }
+                    .joinToString(System.lineSeparator())
+                builder.append(wrapBody)
             } else {
                 builder.append(changeBody)
             }
         }
 
-        if (StringUtils.isNotBlank(breakingChanges)) {
-            val breakingContent = GitConstant.BREAKING_CHANGE_PREFIX + breakingChanges
-            builder.append(System.lineSeparator()).append(System.lineSeparator())
+        // footer
+        if (breakingChanges.isNotBlank()) {
+            builder.append(System.lineSeparator())
+            builder.append(System.lineSeparator())
+            val breaking = GitConstant.BREAKING_CHANGE + breakingChanges
             if (wrapText) {
-                builder.append(WordUtils.wrap(breakingContent, GitConstant.MAX_LINE_LENGTH))
+                val wrapBreaking = breaking.split(System.lineSeparator()).toList()
+                    .flatMap { WordUtils.wrap(it, GitConstant.MAX_LINE_LENGTH).split(System.lineSeparator()).toList() }
+                    .joinToString(System.lineSeparator())
+                builder.append(wrapBreaking)
             } else {
-                builder.append(breakingContent)
+                builder.append(breaking)
             }
         }
 
-        if (StringUtils.isNotBlank(closedIssues)) {
+        if (closedIssues.isNotBlank()) {
             builder.append(System.lineSeparator())
-            for (closedIssue: String in closedIssues.split(",")) {
-                builder.append(System.lineSeparator()).append(GitConstant.CLOSES_PREFIX)
-                        .append(formatClosedIssue(closedIssue))
-            }
+            closedIssues.split(GitConstant.COMMA)
+                .map { formatClosedIssue(it) }
+                .filter { it.isNotBlank() }
+                .forEach {
+                    builder.append(System.lineSeparator())
+                        .append(GitConstant.CLOSES)
+                        .append(it)
+                }
         }
 
         if (skipCI) {
-            builder.append(System.lineSeparator()).append(System.lineSeparator())
+            builder.append(System.lineSeparator())
+            builder.append(System.lineSeparator())
             if (state.skipCI.isTwoEmpty()) {
                 builder.append(System.lineSeparator())
             }
@@ -122,14 +161,5 @@ data class CommitMessage(
         }
 
         return builder.toString()
-    }
-
-
-    private fun formatClosedIssue(closedIssue: String): String {
-        val issue = closedIssue.trim { it <= ' ' }
-        if (StringUtils.isNumeric(issue)) {
-            return "#$issue"
-        }
-        return issue
     }
 }

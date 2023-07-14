@@ -4,6 +4,11 @@ import java.util.regex.Pattern
 
 object GitConstant {
 
+    const val EMPTY = ""
+    const val COMMA = ","
+    const val COLON_EMPTY = ": "
+    const val NEWLINE = "\n"
+
     const val RADIO_BUTTON_TYPE_COUNT = 3
 
     /**
@@ -11,8 +16,8 @@ object GitConstant {
      */
     const val MAX_LINE_LENGTH = 72
 
-    const val BREAKING_CHANGE_PREFIX = "BREAKING CHANGE: "
-    const val CLOSES_PREFIX = "Closes "
+    const val BREAKING_CHANGE = "BREAKING CHANGE: "
+    const val CLOSES = "Closes "
 
     val HEADER_PATTERN: Pattern = Pattern.compile("^([a-z]+)(\\((.+)?\\))?: (.+)?")
     val CLOSED_ISSUES_PATTERN: Pattern = Pattern.compile("Closes (.+)")
