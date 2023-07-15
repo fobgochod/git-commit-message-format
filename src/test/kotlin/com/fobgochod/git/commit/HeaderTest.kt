@@ -13,7 +13,7 @@ class HeaderTest : TestCase() {
 
         assertTrue(matcher.group(1) == "feat")
         assertTrue(matcher.group(3) == "compile")
-        assertTrue(matcher.group(4) == "hello world")
+        assertTrue(matcher.group(5) == "hello world")
     }
 
     fun testCase2() {
@@ -23,7 +23,7 @@ class HeaderTest : TestCase() {
 
         assertTrue(matcher.group(1) == "feat")
         assertTrue(matcher.group(3) == "compile")
-        assertTrue(matcher.group(4) == null)
+        assertTrue(matcher.group(5) == null)
     }
 
     fun testCase3() {
@@ -33,7 +33,7 @@ class HeaderTest : TestCase() {
 
         assertTrue(matcher.group(1) == "feat")
         assertTrue(matcher.group(3) == null)
-        assertTrue(matcher.group(4) == "hello world")
+        assertTrue(matcher.group(5) == "hello world")
     }
 
     fun testCase4() {
@@ -43,7 +43,17 @@ class HeaderTest : TestCase() {
 
         assertTrue(matcher.group(1) == "feat")
         assertTrue(matcher.group(3) == null)
-        assertTrue(matcher.group(4) == null)
+        assertTrue(matcher.group(5) == null)
+    }
+
+    fun testCase5() {
+        val message = "feat(compile)：hello world"
+        val matcher = GitConstant.HEADER_PATTERN.matcher(message)
+        matcher.find()
+
+        assertTrue(matcher.group(1) == "feat")
+        assertTrue(matcher.group(3) == "compile")
+        assertTrue(matcher.group(5) == "hello world")
     }
 
 

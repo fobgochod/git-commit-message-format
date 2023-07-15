@@ -54,7 +54,7 @@ data class CommitMessage(
                             if (matcher.find()) {
                                 commit.changeType = state.getTypeFromName(matcher.group(1))
                                 commit.changeScope = matcher.group(3) ?: GitConstant.EMPTY
-                                commit.changeSubject = matcher.group(4) ?: GitConstant.EMPTY
+                                commit.changeSubject = matcher.group(5) ?: GitConstant.EMPTY
                             }
                         } else if (row.startsWith(GitConstant.BREAKING_CHANGE)) {
                             commit.breakingChanges = row.replace(GitConstant.BREAKING_CHANGE, GitConstant.EMPTY).trim()
