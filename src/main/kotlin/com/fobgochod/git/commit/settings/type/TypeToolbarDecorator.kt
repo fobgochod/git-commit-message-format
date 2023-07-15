@@ -2,6 +2,7 @@ package com.fobgochod.git.commit.settings.type
 
 import com.fobgochod.git.commit.action.ResetTypeAction
 import com.fobgochod.git.commit.action.RestoreTypesAction
+import com.fobgochod.git.commit.action.TypeCountAction
 import com.intellij.openapi.actionSystem.ActionToolbarPosition
 import com.intellij.ui.ToolbarDecorator
 
@@ -15,6 +16,7 @@ class TypeToolbarDecorator {
 
     private val typeModel: TypeModel = TypeModel()
     private val typeTable: TypeTable = TypeTable(typeModel)
+    private val typeCountAction = TypeCountAction()
     val decorator: ToolbarDecorator = ToolbarDecorator.createDecorator(typeTable)
 
     init {
@@ -26,18 +28,21 @@ class TypeToolbarDecorator {
         decorator.setMoveDownAction { typeTable.moveDown() }
         decorator.addExtraAction(ResetTypeAction(typeTable, typeModel))
         decorator.addExtraAction(RestoreTypesAction(typeModel))
+        decorator.addExtraAction(typeCountAction)
     }
 
     fun isModified(): Boolean {
-        return typeModel.isModified()
+        return typeModel.isModified() || typeCountAction.isModified()
     }
 
     fun apply() {
         typeModel.apply()
+        typeCountAction.apply()
     }
 
     fun reset() {
         typeModel.reset()
+        typeCountAction.reset()
     }
 }
 

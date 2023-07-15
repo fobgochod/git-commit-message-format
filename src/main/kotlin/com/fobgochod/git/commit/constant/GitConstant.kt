@@ -20,7 +20,6 @@ object GitConstant {
     const val CLOSES = "Closes "
 
     val HEADER_PATTERN: Pattern = Pattern.compile("^([a-z]+)(\\((.+)?\\))?: (.+)?")
-    val CLOSED_ISSUES_PATTERN: Pattern = Pattern.compile("Closes (.+)")
 
     /**
      * commit ui default size
