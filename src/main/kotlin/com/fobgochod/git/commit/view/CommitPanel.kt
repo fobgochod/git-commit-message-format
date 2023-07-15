@@ -23,7 +23,7 @@ import java.awt.Container
 import java.awt.FocusTraversalPolicy
 import java.awt.KeyboardFocusManager
 import java.awt.event.ItemListener
-import java.util.*
+import java.util.LinkedList
 import javax.swing.AbstractButton
 import javax.swing.ButtonGroup
 import javax.swing.LayoutFocusTraversalPolicy
@@ -128,10 +128,10 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
                 .bindText(commitMessage::changeBody)
         }.layout(RowLayout.PARENT_GRID).resizableRow().visible(!state.hideBody)
 
-        row("") {
+        row(GitConstant.EMPTY) {
             checkBox(message("dialog.form.label.wrap.text"))
                 .align(AlignX.FILL)
-                .bindSelected(commitMessage::wrapText)
+                .bindSelected(state::wrapTextEnabled)
         }.visible(!state.hideWrapText)
 
         row {
@@ -151,7 +151,7 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
                 .bindText(commitMessage::closedIssues)
         }.visible(!state.hideIssues)
 
-        row("") {
+        row(GitConstant.EMPTY) {
             checkBox(message("dialog.form.label.skip.ci")).bindSelected(commitMessage::skipCI)
 
             val action = object : DumbAwareAction(

@@ -39,18 +39,23 @@ class GitSettings : PersistentStateComponent<GitSettingsState> {
             state.typeCount = value
         }
 
-    var skipCI: SkipCI
-        get() = state.skipCI
-        set(value) {
-            state.skipCI = value
-        }
-
     var viewMode: ViewMode
         get() = state.viewMode
         set(value) {
             state.viewMode = value
         }
 
+    var skipCI: SkipCI
+        get() = state.skipCI
+        set(value) {
+            state.skipCI = value
+        }
+
+    var wrapTextEnabled: Boolean
+        get() = state.wrapTextEnabled
+        set(value) {
+            state.wrapTextEnabled = value
+        }
 
     var hideTypeGroup: Boolean
         get() = state.hideTypeGroup

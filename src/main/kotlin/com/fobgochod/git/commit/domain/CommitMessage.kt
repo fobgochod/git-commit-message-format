@@ -22,7 +22,6 @@ data class CommitMessage(
     var changeScope: String = "",
     var changeSubject: String = "",
     var changeBody: String = "",
-    var wrapText: Boolean = true,
     var breakingChanges: String = "",
     var closedIssues: String = "",
     var skipCI: Boolean = false
@@ -98,6 +97,16 @@ data class CommitMessage(
                 else -> GitConstant.EMPTY
             }
         }
+
+        fun wrapText(message: String): String {
+            return when {
+                state.wrapTextEnabled -> message.split(System.lineSeparator()).toList()
+                    .flatMap { WordUtils.wrap(it, GitConstant.MAX_LINE_LENGTH).split(System.lineSeparator()).toList() }
+                    .joinToString(System.lineSeparator())
+
+                else -> message
+            }
+        }
     }
 
     override fun toString(): String {
@@ -114,29 +123,14 @@ data class CommitMessage(
         if (changeBody.isNotBlank()) {
             builder.append(System.lineSeparator())
             builder.append(System.lineSeparator())
-            if (wrapText) {
-                val wrapBody = changeBody.split(System.lineSeparator()).toList()
-                    .flatMap { WordUtils.wrap(it, GitConstant.MAX_LINE_LENGTH).split(System.lineSeparator()).toList() }
-                    .joinToString(System.lineSeparator())
-                builder.append(wrapBody)
-            } else {
-                builder.append(changeBody)
-            }
+            builder.append(wrapText(changeBody))
         }
 
         // footer
         if (breakingChanges.isNotBlank()) {
             builder.append(System.lineSeparator())
             builder.append(System.lineSeparator())
-            val breaking = GitConstant.BREAKING_CHANGE + breakingChanges
-            if (wrapText) {
-                val wrapBreaking = breaking.split(System.lineSeparator()).toList()
-                    .flatMap { WordUtils.wrap(it, GitConstant.MAX_LINE_LENGTH).split(System.lineSeparator()).toList() }
-                    .joinToString(System.lineSeparator())
-                builder.append(wrapBreaking)
-            } else {
-                builder.append(breaking)
-            }
+            builder.append(wrapText(GitConstant.BREAKING_CHANGE + breakingChanges))
         }
 
         if (closedIssues.isNotBlank()) {

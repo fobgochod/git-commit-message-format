@@ -18,11 +18,14 @@ class GitSettingsState : BaseState() {
     @get:OptionTag("TYPE_COUNT")
     var typeCount by property(GitConstant.RADIO_BUTTON_TYPE_COUNT)
 
+    @get:OptionTag("VIEW_MODE")
+    var viewMode by enum(ViewMode.Float)
+
     @get:OptionTag("SKIP_CI")
     var skipCI by enum(SkipCI.SKIP_CI)
 
-    @get:OptionTag("VIEW_MODE")
-    var viewMode by enum(ViewMode.Float)
+    @get:OptionTag("WRAP_TEXT_ENABLED")
+    var wrapTextEnabled by property(true)
 
     @get:OptionTag("HIDE_TYPE_GROUP")
     var hideTypeGroup by property(false)

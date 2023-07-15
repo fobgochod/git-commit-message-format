@@ -34,6 +34,7 @@ internal class GitSettingsConfigurable : BoundSearchableConfigurable(
 ) {
     private val state: GitSettings get() = GitSettings.instance
 
+    // @formatter:off
     private val hideTypeGroup get() = CheckboxDescriptor(ComponentType.TypeGroup.name, state::hideTypeGroup)
     private val hideType get() = CheckboxDescriptor(ComponentType.Type.name, state::hideType)
     private val hideScope get() = CheckboxDescriptor(ComponentType.Scope.name, state::hideScope)
@@ -44,6 +45,8 @@ internal class GitSettingsConfigurable : BoundSearchableConfigurable(
     private val hideIssues get() = CheckboxDescriptor(ComponentType.Issues.name, state::hideIssues)
     private val hideSkipCI get() = CheckboxDescriptor(ComponentType.SkipCI.name, state::hideSkipCI)
     private val scopeEnabled get() = CheckboxDescriptor(message("settings.scope.enabled"), state::scopeEnabled)
+    private val wrapTextEnabled get() = CheckboxDescriptor(message("dialog.form.label.wrap.text"), state::wrapTextEnabled)
+    // @formatter:on
 
     override fun createPanel(): DialogPanel {
         return panel {
@@ -115,21 +118,26 @@ internal class GitSettingsConfigurable : BoundSearchableConfigurable(
 
             group(message("settings.group.common.settings")) {
                 row {
-                    intTextField()
-                        .label(message("settings.common.group.count"))
-                        .bindIntText(state::typeCount)
+                    panel {
+                        row(message("settings.common.view.mode")) {
+                            comboBox(ViewMode.values().toList())
+                                .bindItem(state::viewMode.toNullableProperty())
+                        }
 
-                    comboBox<SkipCI>(
-                        // EnumComboBoxModel(SkipCI::class.java),
-                        DefaultComboBoxModel(SkipCI.values()),
-                        SimpleListCellRenderer.create("", SkipCI::label)
-                    )
-                        .label(message("settings.common.skip.ci.word"))
-                        .bindItem(state::skipCI.toNullableProperty())
+                        row(message("settings.common.skip.ci.word")) {
+                            comboBox<SkipCI>(
+                                // EnumComboBoxModel(SkipCI::class.java),
+                                DefaultComboBoxModel(SkipCI.values()),
+                                SimpleListCellRenderer.create("", SkipCI::label)
+                            ).bindItem(state::skipCI.toNullableProperty())
+                        }
+                    }.gap(RightGap.COLUMNS).align(AlignY.TOP).resizableColumn()
 
-                    comboBox(ViewMode.values().toList())
-                        .label(message("settings.common.view.mode"))
-                        .bindItem(state::viewMode.toNullableProperty())
+                    panel {
+                        row {
+                            checkBox(wrapTextEnabled)
+                        }
+                    }.align(AlignY.TOP).resizableColumn()
                 }
             }
         }
