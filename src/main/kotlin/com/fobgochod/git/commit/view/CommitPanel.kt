@@ -123,6 +123,7 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
                 .align(AlignY.TOP)
                 .gap(RightGap.SMALL)
             textArea()
+                .applyToComponent { lineWrap = true }
                 .rows(6)
                 .align(Align.FILL)
                 .bindText(commitMessage::changeBody)
@@ -139,6 +140,7 @@ class CommitPanel(private val project: Project, private val commitMessage: Commi
                 .align(AlignY.TOP)
                 .gap(RightGap.SMALL)
             textArea()
+                .applyToComponent { lineWrap = true }
                 .rows(3)
                 .align(Align.FILL)
                 .bindText(commitMessage::breakingChanges)
