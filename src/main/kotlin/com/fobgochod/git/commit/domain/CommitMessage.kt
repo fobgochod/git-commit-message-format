@@ -138,6 +138,7 @@ data class CommitMessage(
             closedIssues.split(GitConstant.COMMA)
                 .map { formatClosedIssue(it) }
                 .filter { it.isNotBlank() }
+                .distinct()
                 .forEach {
                     builder.append(System.lineSeparator())
                         .append(GitConstant.CLOSES)

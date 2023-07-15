@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+## [2.0.6]
+
+### Fixed
+
+- Fix wrap at 72 characters exception
+
 ## [2.0.5]
 
 ### Fixed
@@ -63,7 +69,8 @@
 - Initial project scaffold
 
 [//]: # (@formatter:off)
-[Unreleased]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.5...HEAD
+[Unreleased]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.6...HEAD
+[2.0.6]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.2...v2.0.3
