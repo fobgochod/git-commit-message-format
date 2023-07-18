@@ -38,6 +38,7 @@ data class CommitMessage(
                 val messageGroup = messages
                     .flatMapIndexed { index, it ->
                         when {
+                            index == 0 && messages.size == 1 -> listOf(0, 0)
                             index == 0 || index == messages.lastIndex -> listOf(index)
                             it.isEmpty() -> listOf(index - 1, index + 1)
                             else -> emptyList()
