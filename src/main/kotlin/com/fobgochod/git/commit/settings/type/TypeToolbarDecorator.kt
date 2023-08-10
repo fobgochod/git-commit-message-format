@@ -16,7 +16,7 @@ class TypeToolbarDecorator {
 
     private val typeModel: TypeModel = TypeModel()
     private val typeTable: TypeTable = TypeTable(typeModel)
-    private val typeCountAction = TypeCountAction()
+    private val typeCountAction = TypeCountAction(typeModel)
     val decorator: ToolbarDecorator = ToolbarDecorator.createDecorator(typeTable)
 
     init {
