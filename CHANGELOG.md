@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+### Changed
+- Chang type count ui to slider
+
 ## [2.0.7] - 2023-07-18
 
 ### Fixed
