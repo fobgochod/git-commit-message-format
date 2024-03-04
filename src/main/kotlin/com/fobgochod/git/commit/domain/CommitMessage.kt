@@ -114,27 +114,27 @@ data class CommitMessage(
         val builder: StringBuilder = StringBuilder()
         // header
         builder.append(changeType.name)
-        if (changeScope.isNotBlank()) {
+        if (changeScope.isNotBlank() && !state.hideScope) {
             builder.append('(').append(changeScope).append(')')
         }
         builder.append(GitConstant.COLON_EMPTY)
         builder.append(changeSubject)
 
         // body
-        if (changeBody.isNotBlank()) {
+        if (changeBody.isNotBlank() && !state.hideBody) {
             builder.append(System.lineSeparator())
             builder.append(System.lineSeparator())
             builder.append(wrapText(changeBody))
         }
 
         // footer
-        if (breakingChanges.isNotBlank()) {
+        if (breakingChanges.isNotBlank() && !state.hideBreaking) {
             builder.append(System.lineSeparator())
             builder.append(System.lineSeparator())
             builder.append(wrapText(GitConstant.BREAKING_CHANGE + breakingChanges))
         }
 
-        if (closedIssues.isNotBlank()) {
+        if (closedIssues.isNotBlank() && !state.hideIssues) {
             builder.append(System.lineSeparator())
             closedIssues.split(GitConstant.COMMA)
                 .map { formatClosedIssue(it) }
@@ -147,7 +147,7 @@ data class CommitMessage(
                 }
         }
 
-        if (skipCI) {
+        if (skipCI && !state.hideSkipCI) {
             builder.append(System.lineSeparator())
             builder.append(System.lineSeparator())
             if (state.skipCI.isTwoEmpty()) {

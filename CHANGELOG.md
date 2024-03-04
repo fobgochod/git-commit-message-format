@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- remove data when UI is hidden
+
 ## [2.0.8] - 2023-11-08
 
 ### Changed
