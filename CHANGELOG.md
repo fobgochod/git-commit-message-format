@@ -4,9 +4,11 @@
 
 ## [Unreleased]
 
+## [2.0.9] - 2024-03-18
+
 ### Changed
 
-- remove data when UI is hidden
+- remove data when UI is hidden #12
 - Fix header type supports Chinese
 
 ## [2.0.8] - 2023-11-08
@@ -85,7 +87,8 @@
 
 - Initial project scaffold
 
-[Unreleased]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.8...HEAD
+[Unreleased]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.9...HEAD
+[2.0.9]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.8...v2.0.9
 [2.0.8]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.7...v2.0.8
 [2.0.7]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.6...v2.0.7
 [2.0.6]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.5...v2.0.6
