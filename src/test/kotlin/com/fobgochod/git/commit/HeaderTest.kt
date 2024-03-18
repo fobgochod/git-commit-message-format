@@ -56,6 +56,36 @@ class HeaderTest : TestCase() {
         assertTrue(matcher.group(5) == "hello world")
     }
 
+    fun testCase6() {
+        val message = "FEAT(compile)：hello world"
+        val matcher = GitConstant.HEADER_PATTERN.matcher(message)
+        matcher.find()
+
+        assertTrue(matcher.group(1) == "FEAT")
+        assertTrue(matcher.group(3) == "compile")
+        assertTrue(matcher.group(5) == "hello world")
+    }
+
+    fun testCase7() {
+        val message = "1234(compile)：hello world"
+        val matcher = GitConstant.HEADER_PATTERN.matcher(message)
+        matcher.find()
+
+        assertTrue(matcher.group(1) == "1234")
+        assertTrue(matcher.group(3) == "compile")
+        assertTrue(matcher.group(5) == "hello world")
+    }
+
+    fun testCase8() {
+        val message = "功能(compile)：hello world"
+        val matcher = GitConstant.HEADER_PATTERN.matcher(message)
+        matcher.find()
+
+        assertTrue(matcher.group(1) == "功能")
+        assertTrue(matcher.group(3) == "compile")
+        assertTrue(matcher.group(5) == "hello world")
+    }
+
 
     fun test() {
         val message = "feat(compile): hello world"

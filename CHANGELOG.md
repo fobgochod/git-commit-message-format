@@ -7,6 +7,7 @@
 ### Changed
 
 - remove data when UI is hidden
+- Fix header type supports Chinese
 
 ## [2.0.8] - 2023-11-08
 

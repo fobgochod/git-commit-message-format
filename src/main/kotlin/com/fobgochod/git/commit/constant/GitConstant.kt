@@ -19,7 +19,7 @@ object GitConstant {
     const val BREAKING_CHANGE = "BREAKING CHANGE: "
     const val CLOSES = "Closes "
 
-    val HEADER_PATTERN: Pattern = Pattern.compile("^([a-z]+)(\\((.+)?\\))?[:：]( )?(.+)?")
+    val HEADER_PATTERN: Pattern = Pattern.compile("^([a-zA-Z0-9\\u4e00-\\u9fa5]+)(\\((.+)?\\))?[:：]( )?(.+)?")
 
     /**
      * commit ui default size
