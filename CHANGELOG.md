@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add commit panel title icon
+
+### Fixed
+
+- Fix icon display abnormal
+
 ## [2.0.9] - 2024-03-18
 
 ### Changed
