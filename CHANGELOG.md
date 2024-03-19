@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [2.0.10] - 2024-03-19
+
 ### Added
 
 - Add commit panel title icon
@@ -95,7 +97,8 @@
 
 - Initial project scaffold
 
-[Unreleased]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.9...HEAD
+[Unreleased]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.10...HEAD
+[2.0.10]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.9...v2.0.10
 [2.0.9]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.8...v2.0.9
 [2.0.8]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.7...v2.0.8
 [2.0.7]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.6...v2.0.7
