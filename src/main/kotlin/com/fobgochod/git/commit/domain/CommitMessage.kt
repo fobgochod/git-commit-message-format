@@ -3,9 +3,9 @@ package com.fobgochod.git.commit.domain
 import com.fobgochod.git.commit.constant.GitConstant
 import com.fobgochod.git.commit.domain.option.CommitType
 import com.fobgochod.git.commit.settings.GitSettings
+import com.fobgochod.git.commit.util.StringUtils
+import com.fobgochod.git.commit.util.WordUtils
 import com.intellij.openapi.diagnostic.Logger
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.WordUtils
 
 /**
  * <type>(<scope>): <subject>
@@ -67,7 +67,7 @@ data class CommitMessage(
                             .trim()
                     } else if (firstRow.startsWith(GitConstant.CLOSES)) {
                         commit.closedIssues = row.map {
-                            formatClosedIssue(it.replace(GitConstant.CLOSES, GitConstant.EMPTY))
+                            StringUtils.formatClosedIssue(it.replace(GitConstant.CLOSES, GitConstant.EMPTY))
                         }.filter { it.isNotBlank() }.joinToString(GitConstant.COMMA)
                     } else if (firstRow.equals(state.skipCI.label, ignoreCase = true)) {
                         commit.skipCI = true
@@ -79,16 +79,6 @@ data class CommitMessage(
                 logger.error(e.message)
             }
             return commit
-        }
-
-        fun formatClosedIssue(closedIssue: String): String {
-            val issue = closedIssue.trim()
-            val issueNum = issue.trim('#').trim()
-            return when {
-                StringUtils.isNumeric(issue) -> "#$issue"
-                StringUtils.isNumeric(issueNum) -> "#$issueNum"
-                else -> GitConstant.EMPTY
-            }
         }
 
         fun wrapText(message: String): String {
@@ -129,7 +119,7 @@ data class CommitMessage(
         if (closedIssues.isNotBlank() && !state.hideIssues) {
             builder.append(System.lineSeparator())
             closedIssues.split(GitConstant.COMMA)
-                .map { formatClosedIssue(it) }
+                .map { StringUtils.formatClosedIssue(it) }
                 .filter { it.isNotBlank() }
                 .distinct()
                 .forEach {

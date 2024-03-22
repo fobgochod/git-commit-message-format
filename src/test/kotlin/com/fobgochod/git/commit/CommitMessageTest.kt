@@ -5,7 +5,32 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class CommitMessageTest : BasePlatformTestCase() {
 
-    fun testParseOnlyHeader() {
+    fun testStandard() {
+        val message = """
+            feat(scope): A new feature
+            
+            Just as in the subject, use the imperative, present tense: "change" not "changed" nor "changes". 
+            The body should include the motivation for the change and contrast this with previous behavior.
+
+            BREAKING CHANGE: should start with the word BREAKING CHANGE: with a space or two newlines. 
+            The rest of the commit message is then used for this.
+
+            Closes #111
+
+            [skip ci]
+        """.trimIndent()
+
+
+        val cm = CommitMessage.parse(message)
+        println(cm)
+
+        assertTrue(cm.changeType.name == "feat")
+        assertTrue(cm.changeScope == "scope")
+        assertTrue(cm.closedIssues == "#111")
+        assertTrue(cm.skipCI)
+    }
+
+    fun testOnlyHeader() {
         val message = """
             feat(scope): 添加登陆日志
         """.trimIndent()
@@ -17,7 +42,7 @@ class CommitMessageTest : BasePlatformTestCase() {
         assertTrue(cm.changeScope == "scope")
     }
 
-    fun testParseSingleLine() {
+    fun testSingleLine() {
         val message = """
             
             feat(scope): 添加登陆日志
@@ -40,7 +65,7 @@ class CommitMessageTest : BasePlatformTestCase() {
         assertTrue(cm.skipCI)
     }
 
-    fun testParseMultiLine() {
+    fun testMultiLine() {
         val message = """
             
             feat(scope): 添加登陆日志
