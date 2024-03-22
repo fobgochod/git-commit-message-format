@@ -34,42 +34,32 @@ data class CommitMessage(
         fun parse(message: String): CommitMessage {
             val commit = CommitMessage()
             try {
-                val messages = message.split(GitConstant.NEWLINE).toList().dropWhile { it.isEmpty() }
-                val messageGroup = messages
-                    .flatMapIndexed { index, it ->
-                        when {
-                            index == 0 && messages.size == 1 -> listOf(0, 0)
-                            index == 0 || index == messages.lastIndex -> listOf(index)
-                            it.isEmpty() -> listOf(index - 1, index + 1)
-                            else -> emptyList()
-                        }
+                val messages = message.split(GitConstant.NEWLINE).dropWhile { it.isEmpty() }.toMutableList()
+                // header handler
+                val header = messages.first()
+                val matcher = GitConstant.HEADER_PATTERN.matcher(header)
+                if (matcher.find()) {
+                    commit.changeType = state.getTypeFromName(matcher.group(1))
+                    commit.changeScope = matcher.group(3) ?: GitConstant.EMPTY
+                    commit.changeSubject = matcher.group(5) ?: GitConstant.EMPTY
+                    // match ok, remove first line
+                    messages.removeFirst()
+                }
+
+                // body and footer handler
+                val messageGroup = messages.flatMapIndexed { index, it ->
+                    when {
+                        index == 0 && messages.size == 1 -> listOf(0, 0)
+                        index == 0 || index == messages.lastIndex -> listOf(index)
+                        it.isEmpty() -> listOf(index - 1, index + 1)
+                        else -> emptyList()
                     }
+                }
                     .windowed(size = 2, step = 2) { (from, to) -> messages.slice(from..to) }
                     .filter { it.isNotEmpty() }
 
-                // analysis one line data
-                messageGroup.filter { it.size == 1 }.map { it[0] }
-                    .forEachIndexed { index, row ->
-                        if (index == 0) {
-                            val matcher = GitConstant.HEADER_PATTERN.matcher(row)
-                            if (matcher.find()) {
-                                commit.changeType = state.getTypeFromName(matcher.group(1))
-                                commit.changeScope = matcher.group(3) ?: GitConstant.EMPTY
-                                commit.changeSubject = matcher.group(5) ?: GitConstant.EMPTY
-                            }
-                        } else if (row.startsWith(GitConstant.BREAKING_CHANGE)) {
-                            commit.breakingChanges = row.replace(GitConstant.BREAKING_CHANGE, GitConstant.EMPTY).trim()
-                        } else if (row.startsWith(GitConstant.CLOSES)) {
-                            commit.closedIssues = formatClosedIssue(row.replace(GitConstant.CLOSES, GitConstant.EMPTY))
-                        } else if (row.equals(state.skipCI.label, ignoreCase = true)) {
-                            commit.skipCI = true
-                        } else {
-                            commit.changeBody = row.trim()
-                        }
-                    }
-
-                // analysis multi line data
-                messageGroup.filter { it.size > 1 }.forEach { row ->
+                // analysis group data
+                messageGroup.forEach { row ->
                     val firstRow = row[0]
                     if (firstRow.startsWith(GitConstant.BREAKING_CHANGE)) {
                         commit.breakingChanges = row.joinToString(System.lineSeparator())
@@ -79,6 +69,8 @@ data class CommitMessage(
                         commit.closedIssues = row.map {
                             formatClosedIssue(it.replace(GitConstant.CLOSES, GitConstant.EMPTY))
                         }.filter { it.isNotBlank() }.joinToString(GitConstant.COMMA)
+                    } else if (firstRow.equals(state.skipCI.label, ignoreCase = true)) {
+                        commit.skipCI = true
                     } else {
                         commit.changeBody = row.joinToString(System.lineSeparator()).trim()
                     }
@@ -142,7 +134,7 @@ data class CommitMessage(
                 .distinct()
                 .forEach {
                     builder.append(System.lineSeparator())
-                        .append(GitConstant.CLOSES)
+                        .append(GitConstant.CLOSES + GitConstant.SPACE)
                         .append(it)
                 }
         }
