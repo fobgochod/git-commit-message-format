@@ -19,6 +19,18 @@ enum class SkipCI(val label: String) {
         this.twoEmpty = twoEmpty
     }
 
+    companion object {
+
+        fun isSelf(label: String): Boolean {
+            values().forEach {
+                if (it.label.equals(label, ignoreCase = true)) {
+                    return true
+                }
+            }
+            return false
+        }
+    }
+
     fun isTwoEmpty(): Boolean {
         return twoEmpty
     }

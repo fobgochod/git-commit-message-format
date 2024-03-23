@@ -2,6 +2,7 @@ package com.fobgochod.git.commit.domain
 
 import com.fobgochod.git.commit.constant.GitConstant
 import com.fobgochod.git.commit.domain.option.CommitType
+import com.fobgochod.git.commit.domain.option.SkipCI
 import com.fobgochod.git.commit.settings.GitSettings
 import com.fobgochod.git.commit.util.StringUtils
 import com.fobgochod.git.commit.util.WordUtils
@@ -69,7 +70,7 @@ data class CommitMessage(
                         commit.closedIssues = row.map {
                             StringUtils.formatClosedIssue(it.replace(GitConstant.CLOSES, GitConstant.EMPTY))
                         }.filter { it.isNotBlank() }.joinToString(GitConstant.COMMA)
-                    } else if (firstRow.equals(state.skipCI.label, ignoreCase = true)) {
+                    } else if (SkipCI.isSelf(firstRow.trim())) {
                         commit.skipCI = true
                     } else {
                         commit.changeBody = row.joinToString(System.lineSeparator()).trim()
