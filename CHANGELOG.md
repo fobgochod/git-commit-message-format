@@ -4,6 +4,23 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add format junit test
+
+### Changed
+
+- Enhance message format
+
+### Removed
+
+- Remove apache commons dependencies
+
+### Fixed
+
+- Skip CI match fail
+- Compatible with 2024.2
+
 ## [2.0.10] - 2024-03-19
 
 ### Added
@@ -18,7 +35,7 @@
 
 ### Changed
 
-- remove data when UI is hidden #12
+- Remove data when UI is hidden #12
 - Fix header type supports Chinese
 
 ## [2.0.8] - 2023-11-08
