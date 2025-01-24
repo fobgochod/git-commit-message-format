@@ -24,7 +24,7 @@ enum class CommitType {
 
         init {
             if (typeRows.isEmpty()) {
-                values().forEach { type ->
+                entries.forEach { type ->
                     typeRows.add(TypeRow(type.type(), type.description()))
                 }
             }

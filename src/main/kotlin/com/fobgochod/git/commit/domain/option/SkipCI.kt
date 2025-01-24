@@ -22,7 +22,7 @@ enum class SkipCI(val label: String) {
     companion object {
 
         fun isSelf(label: String): Boolean {
-            values().forEach {
+            entries.forEach {
                 if (it.label.equals(label, ignoreCase = true)) {
                     return true
                 }

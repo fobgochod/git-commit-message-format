@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+- Compatible 251.*
+
 ## [2.0.11] - 2024-05-18
 
 ### Added
