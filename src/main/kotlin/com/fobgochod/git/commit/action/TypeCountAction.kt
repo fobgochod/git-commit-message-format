@@ -18,13 +18,10 @@ import kotlin.math.ceil
 class TypeCountAction(private val typeModel: TypeModel) : AnAction(
     message("action.toolbar.type.count.text"),
     message("action.toolbar.type.count.description"),
-    GitIcons.getNumberIcon(state.typeCount)
+    GitIcons.getNumberIcon(GitSettings.instance.typeCount)
 ) {
 
-    companion object {
-        private val state = GitSettings.instance
-    }
-
+    private val state: GitSettings = GitSettings.instance
     private var slider = JSlider()
     private val dialog = panel {
         row {

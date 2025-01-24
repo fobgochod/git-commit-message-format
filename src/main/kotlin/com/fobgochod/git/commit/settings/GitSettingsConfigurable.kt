@@ -122,16 +122,16 @@ internal class GitSettingsConfigurable : BoundSearchableConfigurable(
                         row(message("settings.common.view.mode")) {
                             comboBox(ViewMode.entries)
                                 .bindItem(state::viewMode.toNullableProperty())
+                                .align(AlignX.FILL)
                         }
 
                         row(message("settings.common.skip.ci.word")) {
                             comboBox<SkipCI>(
-                                // EnumComboBoxModel(SkipCI::class.java),
                                 DefaultComboBoxModel(SkipCI.entries.toTypedArray()),
                                 SimpleListCellRenderer.create("", SkipCI::label)
                             ).bindItem(state::skipCI.toNullableProperty())
                         }
-                    }.gap(RightGap.COLUMNS).align(AlignY.TOP).resizableColumn()
+                    }.gap(RightGap.COLUMNS)
 
                     panel {
                         row {
