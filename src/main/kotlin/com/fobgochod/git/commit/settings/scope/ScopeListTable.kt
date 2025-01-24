@@ -6,7 +6,7 @@ import com.intellij.ide.ui.laf.darcula.DarculaUIUtil
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.ColumnInfo
 import com.intellij.util.ui.ListTableModel
-import java.util.LinkedList
+import java.util.*
 import javax.swing.DefaultCellEditor
 import javax.swing.table.TableCellEditor
 
@@ -45,8 +45,8 @@ class ScopeListTable : ListTableWithButtons<ScopeListTable.Item>() {
         }
     }
 
-    override fun createListModel(): ListTableModel<String> {
-        return ListTableModel<String>(NAME_COLUMN)
+    override fun createListModel(): ListTableModel<Item> {
+        return ListTableModel<Item>(NAME_COLUMN)
     }
 
     override fun createElement(): Item {
