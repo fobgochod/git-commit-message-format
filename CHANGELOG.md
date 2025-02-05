@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [2.2.0] - 2025-02-05
+
 ### Fixed
 
 - Compatible with 2025.1
@@ -120,7 +122,8 @@
 
 - Initial project scaffold
 
-[Unreleased]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.11...HEAD
+[Unreleased]: https://github.com/fobgochod/git-commit-message-format/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.11...v2.2.0
 [2.0.11]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.10...v2.0.11
 [2.0.10]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.9...v2.0.10
 [2.0.9]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.8...v2.0.9
