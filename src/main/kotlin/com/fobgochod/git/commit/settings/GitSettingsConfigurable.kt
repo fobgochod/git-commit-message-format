@@ -26,7 +26,6 @@ import javax.swing.DefaultComboBoxModel
  * See [Sample usages in IntelliJ Platform IDEs](https://plugins.jetbrains.com/docs/intellij/kotlin-ui-dsl.html#examples)
  *
  * @author fobgochod
- * @date 2023/5/24 23:43
  */
 internal class GitSettingsConfigurable : BoundSearchableConfigurable(
     message("configurable.display.name"),

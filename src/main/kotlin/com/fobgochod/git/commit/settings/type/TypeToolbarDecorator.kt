@@ -10,7 +10,6 @@ import com.intellij.ui.ToolbarDecorator
  *  TypeToolbarDecorator.java
  *
  * @author fobgochod
- * @date 2023/6/12 23:45
  */
 class TypeToolbarDecorator {
 

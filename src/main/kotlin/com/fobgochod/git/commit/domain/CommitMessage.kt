@@ -16,7 +16,6 @@ import com.intellij.openapi.diagnostic.Logger
  * <footer>
  *
  * @author fobgochod
- * @date 2023/7/13 22:00
  */
 data class CommitMessage(
     var changeType: TypeRow = TypeRow(CommitType.FEAT),

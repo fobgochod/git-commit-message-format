@@ -14,7 +14,6 @@ import javax.swing.SwingUtilities
  * commit type table
  *
  * @author fobgochod
- * @date 2022/12/13 2:13
  */
 class TypeTable(private val typeModel: TypeModel) : JBTable(typeModel) {
 

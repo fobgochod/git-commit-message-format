@@ -35,7 +35,6 @@ import javax.swing.event.ChangeListener
  * See [Kotlin UI DSL Version 2](https://plugins.jetbrains.com/docs/intellij/kotlin-ui-dsl-version-2.html)
  *
  * @author fobgochod
- * @date 2023/5/30 22:21
  * @see com.intellij.internal.ui.uiDslShowcase.UiDslShowcaseAction
  */
 class CommitPanel(private val project: Project, private val commitMessage: CommitMessage) {

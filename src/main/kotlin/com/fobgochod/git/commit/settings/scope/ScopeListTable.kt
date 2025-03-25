@@ -6,16 +6,13 @@ import com.intellij.ide.ui.laf.darcula.DarculaUIUtil
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.ColumnInfo
 import com.intellij.util.ui.ListTableModel
-import java.util.*
 import javax.swing.DefaultCellEditor
 import javax.swing.table.TableCellEditor
 
-
 /**
- *  commit scope table
+ * Commit scope table
  *
  * @author fobgochod
- * @date 2023/6/18 21:16
  */
 class ScopeListTable : ListTableWithButtons<ScopeListTable.Item>() {
 
@@ -25,9 +22,7 @@ class ScopeListTable : ListTableWithButtons<ScopeListTable.Item>() {
         private val state = GitSettings.instance
         private val NAME_COLUMN = object : ColumnInfo<Item, String>("") {
 
-            override fun valueOf(item: Item): String {
-                return item.scope
-            }
+            override fun valueOf(item: Item): String = item.scope
 
             override fun getEditor(item: Item): TableCellEditor {
                 val cellEditor = JBTextField()
@@ -35,9 +30,7 @@ class ScopeListTable : ListTableWithButtons<ScopeListTable.Item>() {
                 return DefaultCellEditor(cellEditor)
             }
 
-            override fun isCellEditable(item: Item): Boolean {
-                return true
-            }
+            override fun isCellEditable(item: Item): Boolean = true
 
             override fun setValue(item: Item, value: String) {
                 item.scope = value
@@ -46,43 +39,31 @@ class ScopeListTable : ListTableWithButtons<ScopeListTable.Item>() {
     }
 
     override fun createListModel(): ListTableModel<Item> {
-        return ListTableModel<Item>(NAME_COLUMN)
+        return ListTableModel(NAME_COLUMN)
     }
 
-    override fun createElement(): Item {
-        return Item("")
-    }
+    override fun createElement(): Item = Item("")
 
-    override fun isEmpty(element: Item): Boolean {
-        return element.scope.isEmpty()
-    }
+    override fun isEmpty(element: Item): Boolean = element.scope.isEmpty()
 
-    override fun isUpDownSupported(): Boolean {
-        return true
-    }
+    override fun isUpDownSupported(): Boolean = true
 
-    override fun cloneElement(variable: Item): Item {
-        return Item(variable.scope)
-    }
+    override fun cloneElement(variable: Item): Item = Item(variable.scope)
 
-    override fun canDeleteElement(selection: Item): Boolean {
-        return true
-    }
+    override fun canDeleteElement(selection: Item): Boolean = true
 
     fun reset() {
-        val rows: MutableList<Item> = LinkedList()
-        state.scopeRows.forEach { rows.add(Item(it)) }
-        setValues(rows)
+        setValues(state.scopeRows.map { Item(it) }.toMutableList())
     }
 
     fun apply() {
-        state.scopeRows.clear()
-        elements.forEach { state.scopeRows.add(it.scope) }
+        state.scopeRows.apply {
+            clear()
+            addAll(elements.map { it.scope })
+        }
     }
 
     fun isModified(): Boolean {
-        val rows: MutableList<String> = LinkedList()
-        elements.forEach { rows.add(it.scope) }
-        return state.scopeRows != rows
+        return state.scopeRows != elements.map { it.scope }
     }
 }
