@@ -35,6 +35,8 @@ data class CommitMessage(
             val commit = CommitMessage()
             try {
                 val messages = message.split(GitConstant.NEWLINE).dropWhile { it.isEmpty() }.toMutableList()
+                if (messages.isEmpty()) return commit
+
                 // header handler
                 val header = messages.first()
                 val matcher = GitConstant.HEADER_PATTERN.matcher(header)
