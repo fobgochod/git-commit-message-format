@@ -8,7 +8,6 @@ object GitConstant {
     const val COMMA = ","
     const val SPACE = " "
     const val COLON_EMPTY = ": "
-    const val NEWLINE = "\n"
 
     const val RADIO_BUTTON_TYPE_COUNT = 3
 
@@ -19,6 +18,11 @@ object GitConstant {
 
     const val BREAKING_CHANGE = "BREAKING CHANGE: "
     const val CLOSES = "Closes"
+
+    /**
+     * 能匹配 \n\n、\r\n\r\n、混合换行等
+     */
+    val BLOCK_REGEX: Regex = Regex("\\R{2,}")
 
     val HEADER_PATTERN: Pattern = Pattern.compile("^([a-zA-Z0-9\\u4e00-\\u9fa5]+)(\\((.+)?\\))?[:：]( )?(.+)?")
 

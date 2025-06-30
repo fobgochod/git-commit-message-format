@@ -34,31 +34,27 @@ data class CommitMessage(
         fun parse(message: String): CommitMessage {
             val commit = CommitMessage()
             try {
-                val messages = message.split(GitConstant.NEWLINE).dropWhile { it.isEmpty() }.toMutableList()
+                val messages = message.trim().lines().toMutableList()
                 if (messages.isEmpty()) return commit
 
+
                 // header handler
-                val header = messages.first()
+                val header = messages.first().trim()
                 val matcher = GitConstant.HEADER_PATTERN.matcher(header)
                 if (matcher.find()) {
                     commit.changeType = state.getTypeFromName(matcher.group(1))
                     commit.changeScope = matcher.group(3) ?: GitConstant.EMPTY
                     commit.changeSubject = matcher.group(5) ?: GitConstant.EMPTY
-                    // match ok, remove first line
                     messages.removeFirst()
                 }
 
+
                 // body and footer handler
-                val messageGroup = messages.flatMapIndexed { index, it ->
-                    when {
-                        index == 0 && messages.size == 1 -> listOf(0, 0)
-                        index == 0 || index == messages.lastIndex -> listOf(index)
-                        it.isEmpty() -> listOf(index - 1, index + 1)
-                        else -> emptyList()
-                    }
-                }
-                    .windowed(size = 2, step = 2) { (from, to) -> messages.slice(from..to) }
+                val messageGroup = messages.joinToString("\n")
+                    .split(GitConstant.BLOCK_REGEX)
+                    .map { it.trim().lines().filter { line -> line.isNotBlank() } }
                     .filter { it.isNotEmpty() }
+
 
                 // analysis group data
                 messageGroup.forEach { row ->

@@ -61,6 +61,7 @@ class CommitMessageTest : BasePlatformTestCase() {
 
         assertTrue(cm.changeType.name == "feat")
         assertTrue(cm.changeScope == "scope")
+        assertTrue(cm.changeBody == "1.日志管理服务")
         assertTrue(cm.closedIssues == "#111")
         assertTrue(cm.skipCI)
     }
@@ -91,5 +92,45 @@ class CommitMessageTest : BasePlatformTestCase() {
         assertTrue(cm.changeScope == "scope")
         assertTrue(cm.closedIssues == "#111,#222")
         assertTrue(cm.skipCI)
+    }
+
+    fun testOnlySkipCI() {
+        val message = """
+            feat(scope): 测试只有 skip ci
+
+            [skip ci]
+        """.trimIndent()
+
+
+        val cm = CommitMessage.parse(message)
+        println(cm)
+
+        assertTrue(cm.changeType.name == "feat")
+        assertTrue(cm.changeScope == "scope")
+        assertTrue(cm.skipCI)
+    }
+
+    fun testNoHeader() {
+        val message = """
+            1.日志管理服务
+            
+            [skip ci]
+        """.trimIndent()
+
+
+        val cm = CommitMessage.parse(message)
+        println(cm)
+
+        assertTrue(cm.changeBody == "1.日志管理服务")
+        assertTrue(cm.skipCI)
+    }
+
+    fun testEmpty() {
+        val message = ""
+
+        val cm = CommitMessage.parse(message)
+        println(cm)
+
+        assertEmpty(cm.changeSubject)
     }
 }
