@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Improve commit message parsing
+
+### Fixed
+
+- Compatible with 2025.2
+
 ## [2.2.0] - 2025-02-05
 
 ### Fixed
