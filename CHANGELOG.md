@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [2.2.1] - 2025-07-05
+
 ### Changed
 
 - Improve commit message parsing
@@ -130,7 +132,8 @@
 
 - Initial project scaffold
 
-[Unreleased]: https://github.com/fobgochod/git-commit-message-format/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/fobgochod/git-commit-message-format/compare/v2.2.1...HEAD
+[2.2.1]: https://github.com/fobgochod/git-commit-message-format/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.11...v2.2.0
 [2.0.11]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.10...v2.0.11
 [2.0.10]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.9...v2.0.10
