@@ -9,7 +9,7 @@ import javax.swing.table.AbstractTableModel
 
 class TypeModel : AbstractTableModel() {
 
-    private inner class Column(private val key: String, val type: Class<*>, val editable: Boolean) {
+    private class Column(private val key: String, val type: Class<*>, val editable: Boolean) {
         val name: String
             get() = message(key)
     }

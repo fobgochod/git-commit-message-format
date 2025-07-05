@@ -131,6 +131,43 @@ class CommitMessageTest : BasePlatformTestCase() {
         val cm = CommitMessage.parse(message)
         println(cm)
 
+        assertTrue(cm.changeType.name == "feat")
         assertEmpty(cm.changeSubject)
+    }
+
+
+    fun testOneLineNotHeader() {
+        val message = "添加登陆日志"
+
+        val cm = CommitMessage.parse(message)
+        println(cm)
+
+        assertTrue(cm.changeType.name == "feat")
+        assertTrue(cm.changeSubject == "添加登陆日志")
+        assertEmpty(cm.changeBody)
+    }
+
+    fun testMultiChangeBody() {
+        val message = """
+            1.日志管理服务
+             
+            2.登陆日志接入
+            3.单元测试
+        """.trimIndent()
+
+        val cm = CommitMessage.parse(message)
+        println(cm.changeBody.lines().size == 3)
+    }
+
+    fun testMultiClosedIssues() {
+        val message = """
+            Closes#111
+             
+            Closes#112
+            Closes#113
+        """.trimIndent()
+
+        val cm = CommitMessage.parse(message)
+        println(cm.closedIssues.lines().size == 3)
     }
 }

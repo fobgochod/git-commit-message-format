@@ -38,7 +38,7 @@ class GitUtil(private val project: Project) {
         return Result(-1)
     }
 
-    inner class Result(exitValue: Int, private val logs: List<String> = emptyList()) {
+    class Result(exitValue: Int, private val logs: List<String> = emptyList()) {
 
         val scopes: MutableSet<String> = LinkedHashSet()
 
