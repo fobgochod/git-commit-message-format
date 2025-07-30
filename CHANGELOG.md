@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [2.2.2] - 2025-07-30
+
 ### Fixed
 
 - Fix scope dropdown not showing items after first open
@@ -136,7 +138,8 @@
 
 - Initial project scaffold
 
-[Unreleased]: https://github.com/fobgochod/git-commit-message-format/compare/v2.2.1...HEAD
+[Unreleased]: https://github.com/fobgochod/git-commit-message-format/compare/v2.2.2...HEAD
+[2.2.2]: https://github.com/fobgochod/git-commit-message-format/compare/v2.2.1...v2.2.2
 [2.2.1]: https://github.com/fobgochod/git-commit-message-format/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.11...v2.2.0
 [2.0.11]: https://github.com/fobgochod/git-commit-message-format/compare/v2.0.10...v2.0.11
