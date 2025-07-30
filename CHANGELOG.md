@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix scope dropdown not showing items after first open
+
 ## [2.2.1] - 2025-07-05
 
 ### Changed
