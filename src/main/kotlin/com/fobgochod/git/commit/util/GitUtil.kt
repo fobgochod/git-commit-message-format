@@ -31,7 +31,10 @@ class GitUtil(private val project: Project) {
                 val reader = BufferedReader(InputStreamReader(process.inputStream, StandardCharsets.UTF_8))
                 val logs: List<String> = reader.lines().collect(Collectors.toList())
 
-                return Result(process.exitValue(), logs)
+                // 再等待进程结束
+                val exitCode = process.waitFor()
+
+                return Result(exitCode, logs)
             }
         } catch (_: Exception) {
         }
