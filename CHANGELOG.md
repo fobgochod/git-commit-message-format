@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Compatible with 2025.3
+
 ## [2.2.2] - 2025-07-30
 
 ### Fixed
